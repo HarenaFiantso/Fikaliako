@@ -1,11 +1,11 @@
 package mg.fikaliako.api.model
 
 data class GeoPoint(
-    val lat: Double,
-    val lng: Double,
+  val lat: Double,
+  val lng: Double,
 )
 
 data class Page<T>(
-    val items: List<T>,
-    val nextCursor: String? = null,
+  val items: List<T>,
+  val nextCursor: String? = null,
 )

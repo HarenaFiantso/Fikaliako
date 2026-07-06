@@ -1,73 +1,41 @@
 package mg.fikaliako.api.repository
 
-import mg.fikaliako.api.model.ReviewItem
-import mg.fikaliako.api.util.Cursor
-import org.springframework.jdbc.core.simple.JdbcClient
-import org.springframework.stereotype.Repository
+import mg.fikaliako.api.entity.Review
+import mg.fikaliako.api.entity.ReviewStatus
+import org.springframework.data.domain.Limit
+import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Query
+import org.springframework.data.repository.query.Param
 import java.time.Instant
 import java.util.UUID
 
-@Repository
-class ReviewRepository(
-    private val jdbc: JdbcClient,
-) {
-    data class Row(
-        val review: ReviewItem,
-        val createdAt: Instant,
-    )
+interface ReviewRepository : JpaRepository<Review, UUID> {
+  @Query(
+    """
+        SELECT r FROM Review r JOIN FETCH r.author
+        WHERE r.establishment.id = :establishmentId AND r.status = :status
+        ORDER BY r.createdAt DESC, r.id DESC
+        """,
+  )
+  fun findPublished(
+    @Param("establishmentId") establishmentId: UUID,
+    @Param("status") status: ReviewStatus,
+    limit: Limit,
+  ): List<Review>
 
-    fun findForEstablishment(
-        establishmentId: UUID,
-        limit: Int,
-        cursor: Cursor?,
-    ): List<Row> {
-        val cursorClause =
-            if (cursor != null) "AND (rv.created_at, rv.id) < (:cursorCreatedAt, :cursorId)" else ""
-        val sql =
-            """
-            SELECT rv.id, u.display_name AS author_name,
-                   rv.rating_quality, rv.rating_price, rv.rating_cleanliness,
-                   rv.rating_speed, rv.rating_welcome, rv.global_note, rv.comment, rv.created_at
-            FROM reviews rv
-            JOIN users u ON u.id = rv.user_id
-            WHERE rv.establishment_id = :establishmentId AND rv.status = 'published' $cursorClause
-            ORDER BY rv.created_at DESC, rv.id DESC
-            LIMIT :limit
-            """.trimIndent()
-
-        val spec =
-            jdbc
-                .sql(sql)
-                .param("establishmentId", establishmentId)
-                .param("limit", limit)
-        if (cursor != null) {
-            spec.param("cursorCreatedAt", cursor.createdAt.atOffset(java.time.ZoneOffset.UTC))
-            spec.param("cursorId", cursor.id)
-        }
-        return spec
-            .query { rs, _ ->
-                Row(
-                    ReviewItem(
-                        id = rs.getObject("id", UUID::class.java),
-                        authorName = rs.getString("author_name"),
-                        ratingQuality = rs.getInt("rating_quality"),
-                        ratingPrice = rs.getInt("rating_price"),
-                        ratingCleanliness = rs.getInt("rating_cleanliness"),
-                        ratingSpeed = rs.getInt("rating_speed"),
-                        ratingWelcome = rs.getInt("rating_welcome"),
-                        globalNote = rs.getBigDecimal("global_note"),
-                        comment = rs.getString("comment"),
-                        createdAt = rs.getTimestamp("created_at").toInstant(),
-                    ),
-                    rs.getTimestamp("created_at").toInstant(),
-                )
-            }.list()
-    }
-
-    fun establishmentExists(id: UUID): Boolean =
-        jdbc
-            .sql("SELECT EXISTS (SELECT 1 FROM establishments WHERE id = :id)")
-            .param("id", id)
-            .query(Boolean::class.java)
-            .single()
+  @Query(
+    """
+        SELECT r FROM Review r JOIN FETCH r.author
+        WHERE r.establishment.id = :establishmentId AND r.status = :status
+          AND (r.createdAt < :cursorCreatedAt OR (r.createdAt = :cursorCreatedAt AND r.id < :cursorId))
+        ORDER BY r.createdAt DESC, r.id DESC
+        """,
+  )
+  fun findPublishedAfter(
+    @Param("establishmentId") establishmentId: UUID,
+    @Param("status") status: ReviewStatus,
+    @Param("cursorCreatedAt") cursorCreatedAt: Instant,
+    @Param("cursorId") cursorId: UUID,
+    limit: Limit,
+  ): List<Review>
 }

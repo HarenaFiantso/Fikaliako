@@ -20,48 +20,48 @@ import java.util.UUID
 @WebMvcTest(NearbyController::class)
 @Import(SecurityConfig::class)
 class NearbyControllerTest {
-    @Autowired
-    lateinit var mockMvc: MockMvc
+  @Autowired
+  lateinit var mockMvc: MockMvc
 
-    @MockitoBean
-    lateinit var service: EstablishmentService
+  @MockitoBean
+  lateinit var service: EstablishmentService
 
-    @Test
-    fun `nearby returns items carrying the distance`() {
-        val item =
-            EstablishmentSummary(
-                id = UUID.fromString("aaaaaaaa-0000-0000-0000-000000000001"),
-                slug = "chez",
-                name = "Chez Bao",
-                type = "gargotte",
-                position = GeoPoint(-18.9, 47.5),
-                avgPriceAr = 2500,
-                verified = true,
-                status = "active",
-                ratingAvg = null,
-                ratingCount = 0,
-                distanceM = 30.5,
-            )
-        Mockito
-            .`when`(service.nearby(-18.9, 47.5, null, EstablishmentFilters(), null))
-            .thenReturn(Page(listOf(item)))
+  @Test
+  fun `nearby returns items carrying the distance`() {
+    val item =
+      EstablishmentSummary(
+        id = UUID.fromString("aaaaaaaa-0000-0000-0000-000000000001"),
+        slug = "chez",
+        name = "Chez Bao",
+        type = "gargotte",
+        position = GeoPoint(-18.9, 47.5),
+        avgPriceAr = 2500,
+        verified = true,
+        status = "active",
+        ratingAvg = null,
+        ratingCount = 0,
+        distanceM = 30.5,
+      )
+    Mockito
+      .`when`(service.nearby(-18.9, 47.5, null, EstablishmentFilters(), null))
+      .thenReturn(Page(listOf(item)))
 
-        mockMvc
-            .get("/v1/nearby") {
-                param("lat", "-18.9")
-                param("lng", "47.5")
-            }.andExpect {
-                status { isOk() }
-                jsonPath("$.items[0].distance_m") { value(30.5) }
-            }
+    mockMvc
+      .get("/v1/nearby") {
+        param("lat", "-18.9")
+        param("lng", "47.5")
+      }.andExpect {
+        status { isOk() }
+        jsonPath("$.items[0].distance_m") { value(30.5) }
+      }
+  }
+
+  @Test
+  fun `missing lat is a problem+json 400 rather than a 403`() {
+    mockMvc.get("/v1/nearby") { param("lng", "47.5") }.andExpect {
+      status { isBadRequest() }
+      content { contentType(MediaType.APPLICATION_PROBLEM_JSON) }
+      jsonPath("$.detail") { value("Missing required parameter 'lat'.") }
     }
-
-    @Test
-    fun `missing lat is a problem+json 400 rather than a 403`() {
-        mockMvc.get("/v1/nearby") { param("lng", "47.5") }.andExpect {
-            status { isBadRequest() }
-            content { contentType(MediaType.APPLICATION_PROBLEM_JSON) }
-            jsonPath("$.detail") { value("Missing required parameter 'lat'.") }
-        }
-    }
+  }
 }

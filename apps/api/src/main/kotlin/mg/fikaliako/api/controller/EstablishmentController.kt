@@ -14,26 +14,26 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/v1/establishments")
 class EstablishmentController(
-    private val service: EstablishmentService,
+  private val service: EstablishmentService,
 ) {
-    @GetMapping
-    fun list(
-        @RequestParam(required = false) type: String?,
-        @RequestParam(name = "min_price", required = false) minPrice: Int?,
-        @RequestParam(name = "max_price", required = false) maxPrice: Int?,
-        @RequestParam(required = false) cuisine: String?,
-        @RequestParam(required = false) payment: String?,
-        @RequestParam(required = false) filters: String?,
-        @RequestParam(name = "open_now", defaultValue = "false") openNow: Boolean,
-        @RequestParam(required = false) limit: Int?,
-        @RequestParam(required = false) cursor: String?,
-    ): Page<EstablishmentSummary> {
-        val parsed = EstablishmentFilterParams.build(type, minPrice, maxPrice, cuisine, payment, filters, openNow)
-        return service.list(parsed, limit, cursor)
-    }
+  @GetMapping
+  fun list(
+    @RequestParam(required = false) type: String?,
+    @RequestParam(name = "min_price", required = false) minPrice: Int?,
+    @RequestParam(name = "max_price", required = false) maxPrice: Int?,
+    @RequestParam(required = false) cuisine: String?,
+    @RequestParam(required = false) payment: String?,
+    @RequestParam(required = false) filters: String?,
+    @RequestParam(name = "open_now", defaultValue = "false") openNow: Boolean,
+    @RequestParam(required = false) limit: Int?,
+    @RequestParam(required = false) cursor: String?,
+  ): Page<EstablishmentSummary> {
+    val parsed = EstablishmentFilterParams.build(type, minPrice, maxPrice, cuisine, payment, filters, openNow)
+    return service.list(parsed, limit, cursor)
+  }
 
-    @GetMapping("/{idOrSlug}")
-    fun detail(
-        @PathVariable idOrSlug: String,
-    ): EstablishmentDetail = service.detail(idOrSlug)
+  @GetMapping("/{idOrSlug}")
+  fun detail(
+    @PathVariable idOrSlug: String,
+  ): EstablishmentDetail = service.detail(idOrSlug)
 }

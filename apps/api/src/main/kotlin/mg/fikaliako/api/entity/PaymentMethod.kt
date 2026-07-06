@@ -5,19 +5,22 @@ import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 
-/** Payment-method referential (project book ch. 4.3). */
 @Entity
 @Table(name = "payment_methods")
 class PaymentMethod(
-    @Id
-    @Column(columnDefinition = "text")
-    var code: String = "",
-    @Column(name = "label_fr", columnDefinition = "text")
-    var labelFr: String = "",
-    @Column(name = "label_mg", columnDefinition = "text")
-    var labelMg: String = "",
-    @Column(name = "is_mobile_money")
-    var isMobileMoney: Boolean = false,
-    @Column(name = "sort_order")
-    var sortOrder: Short = 0,
+  @Id
+  @Column(columnDefinition = "text")
+  var code: String = "",
+
+  @Column(name = "label_fr", columnDefinition = "text")
+  var labelFr: String = "",
+
+  @Column(name = "label_mg", columnDefinition = "text")
+  var labelMg: String = "",
+
+  @Column(name = "is_mobile_money")
+  var isMobileMoney: Boolean = false,
+
+  @Column(name = "sort_order")
+  var sortOrder: Short = 0,
 )

@@ -13,12 +13,12 @@ import java.util.UUID
 @RestController
 @RequestMapping("/v1/establishments/{establishmentId}/reviews")
 class ReviewController(
-    private val service: ReviewService,
+  private val service: ReviewService,
 ) {
-    @GetMapping
-    fun list(
-        @PathVariable establishmentId: UUID,
-        @RequestParam(required = false) limit: Int?,
-        @RequestParam(required = false) cursor: String?,
-    ): Page<ReviewItem> = service.listForEstablishment(establishmentId, limit, cursor)
+  @GetMapping
+  fun list(
+    @PathVariable establishmentId: UUID,
+    @RequestParam(required = false) limit: Int?,
+    @RequestParam(required = false) cursor: String?,
+  ): Page<ReviewItem> = service.listForEstablishment(establishmentId, limit, cursor)
 }

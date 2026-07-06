@@ -11,24 +11,24 @@ import org.springframework.security.web.SecurityFilterChain
 @Configuration
 @EnableWebSecurity
 class SecurityConfig {
-    @Bean
-    fun filterChain(http: HttpSecurity): SecurityFilterChain {
-        http
-            .csrf { it.disable() }
-            .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
-            .authorizeHttpRequests {
-                it
-                    .requestMatchers("/actuator/health/**", "/actuator/info")
-                    .permitAll()
-                    .requestMatchers("/v1/openapi.yaml", "/v1/docs", "/v1/docs/**", "/webjars/**")
-                    .permitAll()
-                    .requestMatchers("/error")
-                    .permitAll()
-                    .requestMatchers(HttpMethod.GET, "/v1/**")
-                    .permitAll()
-                    .anyRequest()
-                    .authenticated()
-            }
-        return http.build()
-    }
+  @Bean
+  fun filterChain(http: HttpSecurity): SecurityFilterChain {
+    http
+      .csrf { it.disable() }
+      .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
+      .authorizeHttpRequests {
+        it
+          .requestMatchers("/actuator/health/**", "/actuator/info")
+          .permitAll()
+          .requestMatchers("/v1/openapi.yaml", "/v1/docs", "/v1/docs/**", "/webjars/**")
+          .permitAll()
+          .requestMatchers("/error")
+          .permitAll()
+          .requestMatchers(HttpMethod.GET, "/v1/**")
+          .permitAll()
+          .anyRequest()
+          .authenticated()
+      }
+    return http.build()
+  }
 }
