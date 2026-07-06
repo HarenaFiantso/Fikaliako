@@ -16,7 +16,6 @@ class ReviewRepository(
         val createdAt: Instant,
     )
 
-    /** Published reviews for an establishment, newest first, keyset-paginated. */
     fun findForEstablishment(
         establishmentId: UUID,
         limit: Int,

@@ -6,7 +6,6 @@ import java.time.Clock
 
 @Configuration
 class TimeConfig {
-    /** Injectable clock so time-dependent logic (open/closed) is testable. */
     @Bean
     fun clock(): Clock = Clock.systemUTC()
 }

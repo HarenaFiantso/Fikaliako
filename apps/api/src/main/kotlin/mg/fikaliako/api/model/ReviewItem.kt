@@ -4,7 +4,6 @@ import java.math.BigDecimal
 import java.time.Instant
 import java.util.UUID
 
-/** A published review (project book ch. 4.4): five criteria + weighted global note. */
 data class ReviewItem(
     val id: UUID,
     val authorName: String,

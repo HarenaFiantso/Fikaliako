@@ -20,7 +20,6 @@ import java.util.UUID
 class EstablishmentRepository(
     private val jdbc: JdbcClient,
 ) {
-    /** Nearby: active establishments within [radiusM] of ([lat], [lng]), cheapest first. */
     fun findNearby(
         lat: Double,
         lng: Double,
@@ -58,13 +57,11 @@ class EstablishmentRepository(
         return spec.query { rs, _ -> mapSummary(rs, withDistance = true) }.list()
     }
 
-    /** A list row plus its keyset sort key, so the service can mint the next cursor. */
     data class ListRow(
         val summary: EstablishmentSummary,
         val createdAt: Instant,
     )
 
-    /** Browse list, newest first, keyset-paginated on `(created_at, id)`. */
     fun findList(
         filters: EstablishmentFilters,
         limit: Int,
@@ -225,7 +222,7 @@ class EstablishmentRepository(
             avgPriceAr = rs.getObject("avg_price_ar") as Int?,
             verified = rs.getBoolean("verified"),
             status = rs.getString("status_text"),
-            openNow = false, // filled by the service, which owns the clock
+            openNow = false,
             amenities =
                 Amenities(
                     delivery = rs.getBoolean("delivery"),
@@ -264,11 +261,6 @@ private fun String.toUuidOrNull(): UUID? =
         null
     }
 
-/**
- * Accumulates WHERE predicates and their named bindings. Column names for
- * dynamic filters are only ever chosen from a fixed whitelist — user input is
- * bound as parameters, never concatenated into SQL.
- */
 private class WhereBuilder(
     private val now: Instant,
 ) {

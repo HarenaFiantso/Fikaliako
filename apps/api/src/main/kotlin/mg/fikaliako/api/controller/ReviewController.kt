@@ -15,7 +15,6 @@ import java.util.UUID
 class ReviewController(
     private val service: ReviewService,
 ) {
-    /** Published reviews for an establishment, newest first, cursor-paginated. */
     @GetMapping
     fun list(
         @PathVariable establishmentId: UUID,

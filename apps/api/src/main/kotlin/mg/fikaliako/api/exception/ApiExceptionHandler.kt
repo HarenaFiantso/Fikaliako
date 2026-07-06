@@ -12,11 +12,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.method.annotation.HandlerMethodValidationException
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
 
-/**
- * Renders every error as RFC 9457 `application/problem+json` (project book
- * ch. 8), stamped with the request's correlation id. Spring emits this content
- * type automatically for [ProblemDetail] return values.
- */
 @RestControllerAdvice
 class ApiExceptionHandler {
     private val log = LoggerFactory.getLogger(javaClass)
@@ -33,14 +28,12 @@ class ApiExceptionHandler {
         request: HttpServletRequest,
     ): ProblemDetail = problem(HttpStatus.BAD_REQUEST, "Bad request", ex.message, request)
 
-    /** Bean Validation failures on `@RequestParam`/`@PathVariable` (single values). */
     @ExceptionHandler(HandlerMethodValidationException::class)
     fun handleConstraint(
         ex: HandlerMethodValidationException,
         request: HttpServletRequest,
     ): ProblemDetail = problem(HttpStatus.BAD_REQUEST, "Invalid request parameters", ex.message, request)
 
-    /** Bean Validation failures on a `@Valid @RequestBody` payload. */
     @ExceptionHandler(MethodArgumentNotValidException::class)
     fun handleBodyValidation(
         ex: MethodArgumentNotValidException,
@@ -58,7 +51,6 @@ class ApiExceptionHandler {
         request: HttpServletRequest,
     ): ProblemDetail = problem(HttpStatus.BAD_REQUEST, "Bad request", "Invalid value for '${ex.name}'.", request)
 
-    /** A required query parameter was absent, e.g. `/v1/nearby` without `lat`. */
     @ExceptionHandler(MissingServletRequestParameterException::class)
     fun handleMissingParam(
         ex: MissingServletRequestParameterException,
@@ -66,7 +58,6 @@ class ApiExceptionHandler {
     ): ProblemDetail =
         problem(HttpStatus.BAD_REQUEST, "Bad request", "Missing required parameter '${ex.parameterName}'.", request)
 
-    /** Catch-all so unexpected failures still return problem+json with a correlation id. */
     @ExceptionHandler(Exception::class)
     fun handleUnexpected(
         ex: Exception,

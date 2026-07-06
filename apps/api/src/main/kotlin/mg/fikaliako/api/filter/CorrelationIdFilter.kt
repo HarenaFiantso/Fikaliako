@@ -10,12 +10,6 @@ import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 import java.util.UUID
 
-/**
- * Ensures every response carries a correlation id (project book ch. 8). Honours
- * an inbound `X-Correlation-Id`, otherwise mints one; exposes it on the response
- * header, in the SLF4J MDC (structured logs), and as a request attribute the
- * problem handler stamps into error bodies.
- */
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
 class CorrelationIdFilter : OncePerRequestFilter() {

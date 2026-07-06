@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController
 class EstablishmentController(
     private val service: EstablishmentService,
 ) {
-    /** Browse establishments, newest first, cursor-paginated. */
     @GetMapping
     fun list(
         @RequestParam(required = false) type: String?,
@@ -33,7 +32,6 @@ class EstablishmentController(
         return service.list(parsed, limit, cursor)
     }
 
-    /** Establishment detail, resolvable by UUID or SEO slug (book ch. 11.3). */
     @GetMapping("/{idOrSlug}")
     fun detail(
         @PathVariable idOrSlug: String,

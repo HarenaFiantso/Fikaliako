@@ -24,6 +24,158 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/v1/nearby': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Establishments near a point, cheapest first
+     * @description The core discovery query (project book ch. 6.2): active establishments within `radius` metres of (`lat`, `lng`), ordered cheapest first then by distance. Uses `ST_DWithin` on the GiST index; target < 300 ms p95. The result set is bounded by `radius` and `limit`, so it is **not** cursor-paginated (`next_cursor` is always absent).
+     */
+    get: operations['nearby'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/search': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Typo-tolerant text search (planned)
+     * @description (planned) Full-text search backed by Meilisearch synced from Postgres (project book ch. 7.2). Same combinable filters as `/v1/nearby`, plus a free-text `q`. Arrives with the search module.
+     */
+    get: operations['search'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/establishments': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Browse establishments
+     * @description Active establishments, newest first, cursor-paginated. Filters combine (project book ch. 4.3).
+     */
+    get: operations['listEstablishments'];
+    put?: never;
+    /**
+     * Propose a new establishment (planned)
+     * @description (planned) Community contribution — anyone connected can propose a new establishment, positioned by dropping a pin (project book ch. 4.8). Goes through the moderation queue. Arrives with the community module.
+     */
+    post: operations['proposeEstablishment'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/establishments/{idOrSlug}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Establishment detail
+     * @description Full detail for one establishment, resolvable by UUID or SEO slug (the slug path powers Google-indexable pages — project book ch. 11.3). `open_now` is computed server-side in Indian/Antananarivo.
+     */
+    get: operations['getEstablishment'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/establishments/{establishmentId}/reviews': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Reviews for an establishment
+     * @description Published reviews, newest first, cursor-paginated.
+     */
+    get: operations['listReviews'];
+    put?: never;
+    /**
+     * Post a review (planned)
+     * @description (planned) One review per user per establishment, scored 1–5 on five criteria (project book ch. 4.4). Arrives with the community module.
+     */
+    post: operations['createReview'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/users/me': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Current authenticated user (planned)
+     * @description (planned) Arrives with the accounts module (project book ch. 4.7).
+     */
+    get: operations['getCurrentUser'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/users/me/favorites/{establishmentId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /**
+     * Add a favorite (planned)
+     * @description (planned) Idempotent add to the user's favorites (project book ch. 4.6).
+     */
+    put: operations['addFavorite'];
+    post?: never;
+    /**
+     * Remove a favorite (planned)
+     * @description (planned) Idempotent removal from the user's favorites.
+     */
+    delete: operations['removeFavorite'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -41,9 +193,238 @@ export interface components {
        */
       message: string;
     };
+    /** @description RFC 9457 problem detail. */
+    Problem: {
+      /**
+       * Format: uri
+       * @default about:blank
+       */
+      type: string;
+      /** @example Not found */
+      title: string;
+      /** @example 404 */
+      status: number;
+      /** @example Establishment 'nope' not found. */
+      detail?: string;
+      /** @example /v1/establishments/nope */
+      instance?: string;
+      /** @description Echoes the `X-Correlation-Id` response header. */
+      correlation_id?: string;
+    };
+    /**
+     * @description Kind of eatery (project book ch. 6.1).
+     * @enum {string}
+     */
+    EstablishmentType:
+      | 'restaurant'
+      | 'gargotte'
+      | 'cafe'
+      | 'snack'
+      | 'food_truck'
+      | 'street_vendor'
+      | 'pastry_shop'
+      | 'bar_restaurant'
+      | 'hotel_restaurant';
+    /** @description WGS 84 coordinate (SRID 4326). */
+    GeoPoint: {
+      /**
+       * Format: double
+       * @example -18.9092
+       */
+      lat: number;
+      /**
+       * Format: double
+       * @example 47.521
+       */
+      lng: number;
+    };
+    /** @description A referential entry with bilingual labels (FR + MG). */
+    ReferentialItem: {
+      /** @example mvola */
+      code: string;
+      /** @example MVola */
+      label_fr: string;
+      /** @example MVola */
+      label_mg: string;
+    };
+    /** @description The one-query boolean attributes (project book ch. 4.3 / 6.1). */
+    Amenities: {
+      delivery: boolean;
+      parking: boolean;
+      wifi: boolean;
+      wheelchair_access: boolean;
+      air_conditioning: boolean;
+      terrace: boolean;
+      family_friendly: boolean;
+      romantic: boolean;
+      student_friendly: boolean;
+      scenic_view: boolean;
+      open_24h: boolean;
+    };
+    /** @description One opening interval; days are 0 = Monday … 6 = Sunday. */
+    OpeningInterval: {
+      day_of_week: number;
+      /** @example 07:00 */
+      opens_at: string;
+      /** @example 21:00 */
+      closes_at: string;
+    };
+    /** @description Aggregated ratings, recomputed nightly (project book ch. 4.5). Per-criterion and Bayesian fields are absent until an establishment has reviews. */
+    RatingSummary: {
+      /** @example 12 */
+      count: number;
+      /** @example 4.5 */
+      avg_global?: number;
+      avg_quality?: number;
+      avg_price?: number;
+      avg_cleanliness?: number;
+      avg_speed?: number;
+      avg_welcome?: number;
+      /** @description Dampened score used for rankings. */
+      bayesian_note?: number;
+    };
+    /** @description Card-level projection for lists and nearby results. */
+    EstablishmentSummary: {
+      /** Format: uuid */
+      id: string;
+      /** @example gargotte-chez-bao */
+      slug: string;
+      /** @example Gargotte Chez Bao */
+      name: string;
+      type: components['schemas']['EstablishmentType'];
+      position: components['schemas']['GeoPoint'];
+      /** @example 2500 */
+      avg_price_ar?: number;
+      verified: boolean;
+      /** @enum {string} */
+      status: 'active' | 'closed' | 'pending';
+      /** @example 4.5 */
+      rating_avg?: number;
+      /** @example 12 */
+      rating_count: number;
+      /**
+       * @description Metres from the query point; present only on `/v1/nearby`.
+       * @example 30.5
+       */
+      distance_m?: number;
+    };
+    /** @description Full establishment detail (project book ch. 8.2 — detail page). */
+    EstablishmentDetail: {
+      /** Format: uuid */
+      id: string;
+      slug: string;
+      name: string;
+      type: components['schemas']['EstablishmentType'];
+      position: components['schemas']['GeoPoint'];
+      address?: string;
+      /** @example Analakely */
+      district?: string;
+      /** @example Antananarivo */
+      city: string;
+      phone?: string;
+      whatsapp?: string;
+      facebook_url?: string;
+      website?: string;
+      avg_price_ar?: number;
+      verified: boolean;
+      /** @enum {string} */
+      status: 'active' | 'closed' | 'pending';
+      /** @description Computed server-side in Indian/Antananarivo. */
+      open_now: boolean;
+      amenities: components['schemas']['Amenities'];
+      opening_hours: components['schemas']['OpeningInterval'][];
+      payment_methods: components['schemas']['ReferentialItem'][];
+      cuisines: components['schemas']['ReferentialItem'][];
+      rating: components['schemas']['RatingSummary'];
+      /** Format: date-time */
+      created_at: string;
+      /** Format: date-time */
+      updated_at: string;
+    };
+    /** @description A published review (project book ch. 4.4). */
+    ReviewItem: {
+      /** Format: uuid */
+      id: string;
+      /** @example Naina */
+      author_name: string;
+      rating_quality: number;
+      rating_price: number;
+      rating_cleanliness: number;
+      rating_speed: number;
+      rating_welcome: number;
+      /**
+       * @description Weighted mean with quality counted twice (weights sum to 6).
+       * @example 4.67
+       */
+      global_note: number;
+      comment?: string;
+      /** Format: date-time */
+      created_at: string;
+    };
+    /** @description (planned) Payload to create a review. */
+    ReviewInput: {
+      rating_quality: number;
+      rating_price: number;
+      rating_cleanliness: number;
+      rating_speed: number;
+      rating_welcome: number;
+      comment?: string;
+    };
+    /** @description A cursor-paginated page of establishment summaries. */
+    EstablishmentPage: {
+      items: components['schemas']['EstablishmentSummary'][];
+      /** @description Pass back as `?cursor=`; absent on the last page. */
+      next_cursor?: string;
+    };
+    /** @description A cursor-paginated page of reviews. */
+    ReviewPage: {
+      items: components['schemas']['ReviewItem'][];
+      /** @description Pass back as `?cursor=`; absent on the last page. */
+      next_cursor?: string;
+    };
   };
-  responses: never;
-  parameters: never;
+  responses: {
+    /** @description Invalid request. */
+    BadRequest: {
+      headers: {
+        [name: string]: unknown;
+      };
+      content: {
+        'application/problem+json': components['schemas']['Problem'];
+      };
+    };
+    /** @description Resource not found. */
+    NotFound: {
+      headers: {
+        [name: string]: unknown;
+      };
+      content: {
+        'application/problem+json': components['schemas']['Problem'];
+      };
+    };
+  };
+  parameters: {
+    /** @description Page size (default 50 for establishments, 20 for reviews; max 100). */
+    LimitParam: number;
+    /** @description Opaque pagination cursor from a previous response's `next_cursor`. */
+    CursorParam: string;
+    /** @description Establishment UUID. */
+    EstablishmentId: string;
+    /** @description Filter by establishment type. */
+    TypeFilter: components['schemas']['EstablishmentType'];
+    /** @description Minimum average price in ariary. */
+    MinPriceFilter: number;
+    /** @description Maximum average price in ariary (the budget king filter, book ch. 3). */
+    MaxPriceFilter: number;
+    /** @description Filter by cuisine referential code (e.g. `malagasy`, `grill`). */
+    CuisineFilter: string;
+    /** @description A payment-method code (e.g. `mvola`) or the literal `mobile` to match any mobile-money operator (book ch. 4.3). */
+    PaymentFilter: string;
+    /** @description Comma-separated boolean amenities that must all be true. One of: `delivery, parking, wifi, wheelchair_access, air_conditioning, terrace, family_friendly, romantic, student_friendly, scenic_view, open_24h`. */
+    BooleanFilters: string;
+    /** @description When true, keep only establishments open now (Indian/Antananarivo). */
+    OpenNowFilter: boolean;
+  };
   requestBodies: never;
   headers: never;
   pathItems: never;
@@ -73,6 +454,272 @@ export interface operations {
            */
           'application/json': components['schemas']['PingResponse'];
         };
+      };
+    };
+  };
+  nearby: {
+    parameters: {
+      query: {
+        lat: number;
+        lng: number;
+        /** @description Search radius in metres (default 1000, max 5000). */
+        radius?: number;
+        /** @description Filter by establishment type. */
+        type?: components['parameters']['TypeFilter'];
+        /** @description Minimum average price in ariary. */
+        min_price?: components['parameters']['MinPriceFilter'];
+        /** @description Maximum average price in ariary (the budget king filter, book ch. 3). */
+        max_price?: components['parameters']['MaxPriceFilter'];
+        /** @description Filter by cuisine referential code (e.g. `malagasy`, `grill`). */
+        cuisine?: components['parameters']['CuisineFilter'];
+        /** @description A payment-method code (e.g. `mvola`) or the literal `mobile` to match any mobile-money operator (book ch. 4.3). */
+        payment?: components['parameters']['PaymentFilter'];
+        /** @description Comma-separated boolean amenities that must all be true. One of: `delivery, parking, wifi, wheelchair_access, air_conditioning, terrace, family_friendly, romantic, student_friendly, scenic_view, open_24h`. */
+        filters?: components['parameters']['BooleanFilters'];
+        /** @description When true, keep only establishments open now (Indian/Antananarivo). */
+        open_now?: components['parameters']['OpenNowFilter'];
+        /** @description Max results (default 50, max 200 — the client clustering threshold). */
+        limit?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Ordered nearby results. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['EstablishmentPage'];
+        };
+      };
+      400: components['responses']['BadRequest'];
+    };
+  };
+  search: {
+    parameters: {
+      query: {
+        q: string;
+        /** @description Page size (default 50 for establishments, 20 for reviews; max 100). */
+        limit?: components['parameters']['LimitParam'];
+        /** @description Opaque pagination cursor from a previous response's `next_cursor`. */
+        cursor?: components['parameters']['CursorParam'];
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Matching establishments. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['EstablishmentPage'];
+        };
+      };
+    };
+  };
+  listEstablishments: {
+    parameters: {
+      query?: {
+        /** @description Filter by establishment type. */
+        type?: components['parameters']['TypeFilter'];
+        /** @description Minimum average price in ariary. */
+        min_price?: components['parameters']['MinPriceFilter'];
+        /** @description Maximum average price in ariary (the budget king filter, book ch. 3). */
+        max_price?: components['parameters']['MaxPriceFilter'];
+        /** @description Filter by cuisine referential code (e.g. `malagasy`, `grill`). */
+        cuisine?: components['parameters']['CuisineFilter'];
+        /** @description A payment-method code (e.g. `mvola`) or the literal `mobile` to match any mobile-money operator (book ch. 4.3). */
+        payment?: components['parameters']['PaymentFilter'];
+        /** @description Comma-separated boolean amenities that must all be true. One of: `delivery, parking, wifi, wheelchair_access, air_conditioning, terrace, family_friendly, romantic, student_friendly, scenic_view, open_24h`. */
+        filters?: components['parameters']['BooleanFilters'];
+        /** @description When true, keep only establishments open now (Indian/Antananarivo). */
+        open_now?: components['parameters']['OpenNowFilter'];
+        /** @description Page size (default 50 for establishments, 20 for reviews; max 100). */
+        limit?: components['parameters']['LimitParam'];
+        /** @description Opaque pagination cursor from a previous response's `next_cursor`. */
+        cursor?: components['parameters']['CursorParam'];
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description A page of establishments. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['EstablishmentPage'];
+        };
+      };
+      400: components['responses']['BadRequest'];
+    };
+  };
+  proposeEstablishment: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Proposal accepted for moderation. */
+      202: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getEstablishment: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description The establishment UUID or its slug. */
+        idOrSlug: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description The establishment. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['EstablishmentDetail'];
+        };
+      };
+      404: components['responses']['NotFound'];
+    };
+  };
+  listReviews: {
+    parameters: {
+      query?: {
+        /** @description Page size (default 50 for establishments, 20 for reviews; max 100). */
+        limit?: components['parameters']['LimitParam'];
+        /** @description Opaque pagination cursor from a previous response's `next_cursor`. */
+        cursor?: components['parameters']['CursorParam'];
+      };
+      header?: never;
+      path: {
+        /** @description Establishment UUID. */
+        establishmentId: components['parameters']['EstablishmentId'];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description A page of reviews. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ReviewPage'];
+        };
+      };
+      404: components['responses']['NotFound'];
+    };
+  };
+  createReview: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Establishment UUID. */
+        establishmentId: components['parameters']['EstablishmentId'];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ReviewInput'];
+      };
+    };
+    responses: {
+      /** @description Review created. */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ReviewItem'];
+        };
+      };
+    };
+  };
+  getCurrentUser: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description The authenticated user. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  addFavorite: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Establishment UUID. */
+        establishmentId: components['parameters']['EstablishmentId'];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Favorited. */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  removeFavorite: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Establishment UUID. */
+        establishmentId: components['parameters']['EstablishmentId'];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Un-favorited. */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
       };
     };
   };
