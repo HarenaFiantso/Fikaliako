@@ -1,4 +1,4 @@
-package mg.fikaliako.api.health
+package mg.fikaliako.api.controller
 
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping

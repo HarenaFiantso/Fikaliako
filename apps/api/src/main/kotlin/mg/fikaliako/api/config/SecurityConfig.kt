@@ -22,6 +22,10 @@ class SecurityConfig {
                     .permitAll()
                     .requestMatchers("/v1/openapi.yaml", "/v1/docs", "/v1/docs/**", "/webjars/**")
                     .permitAll()
+                    // Boot's error dispatch target; must be reachable so failures render
+                    // as their real status (and as problem+json) rather than a 403.
+                    .requestMatchers("/error")
+                    .permitAll()
                     .requestMatchers(HttpMethod.GET, "/v1/**")
                     .permitAll()
                     .anyRequest()

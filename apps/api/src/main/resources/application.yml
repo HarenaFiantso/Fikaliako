@@ -13,6 +13,13 @@ spring:
       ddl-auto: validate
     open-in-view: false
 
+  jackson:
+    # Contract uses snake_case (avg_price_ar, next_cursor, open_now — book ch. 8).
+    # Jackson 3 (Boot 4) already renders java.time types as ISO-8601 strings by
+    # default, so no date-timestamp toggle is needed.
+    property-naming-strategy: SNAKE_CASE
+    default-property-inclusion: non_null
+
   flyway:
     locations: classpath:db/migration
 

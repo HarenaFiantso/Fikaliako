@@ -11,3 +11,8 @@ spring:
       ddl-auto: none
   flyway:
     enabled: false
+  # Mirror the production serialization contract so slice tests assert the
+  # real wire format (snake_case, non-null). Keep in sync with main config.
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+    default-property-inclusion: non_null
