@@ -6,6 +6,8 @@
     "build": "./gradlew build",
     "dev": "./gradlew bootRun",
     "test": "./gradlew test",
-    "clean": "./gradlew clean"
+    "clean": "./gradlew clean",
+    "format": "./gradlew spotlessApply",
+    "format:check": "./gradlew spotlessCheck"
   }
 }

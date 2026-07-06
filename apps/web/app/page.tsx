@@ -1,4 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080';
 
 type PingResponse = {
   service: string;
@@ -7,7 +7,7 @@ type PingResponse = {
 
 async function fetchPing(): Promise<PingResponse | null> {
   try {
-    const res = await fetch(`${API_URL}/v1/ping`, { cache: "no-store" });
+    const res = await fetch(`${API_URL}/v1/ping`, { cache: 'no-store' });
     if (!res.ok) return null;
     return (await res.json()) as PingResponse;
   } catch {

@@ -10,10 +10,10 @@
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL_16_+_PostGIS-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
 ![Redis](https://img.shields.io/badge/Redis_7-FF4438?style=for-the-badge&logo=redis&logoColor=white)
 
-**Fikaliako** (Malagasy: *"what I'm going to eat"*) answers the daily question of millions of Malagasy people — *« Aiza no hisakafo androany ? »* (where do I eat today?) — by position, budget, and craving. It is an interactive map of **all** the food offering in Madagascar, where gargottes and street vendors are first-class citizens alongside restaurants: real prices in ariary, real opening hours, mobile-money payment info, and community-verified data.
+**Fikaliako** (Malagasy: _"what I'm going to eat"_) answers the daily question of millions of Malagasy people — _« Aiza no hisakafo androany ? »_ (where do I eat today?) — by position, budget, and craving. It is an interactive map of **all** the food offering in Madagascar, where gargottes and street vendors are first-class citizens alongside restaurants: real prices in ariary, real opening hours, mobile-money payment info, and community-verified data.
 
 > [!NOTE]
-> The functional and technical reference for this project is the **project book** — *Fikaliako, Livre de Projet v1.0* (July 2026), kept outside the repo. Every v1 development decision must be justifiable by a section of it; code comments cite it as "project book ch. N". This README covers day-to-day development of the monorepo.
+> The functional and technical reference for this project is the **project book** — _Fikaliako, Livre de Projet v1.0_ (July 2026), kept outside the repo. Every v1 development decision must be justifiable by a section of it; code comments cite it as "project book ch. N". This README covers day-to-day development of the monorepo.
 
 ---
 
@@ -67,13 +67,13 @@ Finding where to eat in Madagascar is surprisingly hard — not because the offe
 
 The target user journey (book ch. 4 — each stage is a functional block):
 
-| Stage            | Description                                                                                       |
-| ---------------- | ------------------------------------------------------------------------------------------------- |
-| **Opening**      | "I'm hungry" → geolocation, map centered on the user.                                             |
-| **Exploration**  | Map + filters (budget, distance, attributes); live result counts.                                 |
-| **Decision**     | Establishment page: prices in Ar, today's hours, photos, reviews on 5 criteria.                   |
-| **Visit**        | Directions, call, or delivery.                                                                    |
-| **Contribution** | Rate, photograph, correct data — the community loop that keeps the map alive.                     |
+| Stage            | Description                                                                     |
+| ---------------- | ------------------------------------------------------------------------------- |
+| **Opening**      | "I'm hungry" → geolocation, map centered on the user.                           |
+| **Exploration**  | Map + filters (budget, distance, attributes); live result counts.               |
+| **Decision**     | Establishment page: prices in Ar, today's hours, photos, reviews on 5 criteria. |
+| **Visit**        | Directions, call, or delivery.                                                  |
+| **Contribution** | Rate, photograph, correct data — the community loop that keeps the map alive.   |
 
 ---
 
@@ -81,24 +81,24 @@ The target user journey (book ch. 4 — each stage is a functional block):
 
 Two languages, no more (book ch. 7): **Kotlin server-side, TypeScript client-side**.
 
-| Layer               | Technology                                                                                                     |
-| ------------------- | --------------------------------------------------------------------------------------------------------------- |
-| **Monorepo**        | [Turborepo](https://turborepo.dev/) 2 · pnpm 9 workspaces — the Gradle-built API is driven as a workspace package |
-| **Web**             | [Next.js](https://nextjs.org/) 16 (SSR — every establishment page must be Google-indexable) · React 19          |
-| **Mobile** *(planned)* | React Native (Expo) + MapLibre Native — Android first, then iOS                                              |
-| **Back-office** *(planned)* | React — moderation queues, roles, quality dashboard                                                     |
-| **API**             | Kotlin 2.3 · Spring Boot 4.1 · JVM 21 (Gradle Kotlin DSL, wrapper committed, JDK auto-provisioned via foojay)    |
-| **Database**        | PostgreSQL 16 + [PostGIS](https://postgis.net/) — native `GEOGRAPHY(Point,4326)`, GiST + trigram indexes         |
-| **ORM / spatial**   | Spring Data JPA · `hibernate-spatial` (JTS)                                                                      |
-| **Migrations**      | [Flyway](https://flywaydb.org/) — sole owner of the schema (`ddl-auto: validate`)                                |
-| **Search** *(planned)* | [Meilisearch](https://www.meilisearch.com/), synced from Postgres — typo-tolerant FR/MG search                |
-| **Cache & queues**  | Redis 7 — cache, rate limiting, OTP queues, revocable refresh tokens                                             |
-| **Files** *(planned)* | MinIO (S3-compatible) — photos compressed client-side, thumbnails at upload                                    |
-| **Maps** *(planned)* | OpenStreetMap vector tiles (Planetiler) behind a CDN, rendered by MapLibre GL                                   |
-| **API contract**    | Hand-managed OpenAPI 3.1 spec served at `/v1/openapi.yaml` · self-hosted Swagger UI at `/v1/docs`                |
-| **Auth**            | Spring Security, stateless — short JWTs + Redis-revocable refresh tokens, OTP SMS signup *(accounts module, upcoming)* |
-| **Observability**   | Spring Actuator (`health` · `info` · `metrics`) — Prometheus + Grafana planned                                   |
-| **Delivery** *(planned)* | Docker Compose on VPS · GitHub Actions (build, tests, deploy)                                               |
+| Layer                       | Technology                                                                                                             |
+| --------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| **Monorepo**                | [Turborepo](https://turborepo.dev/) 2 · pnpm 9 workspaces — the Gradle-built API is driven as a workspace package      |
+| **Web**                     | [Next.js](https://nextjs.org/) 16 (SSR — every establishment page must be Google-indexable) · React 19                 |
+| **Mobile** _(planned)_      | React Native (Expo) + MapLibre Native — Android first, then iOS                                                        |
+| **Back-office** _(planned)_ | React — moderation queues, roles, quality dashboard                                                                    |
+| **API**                     | Kotlin 2.3 · Spring Boot 4.1 · JVM 21 (Gradle Kotlin DSL, wrapper committed, JDK auto-provisioned via foojay)          |
+| **Database**                | PostgreSQL 16 + [PostGIS](https://postgis.net/) — native `GEOGRAPHY(Point,4326)`, GiST + trigram indexes               |
+| **ORM / spatial**           | Spring Data JPA · `hibernate-spatial` (JTS)                                                                            |
+| **Migrations**              | [Flyway](https://flywaydb.org/) — sole owner of the schema (`ddl-auto: validate`)                                      |
+| **Search** _(planned)_      | [Meilisearch](https://www.meilisearch.com/), synced from Postgres — typo-tolerant FR/MG search                         |
+| **Cache & queues**          | Redis 7 — cache, rate limiting, OTP queues, revocable refresh tokens                                                   |
+| **Files** _(planned)_       | MinIO (S3-compatible) — photos compressed client-side, thumbnails at upload                                            |
+| **Maps** _(planned)_        | OpenStreetMap vector tiles (Planetiler) behind a CDN, rendered by MapLibre GL                                          |
+| **API contract**            | Hand-managed OpenAPI 3.1 spec served at `/v1/openapi.yaml` · self-hosted Swagger UI at `/v1/docs`                      |
+| **Auth**                    | Spring Security, stateless — short JWTs + Redis-revocable refresh tokens, OTP SMS signup _(accounts module, upcoming)_ |
+| **Observability**           | Spring Actuator (`health` · `info` · `metrics`) — Prometheus + Grafana planned                                         |
+| **Delivery** _(planned)_    | Docker Compose on VPS · GitHub Actions (build, tests, deploy)                                                          |
 
 ---
 
@@ -150,7 +150,7 @@ flowchart TB
 
 **Key decisions (book ch. 7.1):**
 
-- **One source contract**: the OpenAPI spec is hand-managed and versioned with the code; controllers are implemented *against* it and TypeScript client types are generated *from* it.
+- **One source contract**: the OpenAPI spec is hand-managed and versioned with the code; controllers are implemented _against_ it and TypeScript client types are generated _from_ it.
 - **Geo stays in SQL**: the core query — "open establishments within 1 km, cheapest first" — runs natively on PostGIS with `ST_DWithin` (never raw distance math, so it stays on the GiST index).
 - **SSR for SEO**: every establishment page is a Next.js page indexable by Google — a primary organic acquisition channel.
 - **Privacy by design** (book ch. 9): location is used on the fly and never stored as a trajectory; history is user-purgeable; any published statistics are aggregated with k-anonymity ≥ 20.
@@ -192,12 +192,12 @@ fikaliako/
 
 ## Prerequisites
 
-| Tool        | Version | Notes                                                                     |
-| ----------- | ------- | -------------------------------------------------------------------------- |
-| **Node.js** | ≥ 18    |                                                                            |
-| **pnpm**    | 9       | `npm install -g pnpm@9`                                                    |
-| **Docker**  | latest  | With the Compose plugin — PostGIS and Redis run in containers.             |
-| **JDK**     | —       | **Not needed**: the Gradle foojay resolver downloads a JDK 21 toolchain.   |
+| Tool        | Version | Notes                                                                    |
+| ----------- | ------- | ------------------------------------------------------------------------ |
+| **Node.js** | ≥ 18    |                                                                          |
+| **pnpm**    | 9       | `npm install -g pnpm@9`                                                  |
+| **Docker**  | latest  | With the Compose plugin — PostGIS and Redis run in containers.           |
+| **JDK**     | —       | **Not needed**: the Gradle foojay resolver downloads a JDK 21 toolchain. |
 
 ---
 
@@ -240,15 +240,15 @@ Then check:
 
 All variables are optional locally — defaults target the Docker Compose services.
 
-| Variable              | Default                                    | Used by | Purpose                                  |
-| --------------------- | ------------------------------------------ | ------- | ----------------------------------------- |
-| `DB_URL`              | `jdbc:postgresql://localhost:5434/fikaliako` | api     | Postgres JDBC URL (**note port 5434**)   |
-| `DB_USER`             | `fikaliako`                                | api     | Postgres user                             |
-| `DB_PASSWORD`         | `fikaliako`                                | api     | Postgres password                         |
-| `REDIS_HOST`          | `localhost`                                | api     | Redis host                                |
-| `REDIS_PORT`          | `6379`                                     | api     | Redis port                                |
-| `SERVER_PORT`         | `8080`                                     | api     | HTTP port                                 |
-| `NEXT_PUBLIC_API_URL` | `http://localhost:8080`                    | web     | Base URL the web app uses to call the API |
+| Variable              | Default                                      | Used by | Purpose                                   |
+| --------------------- | -------------------------------------------- | ------- | ----------------------------------------- |
+| `DB_URL`              | `jdbc:postgresql://localhost:5434/fikaliako` | api     | Postgres JDBC URL (**note port 5434**)    |
+| `DB_USER`             | `fikaliako`                                  | api     | Postgres user                             |
+| `DB_PASSWORD`         | `fikaliako`                                  | api     | Postgres password                         |
+| `REDIS_HOST`          | `localhost`                                  | api     | Redis host                                |
+| `REDIS_PORT`          | `6379`                                       | api     | Redis port                                |
+| `SERVER_PORT`         | `8080`                                       | api     | HTTP port                                 |
+| `NEXT_PUBLIC_API_URL` | `http://localhost:8080`                      | web     | Base URL the web app uses to call the API |
 
 > [!IMPORTANT]
 > Never commit secrets. Production configuration comes from environment variables / a vault (book ch. 7.3) — the defaults above are for the throwaway local containers only.
@@ -272,7 +272,8 @@ pnpm turbo build --filter=api     # API jar
 # Quality
 pnpm lint                         # ESLint across JS/TS packages
 pnpm check-types                  # tsc --noEmit across TS packages
-pnpm format                       # Prettier on ts/tsx/md
+pnpm format                       # Prettier (web & packages) + Spotless/ktlint (API)
+pnpm format:check                 # Same, verify only — what CI runs
 
 # Testing
 pnpm turbo test --filter=api      # API tests (no Docker needed — runs on H2)
@@ -313,7 +314,7 @@ The book's data dictionary (ch. 6.1) is in French; migrations translate identifi
 
 - The spec lives at `apps/api/src/main/resources/static/v1/openapi.yaml` and is served verbatim at [`/v1/openapi.yaml`](http://localhost:8080/v1/openapi.yaml).
 - Swagger UI renders it at [`/v1/docs`](http://localhost:8080/v1/docs) (self-hosted `swagger-ui` webjar — no CDN).
-- Implement controllers **against** the spec and amend the spec in the same change; TypeScript client types are generated **from** it. Endpoints designed ahead of implementation are marked *(planned)*.
+- Implement controllers **against** the spec and amend the spec in the same change; TypeScript client types are generated **from** it. Endpoints designed ahead of implementation are marked _(planned)_.
 - Lint after every edit: `pnpm --package=@redocly/cli dlx redocly lint apps/api/src/main/resources/static/v1/openapi.yaml`
 
 Contractual conventions (book ch. 8): path versioning under `/v1` (no breaking change without a new major version) · cursor-based pagination · combinable filters · `?fields=` selection to save mobile data · RFC 9457 `application/problem+json` errors with a correlation id.
@@ -340,11 +341,11 @@ Quality bar (book ch. 9, contractual): ≥ 70 % coverage on business modules, bl
 
 Three versions over ~15 months (book ch. 10), each with a single measurable objective:
 
-| Version | Window   | Scope                                                                                              | Objective                                                              |
-| ------- | -------- | --------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| **MVP** | M0 – M6  | Map, search (text · budget · distance, simple rules), establishment pages, 5-criteria reviews, favorites, filters, contributions + moderation. Android first, then iOS; Next.js web in parallel. FR + MG. | An Antananarivo resident finds where to eat in **under a minute**.      |
-| **V2**  | M6 – M10 | Verified restaurateur space, menus & prices, promotions, push notifications, simple reservation, EN. | Activate the supply side: restaurateurs become actors and first payers. |
-| **V3**  | M10 – M15 | Personalized recommendations, gamification, offline city download, public API, multi-city prep.     | Daily-reflex app and open platform.                                     |
+| Version | Window    | Scope                                                                                                                                                                                                     | Objective                                                               |
+| ------- | --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| **MVP** | M0 – M6   | Map, search (text · budget · distance, simple rules), establishment pages, 5-criteria reviews, favorites, filters, contributions + moderation. Android first, then iOS; Next.js web in parallel. FR + MG. | An Antananarivo resident finds where to eat in **under a minute**.      |
+| **V2**  | M6 – M10  | Verified restaurateur space, menus & prices, promotions, push notifications, simple reservation, EN.                                                                                                      | Activate the supply side: restaurateurs become actors and first payers. |
+| **V3**  | M10 – M15 | Personalized recommendations, gamification, offline city download, public API, multi-city prep.                                                                                                           | Daily-reflex app and open platform.                                     |
 
 Non-functional budgets are contractual (book ch. 9): "around me" search **< 300 ms p95** server-side · first map render **< 3 s on 3G** · a typical session **< 2 MB** of data · availability 99.5 % during meal windows (11h–14h, 18h–21h).
 
@@ -357,21 +358,21 @@ Non-functional budgets are contractual (book ch. 9): "around me" search **< 300 
 - **Spec-first**: functional behaviour traces to the project book ("project book ch. N" in comments); API behaviour traces to `openapi.yaml` — when they disagree with the code, the spec wins.
 - **Module boundaries**: new API features live in their own package (`establishments`, `search`, `community`, `notifications`, `accounts`) — no cross-module internals.
 - **Schema changes** are Flyway migrations, always.
-- **Formatting & linting**: `pnpm format`, `pnpm lint`, and `pnpm check-types` before committing.
+- **Formatting is enforced, not optional**: Prettier (config in `.prettierrc`) for TypeScript/web, Spotless with ktlint's official style for Kotlin — `spotlessCheck` runs as part of `gradlew build`, so unformatted Kotlin fails the build. Run `pnpm format` before committing; `.editorconfig` keeps IDEs aligned.
 
 ---
 
 ## Troubleshooting
 
-| Symptom                                        | Fix                                                                                                                        |
-| ---------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| API fails to start: Postgres connection refused | Ensure Docker is running; Compose services auto-start on `bootRun`. Remember Postgres is on **5434**, not 5432.              |
-| Port 8080 already in use                        | Another API instance (e.g. IDE-launched) is running — stop it or set `SERVER_PORT`.                                          |
+| Symptom                                            | Fix                                                                                                                        |
+| -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| API fails to start: Postgres connection refused    | Ensure Docker is running; Compose services auto-start on `bootRun`. Remember Postgres is on **5434**, not 5432.            |
+| Port 8080 already in use                           | Another API instance (e.g. IDE-launched) is running — stop it or set `SERVER_PORT`.                                        |
 | `Flyway validate` errors after editing a migration | Never edit an applied migration — add a new `V<n>__*.sql`. For a throwaway local DB: `docker compose down -v` and restart. |
-| Web shows "API is unreachable"                  | Start the API (`pnpm turbo dev --filter=api`) and check `NEXT_PUBLIC_API_URL`.                                                |
-| `/v1/docs` blank or 403                         | Rebuild/restart the API — the Swagger UI page and webjar assets are packaged into the jar.                                    |
-| First run extremely slow                        | Normal: JDK 21 toolchain, Gradle dependencies, and Docker images all download once.                                           |
-| API tests fail mentioning PostGIS on H2         | Tests run on H2 with Flyway disabled by design; don't point them at migrations. Spatial tests will use Testcontainers.       |
+| Web shows "API is unreachable"                     | Start the API (`pnpm turbo dev --filter=api`) and check `NEXT_PUBLIC_API_URL`.                                             |
+| `/v1/docs` blank or 403                            | Rebuild/restart the API — the Swagger UI page and webjar assets are packaged into the jar.                                 |
+| First run extremely slow                           | Normal: JDK 21 toolchain, Gradle dependencies, and Docker images all download once.                                        |
+| API tests fail mentioning PostGIS on H2            | Tests run on H2 with Flyway disabled by design; don't point them at migrations. Spatial tests will use Testcontainers.     |
 
 ---
 

@@ -1,0 +1,20 @@
+# Dependencies & lockfiles
+node_modules
+pnpm-lock.yaml
+
+# Build outputs & caches
+.next
+.turbo
+dist
+out
+
+# Kotlin API app — formatted by Spotless (ktlint), not Prettier
+apps/api/build
+apps/api/gradle
+apps/api/.gradle
+apps/api/.kotlin
+apps/api/src
+
+# IDE / misc
+.idea
+CLAUDE.md

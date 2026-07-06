@@ -4,14 +4,14 @@ Spring Boot backend (Kotlin, JVM 21) for Fikaliako — a modular monolith as def
 
 ## Modules (packages under `mg.fikaliako.api`)
 
-| Package | Role |
-| --- | --- |
-| `establishments` | Listings, opening hours, attributes |
-| `search` | Search & geospatial (PostGIS, Meilisearch) |
-| `community` | Reviews, contributions, moderation |
-| `notifications` | Notifications & promotions (V2) |
-| `accounts` | Users, SMS OTP, JWT |
-| `config` | Cross-cutting configuration (security, OpenAPI) |
+| Package          | Role                                            |
+| ---------------- | ----------------------------------------------- |
+| `establishments` | Listings, opening hours, attributes             |
+| `search`         | Search & geospatial (PostGIS, Meilisearch)      |
+| `community`      | Reviews, contributions, moderation              |
+| `notifications`  | Notifications & promotions (V2)                 |
+| `accounts`       | Users, SMS OTP, JWT                             |
+| `config`         | Cross-cutting configuration (security, OpenAPI) |
 
 Only `establishments` and `config` exist so far; the other modules are created as features land.
 
