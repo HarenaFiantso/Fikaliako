@@ -1,0 +1,11 @@
+{
+  "name": "api",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "./gradlew build",
+    "dev": "./gradlew bootRun",
+    "test": "./gradlew test",
+    "clean": "./gradlew clean"
+  }
+}

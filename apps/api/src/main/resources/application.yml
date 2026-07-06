@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: api
+
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/fikaliako}
+    username: ${DB_USER:fikaliako}
+    password: ${DB_PASSWORD:fikaliako}
+
+  jpa:
+    # Flyway owns the schema; Hibernate only validates
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+
+  flyway:
+    locations: classpath:db/migration
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+
+server:
+  port: ${SERVER_PORT:8080}
+  shutdown: graceful
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+
+springdoc:
+  api-docs:
+    path: /v1/openapi
+  swagger-ui:
+    path: /v1/docs
