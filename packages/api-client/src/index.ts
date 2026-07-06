@@ -24,3 +24,15 @@ export type { components, operations, paths };
 /** Schema shortcuts — one alias per component schema in the contract. */
 export type Schemas = components['schemas'];
 export type PingResponse = Schemas['PingResponse'];
+export type Problem = Schemas['Problem'];
+export type GeoPoint = Schemas['GeoPoint'];
+export type EstablishmentType = Schemas['EstablishmentType'];
+export type EstablishmentSummary = Schemas['EstablishmentSummary'];
+export type EstablishmentDetail = Schemas['EstablishmentDetail'];
+export type EstablishmentPage = Schemas['EstablishmentPage'];
+export type Amenities = Schemas['Amenities'];
+export type OpeningInterval = Schemas['OpeningInterval'];
+export type RatingSummary = Schemas['RatingSummary'];
+export type ReferentialItem = Schemas['ReferentialItem'];
+export type ReviewItem = Schemas['ReviewItem'];
+export type ReviewPage = Schemas['ReviewPage'];
