@@ -377,4 +377,4 @@ Non-functional budgets are contractual (book ch. 9): "around me" search **< 300 
 
 ## License
 
-Proprietary — © Fikaliako team. Internal distribution only (team, partners, and investors under agreement).
+Licensed under the **Apache License 2.0** — see [`LICENSE`](LICENSE) for details.
