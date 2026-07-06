@@ -180,6 +180,7 @@ fikaliako/
 │   └── web/                        # Next.js app (App Router)
 │       └── app/
 ├── packages/
+│   ├── api-client/                 # Typed API client generated from the OpenAPI contract (@fikaliako/api-client)
 │   ├── ui/                         # Shared React components (@fikaliako/ui)
 │   ├── eslint-config/              # Shared ESLint configs (@fikaliako/eslint-config)
 │   └── typescript-config/          # Shared tsconfigs (@fikaliako/typescript-config)
@@ -314,8 +315,23 @@ The book's data dictionary (ch. 6.1) is in French; migrations translate identifi
 
 - The spec lives at `apps/api/src/main/resources/static/v1/openapi.yaml` and is served verbatim at [`/v1/openapi.yaml`](http://localhost:8080/v1/openapi.yaml).
 - Swagger UI renders it at [`/v1/docs`](http://localhost:8080/v1/docs) (self-hosted `swagger-ui` webjar — no CDN).
-- Implement controllers **against** the spec and amend the spec in the same change; TypeScript client types are generated **from** it. Endpoints designed ahead of implementation are marked _(planned)_.
+- Implement controllers **against** the spec and amend the spec in the same change; the TypeScript client is generated **from** it. Endpoints designed ahead of implementation are marked _(planned)_.
 - Lint after every edit: `pnpm --package=@redocly/cli dlx redocly lint apps/api/src/main/resources/static/v1/openapi.yaml`
+
+The typed client lives in **`@fikaliako/api-client`** (`packages/api-client`) — [`openapi-typescript`](https://openapi-ts.dev/) types + the fetch-based [`openapi-fetch`](https://openapi-ts.dev/openapi-fetch/) runtime, platform-neutral so the web app and the future React Native app share it:
+
+```ts
+import { createFikaliakoClient } from '@fikaliako/api-client';
+
+const api = createFikaliakoClient(process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080');
+const { data } = await api.GET('/v1/ping'); // fully typed from the contract
+```
+
+After every contract change, regenerate the types (`packages/api-client/src/schema.ts` is committed) and commit spec + types together:
+
+```bash
+pnpm --filter @fikaliako/api-client generate
+```
 
 Contractual conventions (book ch. 8): path versioning under `/v1` (no breaking change without a new major version) · cursor-based pagination · combinable filters · `?fields=` selection to save mobile data · RFC 9457 `application/problem+json` errors with a correlation id.
 

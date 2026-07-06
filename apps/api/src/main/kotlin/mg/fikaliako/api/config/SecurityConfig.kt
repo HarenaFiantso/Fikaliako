@@ -8,11 +8,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
 
-/**
- * Stateless API: browsing is public, only writes (reviews, contributions,
- * favorites) require an account — project book, ch. 4.7. JWT comes with the
- * accounts module.
- */
 @Configuration
 @EnableWebSecurity
 class SecurityConfig {

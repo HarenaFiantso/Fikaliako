@@ -1,0 +1,27 @@
+{
+  "name": "@fikaliako/api-client",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Typed Fikaliako API client generated from the hand-managed OpenAPI contract — shared by the web app and the future mobile app",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema": "./src/schema.ts"
+  },
+  "scripts": {
+    "generate": "openapi-typescript ../../apps/api/src/main/resources/static/v1/openapi.yaml -o src/schema.ts && prettier --write src/schema.ts",
+    "lint": "eslint . --max-warnings 0",
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "openapi-fetch": "^0.17.0"
+  },
+  "devDependencies": {
+    "@fikaliako/eslint-config": "workspace:*",
+    "@fikaliako/typescript-config": "workspace:*",
+    "eslint": "^9.39.1",
+    "openapi-typescript": "^7.13.0",
+    "prettier": "^3.7.4",
+    "typescript": "5.9.2"
+  }
+}

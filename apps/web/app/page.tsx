@@ -1,15 +1,11 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080';
+import { createFikaliakoClient, type PingResponse } from '@fikaliako/api-client';
 
-type PingResponse = {
-  service: string;
-  message: string;
-};
+const api = createFikaliakoClient(process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080');
 
 async function fetchPing(): Promise<PingResponse | null> {
   try {
-    const res = await fetch(`${API_URL}/v1/ping`, { cache: 'no-store' });
-    if (!res.ok) return null;
-    return (await res.json()) as PingResponse;
+    const { data } = await api.GET('/v1/ping', { cache: 'no-store' });
+    return data ?? null;
   } catch {
     return null;
   }

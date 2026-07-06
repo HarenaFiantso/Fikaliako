@@ -11,6 +11,7 @@
     "check-types": "next typegen && tsc --noEmit"
   },
   "dependencies": {
+    "@fikaliako/api-client": "workspace:^",
     "@fikaliako/ui": "workspace:*",
     "next": "16.2.0",
     "react": "^19.2.0",
