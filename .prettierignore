@@ -7,6 +7,7 @@ pnpm-lock.yaml
 .turbo
 dist
 out
+next-env.d.ts
 
 # Kotlin API app — formatted by Spotless (ktlint), not Prettier
 apps/api/build

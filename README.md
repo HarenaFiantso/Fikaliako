@@ -180,9 +180,9 @@ fikaliako/
 │   └── web/                        # Next.js app (App Router)
 │       └── app/
 ├── packages/
-│   ├── ui/                         # Shared React components (@repo/ui)
-│   ├── eslint-config/              # Shared ESLint configs (@repo/eslint-config)
-│   └── typescript-config/          # Shared tsconfigs (@repo/typescript-config)
+│   ├── ui/                         # Shared React components (@fikaliako/ui)
+│   ├── eslint-config/              # Shared ESLint configs (@fikaliako/eslint-config)
+│   └── typescript-config/          # Shared tsconfigs (@fikaliako/typescript-config)
 ├── compose.yaml                    # PostGIS + Redis for local dev (auto-started by bootRun)
 ├── turbo.json                      # Turborepo task graph
 └── pnpm-workspace.yaml

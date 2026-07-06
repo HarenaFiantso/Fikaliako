@@ -17,7 +17,7 @@
     "^react$",
     "^next(.*)$",
     "<THIRD_PARTY_MODULES>",
-    "^@repo/(.*)$",
+    "^@fikaliako/(.*)$",
     "^@/components/auth(.*)$",
     "^@/components/ui(.*)$",
     "^@/components/(.*)$",
