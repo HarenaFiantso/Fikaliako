@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Fikaliako API — docs</title>
+    <!-- Assets come from the swagger-ui webjar (self-hosted, no CDN);
+         the spec itself is the hand-managed /v1/openapi.yaml -->
+    <link rel="stylesheet" href="/webjars/swagger-ui/swagger-ui.css" />
+  </head>
+  <body>
+    <div id="swagger-ui"></div>
+    <script src="/webjars/swagger-ui/swagger-ui-bundle.js"></script>
+    <script src="/webjars/swagger-ui/swagger-ui-standalone-preset.js"></script>
+    <script>
+      window.ui = SwaggerUIBundle({
+        url: "/v1/openapi.yaml",
+        dom_id: "#swagger-ui",
+        deepLinking: true,
+        presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
+        layout: "StandaloneLayout",
+      });
+    </script>
+  </body>
+</html>

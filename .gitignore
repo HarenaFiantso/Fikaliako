@@ -45,3 +45,6 @@ yarn-error.log*
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
+
+.claude
+CLAUDE.md

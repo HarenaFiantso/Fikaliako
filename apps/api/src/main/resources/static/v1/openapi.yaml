@@ -1,0 +1,92 @@
+openapi: 3.1.0
+
+info:
+  title: Fikaliako API
+  version: 0.1.0
+  summary: Geolocated food discovery for Madagascar
+  description: |
+    REST API of **Fikaliako**, the platform for discovering places to eat in
+    Madagascar — restaurants, gargottes, cafés, street vendors — around you.
+
+    ## Contract-first
+
+    This document is the **manually managed source of truth** for the API
+    (project book ch. 7.1, "one source contract"). It is written by hand,
+    versioned with the code in
+    `apps/api/src/main/resources/static/v1/openapi.yaml`, and served at
+    `/v1/openapi.yaml`. Controllers are implemented **against** this contract,
+    and the TypeScript client types for `apps/web` are generated **from** it.
+    When behaviour and spec disagree, the spec wins: fix the code or amend the
+    spec in the same change.
+
+    Endpoints not yet implemented are marked with a (planned) note in their
+    description; they define the target contract for the modules to come.
+
+    ## Conventions
+
+    - All endpoints are rooted at `/v1`.
+    - Reads (`GET`) are public; writes require authentication (JWT, arriving
+      with the accounts module — project book ch. 4.7).
+    - Errors use RFC 9457 Problem Details (`application/problem+json`).
+    - Prices are integers in **ariary** (`*_ar` fields).
+    - Coordinates are WGS 84 (SRID 4326): `lat` ∈ [-90, 90], `lng` ∈ [-180, 180].
+    - Times are local (Indian/Antananarivo), `HH:mm`; days of week are
+      `0` = Monday … `6` = Sunday.
+  contact:
+    name: Fikaliako
+
+servers:
+  - url: http://localhost:8080
+    description: Local development
+
+security: []
+
+tags:
+  - name: Health
+    description: Liveness and service metadata.
+
+paths:
+  /v1/ping:
+    get:
+      tags: [Health]
+      operationId: ping
+      summary: Service liveness probe
+      description: >
+        Lightweight liveness check used by the web app's home page. Returns
+        the service identity and a greeting. For operational health checks
+        prefer the actuator endpoint (`/actuator/health`).
+      responses:
+        "200":
+          description: Service is up.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PingResponse"
+              example:
+                service: fikaliako-api
+                message: "Aiza no hisakafo androany ?"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: >
+        (planned) Arrives with the accounts module (project book ch. 7.3). Required
+        on write operations (reviews, contributions, favorites).
+
+  schemas:
+    PingResponse:
+      type: object
+      description: Service identity and greeting.
+      required: [service, message]
+      properties:
+        service:
+          type: string
+          description: Service identifier.
+          examples: [fikaliako-api]
+        message:
+          type: string
+          description: Human greeting, in Malagasy.
+          examples: ["Aiza no hisakafo androany ?"]

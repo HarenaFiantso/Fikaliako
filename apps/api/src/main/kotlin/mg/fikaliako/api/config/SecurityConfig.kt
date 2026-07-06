@@ -25,7 +25,7 @@ class SecurityConfig {
 			.authorizeHttpRequests {
 				it
 					.requestMatchers("/actuator/health/**", "/actuator/info").permitAll()
-					.requestMatchers("/v1/openapi/**", "/v1/docs/**", "/swagger-ui/**").permitAll()
+					.requestMatchers("/v1/openapi.yaml", "/v1/docs", "/v1/docs/**", "/webjars/**").permitAll()
 					.requestMatchers(HttpMethod.GET, "/v1/**").permitAll()
 					.anyRequest().authenticated()
 			}

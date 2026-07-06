@@ -30,9 +30,3 @@ management:
     web:
       exposure:
         include: health,info,metrics
-
-springdoc:
-  api-docs:
-    path: /v1/openapi
-  swagger-ui:
-    path: /v1/docs
