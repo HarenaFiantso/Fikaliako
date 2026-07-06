@@ -9,7 +9,8 @@ services:
       POSTGRES_USER: fikaliako
       POSTGRES_PASSWORD: fikaliako
     ports:
-      - "5432:5432"
+      # host port 5434: 5432 is taken by the system PostgreSQL service
+      - "5434:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
 
