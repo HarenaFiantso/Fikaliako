@@ -1,7 +1,7 @@
-package mg.fikaliako.api.model
+package mg.fikaliako.api.endpoint.rest.model
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import mg.fikaliako.api.model.GeoPoint
+import mg.fikaliako.api.endpoint.rest.model.GeoPoint
 import java.math.BigDecimal
 import java.time.Instant
 import java.util.UUID

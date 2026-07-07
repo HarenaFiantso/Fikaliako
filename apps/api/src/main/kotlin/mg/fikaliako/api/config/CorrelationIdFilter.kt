@@ -1,4 +1,4 @@
-package mg.fikaliako.api.filter
+package mg.fikaliako.api.config
 
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest

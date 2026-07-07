@@ -4,9 +4,9 @@ import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
 import jakarta.persistence.Query
 import jakarta.persistence.Tuple
-import mg.fikaliako.api.model.EstablishmentFilters
-import mg.fikaliako.api.model.EstablishmentSummary
-import mg.fikaliako.api.model.GeoPoint
+import mg.fikaliako.api.endpoint.rest.model.EstablishmentFilters
+import mg.fikaliako.api.endpoint.rest.model.EstablishmentSummary
+import mg.fikaliako.api.endpoint.rest.model.GeoPoint
 import mg.fikaliako.api.util.Cursor
 import mg.fikaliako.api.util.OpeningHours
 import org.springframework.stereotype.Repository

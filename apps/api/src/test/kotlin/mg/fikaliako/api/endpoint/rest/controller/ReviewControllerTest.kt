@@ -1,8 +1,8 @@
-package mg.fikaliako.api.controller
+package mg.fikaliako.api.endpoint.rest.controller
 
 import mg.fikaliako.api.config.SecurityConfig
-import mg.fikaliako.api.model.Page
-import mg.fikaliako.api.model.ReviewItem
+import mg.fikaliako.api.endpoint.rest.model.Page
+import mg.fikaliako.api.endpoint.rest.model.ReviewItem
 import mg.fikaliako.api.service.ReviewService
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito

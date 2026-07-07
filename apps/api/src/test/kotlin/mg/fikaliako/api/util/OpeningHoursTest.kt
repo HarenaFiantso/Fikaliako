@@ -1,6 +1,6 @@
 package mg.fikaliako.api.util
 
-import mg.fikaliako.api.model.OpeningInterval
+import mg.fikaliako.api.endpoint.rest.model.OpeningInterval
 import org.junit.jupiter.api.Test
 import java.time.Instant
 import java.time.ZonedDateTime
@@ -8,7 +8,6 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class OpeningHoursTest {
-  // 2026-07-06 is a Monday (day 0).
   private fun monday(
     hour: Int,
     minute: Int = 0,

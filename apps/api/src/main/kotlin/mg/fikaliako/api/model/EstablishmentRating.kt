@@ -1,4 +1,4 @@
-package mg.fikaliako.api.entity
+package mg.fikaliako.api.model
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity

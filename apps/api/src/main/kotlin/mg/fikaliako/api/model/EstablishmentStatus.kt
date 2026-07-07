@@ -1,4 +1,4 @@
-package mg.fikaliako.api.entity
+package mg.fikaliako.api.model
 
 enum class EstablishmentStatus {
   ACTIVE,

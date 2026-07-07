@@ -1,6 +1,5 @@
 package mg.fikaliako.api.util
-
-import mg.fikaliako.api.model.OpeningInterval
+import mg.fikaliako.api.endpoint.rest.model.OpeningInterval
 import java.time.Instant
 import java.time.LocalTime
 import java.time.ZoneId

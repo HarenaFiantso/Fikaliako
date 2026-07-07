@@ -1,4 +1,4 @@
-package mg.fikaliako.api.controller
+package mg.fikaliako.api.endpoint.rest.controller
 
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping

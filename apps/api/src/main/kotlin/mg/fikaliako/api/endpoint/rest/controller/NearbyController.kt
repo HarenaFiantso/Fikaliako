@@ -1,7 +1,7 @@
-package mg.fikaliako.api.controller
+package mg.fikaliako.api.endpoint.rest.controller
 
-import mg.fikaliako.api.model.EstablishmentSummary
-import mg.fikaliako.api.model.Page
+import mg.fikaliako.api.endpoint.rest.model.EstablishmentSummary
+import mg.fikaliako.api.endpoint.rest.model.Page
 import mg.fikaliako.api.service.EstablishmentFilterParams
 import mg.fikaliako.api.service.EstablishmentService
 import org.springframework.web.bind.annotation.GetMapping
@@ -9,11 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
-/**
- * The core discovery query (project book ch. 6.2): active establishments within
- * a radius of a point, cheapest first, with the combinable filters applied. Uses
- * `ST_DWithin` so it stays on the GiST index; target < 300 ms p95 (ch. 9).
- */
 @RestController
 @RequestMapping("/v1/nearby")
 class NearbyController(

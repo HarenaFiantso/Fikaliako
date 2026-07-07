@@ -1,8 +1,7 @@
 package mg.fikaliako.api.repository
-
-import mg.fikaliako.api.entity.Establishment
-import mg.fikaliako.api.model.EstablishmentFilters
-import mg.fikaliako.api.model.EstablishmentSummary
+import mg.fikaliako.api.endpoint.rest.model.EstablishmentFilters
+import mg.fikaliako.api.endpoint.rest.model.EstablishmentSummary
+import mg.fikaliako.api.model.Establishment
 import mg.fikaliako.api.util.Cursor
 import org.springframework.data.jpa.repository.JpaRepository
 import java.time.Instant

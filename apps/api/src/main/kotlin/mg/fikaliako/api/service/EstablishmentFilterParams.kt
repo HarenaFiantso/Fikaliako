@@ -1,7 +1,7 @@
 package mg.fikaliako.api.service
 
-import mg.fikaliako.api.exception.BadRequestException
-import mg.fikaliako.api.model.EstablishmentFilters
+import mg.fikaliako.api.endpoint.rest.model.EstablishmentFilters
+import mg.fikaliako.api.model.exception.BadRequestException
 
 object EstablishmentFilterParams {
   val ESTABLISHMENT_TYPES =

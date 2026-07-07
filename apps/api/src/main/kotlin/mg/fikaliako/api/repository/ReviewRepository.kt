@@ -1,7 +1,6 @@
 package mg.fikaliako.api.repository
-
-import mg.fikaliako.api.entity.Review
-import mg.fikaliako.api.entity.ReviewStatus
+import mg.fikaliako.api.model.Review
+import mg.fikaliako.api.model.ReviewStatus
 import org.springframework.data.domain.Limit
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query

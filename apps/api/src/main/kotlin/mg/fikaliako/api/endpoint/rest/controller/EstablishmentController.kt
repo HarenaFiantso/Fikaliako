@@ -1,8 +1,8 @@
-package mg.fikaliako.api.controller
+package mg.fikaliako.api.endpoint.rest.controller
 
-import mg.fikaliako.api.model.EstablishmentDetail
-import mg.fikaliako.api.model.EstablishmentSummary
-import mg.fikaliako.api.model.Page
+import mg.fikaliako.api.endpoint.rest.model.EstablishmentDetail
+import mg.fikaliako.api.endpoint.rest.model.EstablishmentSummary
+import mg.fikaliako.api.endpoint.rest.model.Page
 import mg.fikaliako.api.service.EstablishmentFilterParams
 import mg.fikaliako.api.service.EstablishmentService
 import org.springframework.web.bind.annotation.GetMapping

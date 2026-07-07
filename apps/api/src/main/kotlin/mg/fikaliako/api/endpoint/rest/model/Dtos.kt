@@ -1,4 +1,4 @@
-package mg.fikaliako.api.model
+package mg.fikaliako.api.endpoint.rest.model
 
 data class GeoPoint(
   val lat: Double,

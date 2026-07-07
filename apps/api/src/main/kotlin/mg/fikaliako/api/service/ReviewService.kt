@@ -1,11 +1,11 @@
 package mg.fikaliako.api.service
-
-import mg.fikaliako.api.entity.Review
-import mg.fikaliako.api.entity.ReviewStatus
-import mg.fikaliako.api.exception.BadRequestException
-import mg.fikaliako.api.exception.NotFoundException
-import mg.fikaliako.api.model.Page
-import mg.fikaliako.api.model.ReviewItem
+import mg.fikaliako.api.endpoint.rest.model.Page
+import mg.fikaliako.api.endpoint.rest.model.ReviewItem
+import mg.fikaliako.api.model.Establishment
+import mg.fikaliako.api.model.Review
+import mg.fikaliako.api.model.ReviewStatus
+import mg.fikaliako.api.model.exception.BadRequestException
+import mg.fikaliako.api.model.exception.NotFoundException
 import mg.fikaliako.api.repository.EstablishmentRepository
 import mg.fikaliako.api.repository.ReviewRepository
 import mg.fikaliako.api.util.Cursor

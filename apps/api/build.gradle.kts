@@ -5,6 +5,7 @@ plugins {
   id("io.spring.dependency-management") version "1.1.7"
   kotlin("plugin.jpa") version "2.3.21"
   id("com.diffplug.spotless") version "8.8.0"
+  jacoco
 }
 
 group = "mg.fikaliako"
@@ -86,10 +87,6 @@ spotless {
     trimTrailingWhitespace()
     endWithNewline()
   }
-}
-
-tasks.withType<Test> {
-  useJUnitPlatform()
 }
 
 tasks.named<org.springframework.boot.gradle.tasks.run.BootRun>("bootRun") {

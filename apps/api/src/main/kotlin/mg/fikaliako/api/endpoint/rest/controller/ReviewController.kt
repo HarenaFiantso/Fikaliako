@@ -1,7 +1,6 @@
-package mg.fikaliako.api.controller
-
-import mg.fikaliako.api.model.Page
-import mg.fikaliako.api.model.ReviewItem
+package mg.fikaliako.api.endpoint.rest.controller
+import mg.fikaliako.api.endpoint.rest.model.Page
+import mg.fikaliako.api.endpoint.rest.model.ReviewItem
 import mg.fikaliako.api.service.ReviewService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable

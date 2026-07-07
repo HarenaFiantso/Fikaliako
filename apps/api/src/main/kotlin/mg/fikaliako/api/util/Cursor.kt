@@ -1,6 +1,6 @@
 package mg.fikaliako.api.util
 
-import mg.fikaliako.api.exception.BadRequestException
+import mg.fikaliako.api.model.exception.BadRequestException
 import java.time.Instant
 import java.util.Base64
 import java.util.UUID

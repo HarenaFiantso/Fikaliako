@@ -1,7 +1,8 @@
-package mg.fikaliako.api.exception
-
+package mg.fikaliako.api.endpoint.rest.controller
 import jakarta.servlet.http.HttpServletRequest
-import mg.fikaliako.api.filter.CorrelationIdFilter
+import mg.fikaliako.api.config.CorrelationIdFilter
+import mg.fikaliako.api.model.exception.BadRequestException
+import mg.fikaliako.api.model.exception.NotFoundException
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ProblemDetail

@@ -1,4 +1,4 @@
-package mg.fikaliako.api.model
+package mg.fikaliako.api.endpoint.rest.model
 
 import java.math.BigDecimal
 import java.time.Instant

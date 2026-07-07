@@ -1,14 +1,14 @@
 package mg.fikaliako.api.service
 
-import mg.fikaliako.api.entity.Establishment
-import mg.fikaliako.api.entity.EstablishmentStatus
-import mg.fikaliako.api.entity.EstablishmentType
-import mg.fikaliako.api.entity.OpeningHoursEntity
-import mg.fikaliako.api.exception.BadRequestException
-import mg.fikaliako.api.exception.NotFoundException
-import mg.fikaliako.api.model.EstablishmentFilters
-import mg.fikaliako.api.model.EstablishmentSummary
-import mg.fikaliako.api.model.GeoPoint
+import mg.fikaliako.api.endpoint.rest.model.EstablishmentFilters
+import mg.fikaliako.api.endpoint.rest.model.EstablishmentSummary
+import mg.fikaliako.api.endpoint.rest.model.GeoPoint
+import mg.fikaliako.api.model.Establishment
+import mg.fikaliako.api.model.EstablishmentStatus
+import mg.fikaliako.api.model.EstablishmentType
+import mg.fikaliako.api.model.OpeningHoursEntity
+import mg.fikaliako.api.model.exception.BadRequestException
+import mg.fikaliako.api.model.exception.NotFoundException
 import mg.fikaliako.api.repository.EstablishmentListRow
 import mg.fikaliako.api.repository.EstablishmentRatingRepository
 import mg.fikaliako.api.repository.EstablishmentRepository
@@ -28,7 +28,6 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class EstablishmentServiceTest {
-  // Monday 2026-07-06, 12:00 in Antananarivo (== 09:00Z).
   private val now = Instant.parse("2026-07-06T09:00:00Z")
   private val clock = Clock.fixed(now, ZoneOffset.UTC)
   private val repo = Mockito.mock(EstablishmentRepository::class.java)
@@ -66,7 +65,6 @@ class EstablishmentServiceTest {
   @Test
   fun `nearby applies the default radius and clamps the limit`() {
     val expected = listOf(summary("aaaaaaaa-0000-0000-0000-000000000001"))
-    // Default radius 1000 m, limit clamped from 500 to the 200 clustering cap.
     Mockito.`when`(repo.searchNearby(-18.9, 47.5, 1000.0, filters, 200, now)).thenReturn(expected)
     val page = service.nearby(-18.9, 47.5, null, filters, 500)
     assertEquals(expected, page.items)
@@ -79,13 +77,11 @@ class EstablishmentServiceTest {
     val rowB = EstablishmentListRow(summary("aaaaaaaa-0000-0000-0000-000000000002"), now.minusSeconds(1))
     val rowC = EstablishmentListRow(summary("aaaaaaaa-0000-0000-0000-000000000003"), now.minusSeconds(2))
 
-    // Over-fetch of 3 for a page size of 2 → there is a next page.
     Mockito.`when`(repo.searchList(filters, 3, null, now)).thenReturn(listOf(rowA, rowB, rowC))
     val page = service.list(filters, 2, null)
     assertEquals(2, page.items.size)
     assertTrue(page.nextCursor != null)
 
-    // Exactly the page size returned → no next page.
     Mockito.`when`(repo.searchList(filters, 3, null, now)).thenReturn(listOf(rowA, rowB))
     val last = service.list(filters, 2, null)
     assertEquals(2, last.items.size)

@@ -1,4 +1,4 @@
-package mg.fikaliako.api.exception
+package mg.fikaliako.api.model.exception
 
 class NotFoundException(
   message: String,

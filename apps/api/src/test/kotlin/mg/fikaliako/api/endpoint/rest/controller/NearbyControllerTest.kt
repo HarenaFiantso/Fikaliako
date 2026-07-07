@@ -1,10 +1,10 @@
-package mg.fikaliako.api.controller
+package mg.fikaliako.api.endpoint.rest.controller
 
 import mg.fikaliako.api.config.SecurityConfig
-import mg.fikaliako.api.model.EstablishmentFilters
-import mg.fikaliako.api.model.EstablishmentSummary
-import mg.fikaliako.api.model.GeoPoint
-import mg.fikaliako.api.model.Page
+import mg.fikaliako.api.endpoint.rest.model.EstablishmentFilters
+import mg.fikaliako.api.endpoint.rest.model.EstablishmentSummary
+import mg.fikaliako.api.endpoint.rest.model.GeoPoint
+import mg.fikaliako.api.endpoint.rest.model.Page
 import mg.fikaliako.api.service.EstablishmentService
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
