@@ -24,6 +24,186 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/v1/auth/register': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Create an account
+     * @description Creates a phone-number account (project book ch. 4.7). `account_type` picks the role: `consumer` (default) or `business` (premium establishment account — managing an establishment additionally requires an admin-granted link). The password is hashed with Argon2id and a 6-digit verification code is sent by SMS; the account cannot log in until `/v1/auth/verify-phone` succeeds.
+     */
+    post: operations['register'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/auth/verify-phone': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Verify the phone number with the SMS code
+     * @description Consumes the 6-digit code (10-minute lifetime, 5 attempts) and opens the first session. Whether a number is registered is never revealed: an unknown number answers the same 400 as a bad code.
+     */
+    post: operations['verifyPhone'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/auth/resend-otp': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Re-send the verification code
+     * @description Always answers 202 so account existence is not revealed. Issuance is capped at 5 codes/hour/number (book ch. 7.3).
+     */
+    post: operations['resendOtp'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/auth/login': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Log in with phone number and password
+     * @description Opens a session: a 15-minute access JWT plus a 30-day single-use refresh token. Unverified phones get a 403 pointing at `/v1/auth/verify-phone`; suspended accounts get a 403 too.
+     */
+    post: operations['login'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/auth/refresh': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Rotate the refresh token
+     * @description Exchanges a live refresh token for a fresh access JWT and a new refresh token. Each refresh token is single-use: presenting an already-rotated one is treated as theft and revokes the whole session family.
+     */
+    post: operations['refreshTokens'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/auth/logout': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Log out (revoke the session)
+     * @description Revokes the session the refresh token belongs to, server-side and idempotently. The current access token stays valid for its remaining lifetime (≤ 15 min) — clients should also drop it locally.
+     */
+    post: operations['logout'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/auth/forgot-password': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Request a password-reset code
+     * @description Sends a reset code by SMS if the number has an account. Always answers 202 so account existence is not revealed; issuance shares the 5/hour/number cap.
+     */
+    post: operations['forgotPassword'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/auth/reset-password': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Reset the password with the SMS code
+     * @description Sets a new password after validating the reset code, then revokes every live session of the account (the reset proves control of the number, not of every device).
+     */
+    post: operations['resetPassword'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/auth/change-password': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Change the password (authenticated)
+     * @description Requires the current password. Every other session is revoked and a fresh token pair is returned so the calling device stays logged in.
+     */
+    post: operations['changePassword'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/v1/nearby': {
     parameters: {
       query?: never;
@@ -122,8 +302,8 @@ export interface paths {
     get: operations['listReviews'];
     put?: never;
     /**
-     * Post a review (planned)
-     * @description (planned) One review per user per establishment, scored 1–5 on five criteria (project book ch. 4.4). Arrives with the community module.
+     * Post a review
+     * @description One review per user per establishment, scored 1–5 on five criteria (project book ch. 4.4). The global note is the weighted mean with quality counted twice. A second review from the same account is a 409.
      */
     post: operations['createReview'];
     delete?: never;
@@ -139,11 +319,32 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    /**
-     * Current authenticated user (planned)
-     * @description (planned) Arrives with the accounts module (project book ch. 4.7).
-     */
+    /** Current authenticated user */
     get: operations['getCurrentUser'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /**
+     * Update the profile
+     * @description Partial update — absent fields stay untouched.
+     */
+    patch: operations['updateCurrentUser'];
+    trace?: never;
+  };
+  '/v1/users/me/favorites': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * The user's favorites
+     * @description Favorited establishments, most recently added first, cursor-paginated (project book ch. 4.6).
+     */
+    get: operations['listFavorites'];
     put?: never;
     post?: never;
     delete?: never;
@@ -161,16 +362,117 @@ export interface paths {
     };
     get?: never;
     /**
-     * Add a favorite (planned)
-     * @description (planned) Idempotent add to the user's favorites (project book ch. 4.6).
+     * Add a favorite
+     * @description Idempotent add to the user's favorites (project book ch. 4.6).
      */
     put: operations['addFavorite'];
     post?: never;
     /**
-     * Remove a favorite (planned)
-     * @description (planned) Idempotent removal from the user's favorites.
+     * Remove a favorite
+     * @description Idempotent removal from the user's favorites.
      */
     delete: operations['removeFavorite'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/business/establishments': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Establishments managed by this account
+     * @description The establishments an admin granted this `business` account. One page, no cursor — an account manages a handful at most.
+     */
+    get: operations['listManagedEstablishments'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/business/establishments/{establishmentId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /**
+     * Update the business profile
+     * @description Partial update of an establishment this account manages: contact fields, average price, amenities, and `active`/`closed` status. Position changes go through the community loop (book ch. 4.8) and `verified` is a moderator act — neither is editable here. Admins pass the ownership check.
+     */
+    patch: operations['updateManagedEstablishment'];
+    trace?: never;
+  };
+  '/v1/business/establishments/{establishmentId}/opening-hours': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /**
+     * Replace the opening hours
+     * @description Full replacement of the opening intervals (multiple per day allowed, day 0 = Monday — book ch. 6.1).
+     */
+    put: operations['replaceOpeningHours'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/admin/establishments/{establishmentId}/managers': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Managers of an establishment */
+    get: operations['listEstablishmentManagers'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/admin/establishments/{establishmentId}/managers/{userId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /**
+     * Grant management of an establishment
+     * @description Links a `business` account to the establishment. Idempotent; every effective grant lands in the immutable audit log (book ch. 7.3). Granting to a non-business account is a 400.
+     */
+    put: operations['grantEstablishmentManager'];
+    post?: never;
+    /**
+     * Revoke management of an establishment
+     * @description Idempotent; effective revocations are audit-logged.
+     */
+    delete: operations['revokeEstablishmentManager'];
     options?: never;
     head?: never;
     patch?: never;
@@ -210,6 +512,112 @@ export interface components {
       instance?: string;
       /** @description Echoes the `X-Correlation-Id` response header. */
       correlation_id?: string;
+    };
+    /**
+     * @description E.164 phone number — the account identifier (book ch. 4.7).
+     * @example +261340000001
+     */
+    PhoneNumber: string;
+    /**
+     * @description 6-digit one-time code received by SMS.
+     * @example 123456
+     */
+    OtpCode: string;
+    /**
+     * @description Account role: `user` = consumer, `business` = premium establishment account, `moderator` and `admin` = back-office.
+     * @enum {string}
+     */
+    UserRole: 'user' | 'business' | 'moderator' | 'admin';
+    /** @description The account as its owner sees it. */
+    UserProfile: {
+      /** Format: uuid */
+      id: string;
+      phone: components['schemas']['PhoneNumber'];
+      /** @example Naina */
+      display_name: string;
+      role: components['schemas']['UserRole'];
+      phone_verified: boolean;
+      /** @enum {string} */
+      locale: 'fr' | 'mg';
+      /** Format: date-time */
+      created_at: string;
+    };
+    RegisterRequest: {
+      phone: components['schemas']['PhoneNumber'];
+      password: string;
+      display_name: string;
+      /**
+       * @description `consumer` (default) or `business` — a premium establishment account (restaurant, gargotte, café…).
+       * @default consumer
+       * @enum {string}
+       */
+      account_type: 'consumer' | 'business';
+      /**
+       * @default fr
+       * @enum {string}
+       */
+      locale: 'fr' | 'mg';
+    };
+    VerifyPhoneRequest: {
+      phone: components['schemas']['PhoneNumber'];
+      code: components['schemas']['OtpCode'];
+    };
+    ResendOtpRequest: {
+      phone: components['schemas']['PhoneNumber'];
+    };
+    LoginRequest: {
+      phone: components['schemas']['PhoneNumber'];
+      password: string;
+    };
+    RefreshRequest: {
+      refresh_token: string;
+    };
+    LogoutRequest: {
+      refresh_token: string;
+    };
+    ForgotPasswordRequest: {
+      phone: components['schemas']['PhoneNumber'];
+    };
+    ResetPasswordRequest: {
+      phone: components['schemas']['PhoneNumber'];
+      code: components['schemas']['OtpCode'];
+      new_password: string;
+    };
+    ChangePasswordRequest: {
+      current_password: string;
+      new_password: string;
+    };
+    /** @description A session: short-lived access JWT plus the single-use refresh token (book ch. 7.3). Store the refresh token securely — it is shown once. */
+    AuthTokens: {
+      /** @enum {string} */
+      token_type: 'Bearer';
+      /** @description HS256 JWT, 15-minute lifetime. */
+      access_token: string;
+      /**
+       * Format: int64
+       * @description Access-token lifetime in seconds.
+       * @example 900
+       */
+      expires_in: number;
+      /** @description Opaque, single-use; rotate via `/v1/auth/refresh`. */
+      refresh_token: string;
+      /**
+       * Format: int64
+       * @description Refresh-token lifetime in seconds.
+       * @example 2592000
+       */
+      refresh_expires_in: number;
+    };
+    /** @description Login/verification result — the user and their tokens. */
+    AuthSession: {
+      user: components['schemas']['UserProfile'];
+      tokens: components['schemas']['AuthTokens'];
+    };
+    /** @description Partial profile update — absent fields stay untouched. */
+    UpdateProfileRequest: {
+      display_name?: string;
+      /** @enum {string} */
+      locale?: 'fr' | 'mg';
     };
     /**
      * @description Kind of eatery (project book ch. 6.1).
@@ -341,6 +749,55 @@ export interface components {
       /** Format: date-time */
       updated_at: string;
     };
+    /** @description Partial business-profile update; absent fields stay untouched. Position and `verified` are not editable through this endpoint. */
+    BusinessEstablishmentUpdate: {
+      name?: string;
+      address?: string;
+      district?: string;
+      phone?: string;
+      whatsapp?: string;
+      facebook_url?: string;
+      website?: string;
+      avg_price_ar?: number;
+      /**
+       * @description An owner can close or reopen, not self-approve out of `pending`.
+       * @enum {string}
+       */
+      status?: 'active' | 'closed';
+      amenities?: components['schemas']['AmenitiesUpdate'];
+    };
+    /** @description Partial amenities update — absent flags stay untouched. */
+    AmenitiesUpdate: {
+      delivery?: boolean;
+      parking?: boolean;
+      wifi?: boolean;
+      wheelchair_access?: boolean;
+      air_conditioning?: boolean;
+      terrace?: boolean;
+      family_friendly?: boolean;
+      romantic?: boolean;
+      student_friendly?: boolean;
+      scenic_view?: boolean;
+      open_24h?: boolean;
+    };
+    /** @description Full replacement of an establishment's opening intervals. */
+    OpeningHoursUpdate: {
+      intervals: components['schemas']['OpeningInterval'][];
+    };
+    /** @description A business account managing an establishment. */
+    ManagerItem: {
+      /** Format: uuid */
+      user_id: string;
+      /** @example Chez Bao */
+      display_name: string;
+      phone: components['schemas']['PhoneNumber'];
+      /** Format: date-time */
+      granted_at: string;
+    };
+    /** @description The managers of one establishment (no pagination). */
+    ManagerPage: {
+      items: components['schemas']['ManagerItem'][];
+    };
     /** @description A published review (project book ch. 4.4). */
     ReviewItem: {
       /** Format: uuid */
@@ -361,7 +818,7 @@ export interface components {
       /** Format: date-time */
       created_at: string;
     };
-    /** @description (planned) Payload to create a review. */
+    /** @description Payload to create a review. */
     ReviewInput: {
       rating_quality: number;
       rating_price: number;
@@ -393,8 +850,44 @@ export interface components {
         'application/problem+json': components['schemas']['Problem'];
       };
     };
+    /** @description Missing/invalid bearer token, or invalid credentials. */
+    Unauthorized: {
+      headers: {
+        [name: string]: unknown;
+      };
+      content: {
+        'application/problem+json': components['schemas']['Problem'];
+      };
+    };
+    /** @description Authenticated but not allowed to perform this action. */
+    Forbidden: {
+      headers: {
+        [name: string]: unknown;
+      };
+      content: {
+        'application/problem+json': components['schemas']['Problem'];
+      };
+    };
     /** @description Resource not found. */
     NotFound: {
+      headers: {
+        [name: string]: unknown;
+      };
+      content: {
+        'application/problem+json': components['schemas']['Problem'];
+      };
+    };
+    /** @description The request conflicts with existing state. */
+    Conflict: {
+      headers: {
+        [name: string]: unknown;
+      };
+      content: {
+        'application/problem+json': components['schemas']['Problem'];
+      };
+    };
+    /** @description Rate limit hit (e.g. 5 OTP codes/hour/number). */
+    TooManyRequests: {
       headers: {
         [name: string]: unknown;
       };
@@ -410,6 +903,8 @@ export interface components {
     CursorParam: string;
     /** @description Establishment UUID. */
     EstablishmentId: string;
+    /** @description User account UUID. */
+    UserId: string;
     /** @description Filter by establishment type. */
     TypeFilter: components['schemas']['EstablishmentType'];
     /** @description Minimum average price in ariary. */
@@ -455,6 +950,231 @@ export interface operations {
           'application/json': components['schemas']['PingResponse'];
         };
       };
+    };
+  };
+  register: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RegisterRequest'];
+      };
+    };
+    responses: {
+      /** @description Account created; verification code sent by SMS. */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['UserProfile'];
+        };
+      };
+      400: components['responses']['BadRequest'];
+      409: components['responses']['Conflict'];
+    };
+  };
+  verifyPhone: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['VerifyPhoneRequest'];
+      };
+    };
+    responses: {
+      /** @description Phone verified; the account is now active. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuthSession'];
+        };
+      };
+      400: components['responses']['BadRequest'];
+      403: components['responses']['Forbidden'];
+    };
+  };
+  resendOtp: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ResendOtpRequest'];
+      };
+    };
+    responses: {
+      /** @description If the number has an unverified account, a code was sent. */
+      202: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      400: components['responses']['BadRequest'];
+      429: components['responses']['TooManyRequests'];
+    };
+  };
+  login: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['LoginRequest'];
+      };
+    };
+    responses: {
+      /** @description Authenticated. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuthSession'];
+        };
+      };
+      400: components['responses']['BadRequest'];
+      401: components['responses']['Unauthorized'];
+      403: components['responses']['Forbidden'];
+    };
+  };
+  refreshTokens: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RefreshRequest'];
+      };
+    };
+    responses: {
+      /** @description New token pair. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuthTokens'];
+        };
+      };
+      400: components['responses']['BadRequest'];
+      401: components['responses']['Unauthorized'];
+    };
+  };
+  logout: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['LogoutRequest'];
+      };
+    };
+    responses: {
+      /** @description Session revoked (or the token was already unknown). */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      400: components['responses']['BadRequest'];
+    };
+  };
+  forgotPassword: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ForgotPasswordRequest'];
+      };
+    };
+    responses: {
+      /** @description If the number has an account, a reset code was sent. */
+      202: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      400: components['responses']['BadRequest'];
+      429: components['responses']['TooManyRequests'];
+    };
+  };
+  resetPassword: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ResetPasswordRequest'];
+      };
+    };
+    responses: {
+      /** @description Password changed; all sessions revoked. Log in again. */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      400: components['responses']['BadRequest'];
+    };
+  };
+  changePassword: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ChangePasswordRequest'];
+      };
+    };
+    responses: {
+      /** @description Password changed; fresh tokens for this device. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuthTokens'];
+        };
+      };
+      400: components['responses']['BadRequest'];
+      401: components['responses']['Unauthorized'];
     };
   };
   nearby: {
@@ -661,6 +1381,10 @@ export interface operations {
           'application/json': components['schemas']['ReviewItem'];
         };
       };
+      400: components['responses']['BadRequest'];
+      401: components['responses']['Unauthorized'];
+      404: components['responses']['NotFound'];
+      409: components['responses']['Conflict'];
     };
   };
   getCurrentUser: {
@@ -677,8 +1401,64 @@ export interface operations {
         headers: {
           [name: string]: unknown;
         };
-        content?: never;
+        content: {
+          'application/json': components['schemas']['UserProfile'];
+        };
       };
+      401: components['responses']['Unauthorized'];
+    };
+  };
+  updateCurrentUser: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UpdateProfileRequest'];
+      };
+    };
+    responses: {
+      /** @description The updated profile. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['UserProfile'];
+        };
+      };
+      400: components['responses']['BadRequest'];
+      401: components['responses']['Unauthorized'];
+    };
+  };
+  listFavorites: {
+    parameters: {
+      query?: {
+        /** @description Page size (default 50 for establishments, 20 for reviews; max 100). */
+        limit?: components['parameters']['LimitParam'];
+        /** @description Opaque pagination cursor from a previous response's `next_cursor`. */
+        cursor?: components['parameters']['CursorParam'];
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description A page of favorited establishments. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['EstablishmentPage'];
+        };
+      };
+      400: components['responses']['BadRequest'];
+      401: components['responses']['Unauthorized'];
     };
   };
   addFavorite: {
@@ -693,13 +1473,15 @@ export interface operations {
     };
     requestBody?: never;
     responses: {
-      /** @description Favorited. */
+      /** @description Favorited (already-favorited is not an error). */
       204: {
         headers: {
           [name: string]: unknown;
         };
         content?: never;
       };
+      401: components['responses']['Unauthorized'];
+      404: components['responses']['NotFound'];
     };
   };
   removeFavorite: {
@@ -714,13 +1496,176 @@ export interface operations {
     };
     requestBody?: never;
     responses: {
-      /** @description Un-favorited. */
+      /** @description Un-favorited (or was never favorited). */
       204: {
         headers: {
           [name: string]: unknown;
         };
         content?: never;
       };
+      401: components['responses']['Unauthorized'];
+    };
+  };
+  listManagedEstablishments: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description The managed establishments. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['EstablishmentPage'];
+        };
+      };
+      401: components['responses']['Unauthorized'];
+      403: components['responses']['Forbidden'];
+    };
+  };
+  updateManagedEstablishment: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Establishment UUID. */
+        establishmentId: components['parameters']['EstablishmentId'];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['BusinessEstablishmentUpdate'];
+      };
+    };
+    responses: {
+      /** @description The updated establishment. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['EstablishmentDetail'];
+        };
+      };
+      400: components['responses']['BadRequest'];
+      401: components['responses']['Unauthorized'];
+      403: components['responses']['Forbidden'];
+      404: components['responses']['NotFound'];
+    };
+  };
+  replaceOpeningHours: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Establishment UUID. */
+        establishmentId: components['parameters']['EstablishmentId'];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['OpeningHoursUpdate'];
+      };
+    };
+    responses: {
+      /** @description The establishment with its new hours. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['EstablishmentDetail'];
+        };
+      };
+      400: components['responses']['BadRequest'];
+      401: components['responses']['Unauthorized'];
+      403: components['responses']['Forbidden'];
+      404: components['responses']['NotFound'];
+    };
+  };
+  listEstablishmentManagers: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Establishment UUID. */
+        establishmentId: components['parameters']['EstablishmentId'];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description The accounts managing this establishment. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ManagerPage'];
+        };
+      };
+      401: components['responses']['Unauthorized'];
+      403: components['responses']['Forbidden'];
+      404: components['responses']['NotFound'];
+    };
+  };
+  grantEstablishmentManager: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Establishment UUID. */
+        establishmentId: components['parameters']['EstablishmentId'];
+        /** @description User account UUID. */
+        userId: components['parameters']['UserId'];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Granted (or already granted). */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      400: components['responses']['BadRequest'];
+      401: components['responses']['Unauthorized'];
+      403: components['responses']['Forbidden'];
+      404: components['responses']['NotFound'];
+    };
+  };
+  revokeEstablishmentManager: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Establishment UUID. */
+        establishmentId: components['parameters']['EstablishmentId'];
+        /** @description User account UUID. */
+        userId: components['parameters']['UserId'];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Revoked (or was never granted). */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      401: components['responses']['Unauthorized'];
+      403: components['responses']['Forbidden'];
     };
   };
 }
