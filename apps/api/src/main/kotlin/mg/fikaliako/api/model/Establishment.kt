@@ -1,5 +1,6 @@
 package mg.fikaliako.api.model
 
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
@@ -94,7 +95,8 @@ class Establishment(
   @Column(name = "updated_at", insertable = false, updatable = false)
   var updatedAt: Instant? = null,
 
-  @OneToMany(mappedBy = "establishment", fetch = FetchType.LAZY)
+  // cascade + orphanRemoval: the business profile PUT replaces the whole set
+  @OneToMany(mappedBy = "establishment", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
   @OrderBy("dayOfWeek, opensAt")
   var openingHours: MutableList<OpeningHoursEntity> = mutableListOf(),
 
