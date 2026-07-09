@@ -1,13 +1,13 @@
 package mg.fikaliako.api.service
 import mg.fikaliako.api.config.AuthProperties
 import mg.fikaliako.api.model.UserAccount
+import mg.fikaliako.api.util.Hashing
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm
 import org.springframework.security.oauth2.jwt.JwsHeader
 import org.springframework.security.oauth2.jwt.JwtClaimsSet
 import org.springframework.security.oauth2.jwt.JwtEncoder
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters
 import org.springframework.stereotype.Service
-import java.security.MessageDigest
 import java.security.SecureRandom
 import java.time.Clock
 import java.util.Base64
@@ -44,10 +44,7 @@ class TokenService(
     return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes)
   }
 
-  fun hash(tokenValue: String): String {
-    val digest = MessageDigest.getInstance("SHA-256").digest(tokenValue.toByteArray())
-    return digest.joinToString("") { "%02x".format(it) }
-  }
+  fun hash(tokenValue: String): String = Hashing.sha256Hex(tokenValue)
 
   companion object {
     private const val REFRESH_TOKEN_BYTES = 32

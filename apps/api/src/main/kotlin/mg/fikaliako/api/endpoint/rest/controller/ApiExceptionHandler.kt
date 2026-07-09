@@ -2,10 +2,15 @@ package mg.fikaliako.api.endpoint.rest.controller
 import jakarta.servlet.http.HttpServletRequest
 import mg.fikaliako.api.config.CorrelationIdFilter
 import mg.fikaliako.api.model.exception.BadRequestException
+import mg.fikaliako.api.model.exception.ConflictException
+import mg.fikaliako.api.model.exception.ForbiddenException
 import mg.fikaliako.api.model.exception.NotFoundException
+import mg.fikaliako.api.model.exception.TooManyRequestsException
+import mg.fikaliako.api.model.exception.UnauthorizedException
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ProblemDetail
+import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.MissingServletRequestParameterException
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -28,6 +33,36 @@ class ApiExceptionHandler {
     ex: BadRequestException,
     request: HttpServletRequest,
   ): ProblemDetail = problem(HttpStatus.BAD_REQUEST, "Bad request", ex.message, request)
+
+  @ExceptionHandler(UnauthorizedException::class)
+  fun handleUnauthorized(
+    ex: UnauthorizedException,
+    request: HttpServletRequest,
+  ): ProblemDetail = problem(HttpStatus.UNAUTHORIZED, "Unauthorized", ex.message, request)
+
+  @ExceptionHandler(ForbiddenException::class)
+  fun handleForbidden(
+    ex: ForbiddenException,
+    request: HttpServletRequest,
+  ): ProblemDetail = problem(HttpStatus.FORBIDDEN, "Forbidden", ex.message, request)
+
+  @ExceptionHandler(ConflictException::class)
+  fun handleConflict(
+    ex: ConflictException,
+    request: HttpServletRequest,
+  ): ProblemDetail = problem(HttpStatus.CONFLICT, "Conflict", ex.message, request)
+
+  @ExceptionHandler(TooManyRequestsException::class)
+  fun handleTooManyRequests(
+    ex: TooManyRequestsException,
+    request: HttpServletRequest,
+  ): ProblemDetail = problem(HttpStatus.TOO_MANY_REQUESTS, "Too many requests", ex.message, request)
+
+  @ExceptionHandler(HttpMessageNotReadableException::class)
+  fun handleUnreadableBody(
+    ex: HttpMessageNotReadableException,
+    request: HttpServletRequest,
+  ): ProblemDetail = problem(HttpStatus.BAD_REQUEST, "Bad request", "Malformed or missing request body.", request)
 
   @ExceptionHandler(HandlerMethodValidationException::class)
   fun handleConstraint(
