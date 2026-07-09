@@ -54,7 +54,9 @@ class Review(
   @Column(columnDefinition = "review_status")
   var status: ReviewStatus = ReviewStatus.PUBLISHED,
 
-  @Column(name = "created_at", insertable = false, updatable = false)
+  // set by the service on insert so the freshly created review can be echoed
+  // without a DB round-trip; never touched on update
+  @Column(name = "created_at", updatable = false)
   var createdAt: Instant? = null,
 
   @Column(name = "updated_at", insertable = false, updatable = false)

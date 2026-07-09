@@ -94,7 +94,8 @@ class EstablishmentService(
       id = requireNotNull(e.id),
       slug = e.slug,
       name = e.name,
-      type = e.type.name,
+      // lowercase like the summaries built from native SQL (contract enums)
+      type = e.type.name.lowercase(),
       position = GeoPoint(requireNotNull(e.position).y, requireNotNull(e.position).x),
       address = e.address,
       district = e.district,
@@ -105,7 +106,7 @@ class EstablishmentService(
       website = e.website,
       avgPriceAr = e.avgPriceAr,
       verified = e.verified,
-      status = e.status.name,
+      status = e.status.name.lowercase(),
       openNow = OpeningHours.isOpenNow(e.open24h, hours, clock.instant()),
       amenities =
         Amenities(
