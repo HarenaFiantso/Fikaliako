@@ -48,8 +48,8 @@ class AuthServiceTest {
 
   private fun activeUser(
     verified: Boolean = true,
-    role: UserRole = UserRole.USER,
-    status: AccountStatus = AccountStatus.ACTIVE,
+    role: UserRole = UserRole.user,
+    status: AccountStatus = AccountStatus.active,
   ) = UserAccount(
     id = userId,
     displayName = "Naina",
@@ -78,9 +78,9 @@ class AuthServiceTest {
     val captor = ArgumentCaptor.forClass(UserAccount::class.java)
     Mockito.verify(users).save(captor.capture())
     assertEquals("argon2-hash", captor.value.passwordHash)
-    assertEquals(UserRole.USER, captor.value.role)
+    assertEquals(UserRole.user, captor.value.role)
     assertEquals(now, captor.value.createdAt)
-    Mockito.verify(otpService).issue(phone, OtpPurpose.VERIFY_PHONE)
+    Mockito.verify(otpService).issue(phone, OtpPurpose.verify_phone)
     assertEquals("user", profile.role)
     assertEquals(false, profile.phoneVerified)
   }
@@ -106,7 +106,6 @@ class AuthServiceTest {
     Mockito.`when`(users.findByPhone(phone)).thenReturn(null)
     val ex = assertFailsWith<UnauthorizedException> { service.login(LoginRequest(phone, "password123")) }
     assertEquals(AuthService.BAD_CREDENTIALS, ex.message)
-    // the dummy hash must still be checked so timing does not reveal existence
     Mockito.verify(passwordEncoder).matches(Mockito.eq("password123"), Mockito.anyString())
   }
 
@@ -126,7 +125,7 @@ class AuthServiceTest {
 
   @Test
   fun `login refuses a suspended account`() {
-    Mockito.`when`(users.findByPhone(phone)).thenReturn(activeUser(status = AccountStatus.SUSPENDED))
+    Mockito.`when`(users.findByPhone(phone)).thenReturn(activeUser(status = AccountStatus.suspended))
     Mockito.`when`(passwordEncoder.matches("password123", "stored-hash")).thenReturn(true)
     assertFailsWith<ForbiddenException> { service.login(LoginRequest(phone, "password123")) }
   }
@@ -160,7 +159,7 @@ class AuthServiceTest {
 
     val session = service.verifyPhone(VerifyPhoneRequest(phone, "123456"))
 
-    Mockito.verify(otpService).verify(phone, OtpPurpose.VERIFY_PHONE, "123456")
+    Mockito.verify(otpService).verify(phone, OtpPurpose.verify_phone, "123456")
     assertTrue(user.phoneVerified)
     assertEquals(true, session.user.phoneVerified)
   }
@@ -248,7 +247,6 @@ class AuthServiceTest {
     service.logout(LogoutRequest("known"))
     service.logout(LogoutRequest("unknown"))
 
-    // exactly one revocation: the known token's family, nothing for the unknown one
     Mockito.verify(refreshTokens, Mockito.times(1)).revokeFamily(familyId, now)
   }
 
@@ -267,7 +265,7 @@ class AuthServiceTest {
 
     service.resetPassword(ResetPasswordRequest(phone, "123456", "new-password-1"))
 
-    Mockito.verify(otpService).verify(phone, OtpPurpose.RESET_PASSWORD, "123456")
+    Mockito.verify(otpService).verify(phone, OtpPurpose.reset_password, "123456")
     assertEquals("new-hash", user.passwordHash)
     Mockito.verify(refreshTokens).revokeAllForUser(userId, now)
   }

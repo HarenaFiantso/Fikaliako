@@ -1,13 +1,14 @@
 package mg.fikaliako.api.model
 
+@Suppress("ktlint:standard:enum-entry-name-case", "EnumEntryName")
 enum class EstablishmentType {
-  RESTAURANT,
-  GARGOTTE,
-  CAFE,
-  SNACK,
-  FOOD_TRUCK,
-  STREET_VENDOR,
-  PASTRY_SHOP,
-  BAR_RESTAURANT,
-  HOTEL_RESTAURANT,
+  restaurant,
+  gargotte,
+  cafe,
+  snack,
+  food_truck,
+  street_vendor,
+  pastry_shop,
+  bar_restaurant,
+  hotel_restaurant,
 }

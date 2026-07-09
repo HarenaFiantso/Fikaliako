@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional
 import java.time.Clock
 import java.util.UUID
 
-// The authenticated user's own corner (book ch. 4.6, 4.7): profile + favorites.
 @Service
 class UserService(
   private val users: UserAccountRepository,
@@ -45,7 +44,6 @@ class UserService(
     return user.toProfile()
   }
 
-  // Idempotent PUT (book ch. 4.6): favoriting twice is not an error
   @Transactional
   fun addFavorite(
     userId: UUID,
@@ -105,7 +103,6 @@ class UserService(
 
   private fun find(userId: UUID): UserAccount =
     users.findById(userId).orElseThrow {
-      // valid token, purged account (book ch. 9 allows full deletion)
       UnauthorizedException("Account no longer exists.")
     }
 

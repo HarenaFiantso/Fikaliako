@@ -18,7 +18,6 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import java.util.UUID
 
-// RBAC around /v1/business/**: consumers are refused, BUSINESS and ADMIN pass
 @WebMvcTest(BusinessController::class)
 @Import(SecurityConfig::class)
 class BusinessControllerTest {

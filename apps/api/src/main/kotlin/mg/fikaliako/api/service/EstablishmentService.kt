@@ -94,7 +94,6 @@ class EstablishmentService(
       id = requireNotNull(e.id),
       slug = e.slug,
       name = e.name,
-      // lowercase like the summaries built from native SQL (contract enums)
       type = e.type.name.lowercase(),
       position = GeoPoint(requireNotNull(e.position).y, requireNotNull(e.position).x),
       address = e.address,

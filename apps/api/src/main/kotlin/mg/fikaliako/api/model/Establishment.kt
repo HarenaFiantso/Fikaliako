@@ -31,7 +31,7 @@ class Establishment(
 
   @JdbcTypeCode(SqlTypes.NAMED_ENUM)
   @Column(columnDefinition = "establishment_type")
-  var type: EstablishmentType = EstablishmentType.RESTAURANT,
+  var type: EstablishmentType = EstablishmentType.restaurant,
 
   @JdbcTypeCode(SqlTypes.GEOGRAPHY)
   @Column(columnDefinition = "geography(Point,4326)")
@@ -64,7 +64,7 @@ class Establishment(
 
   @JdbcTypeCode(SqlTypes.NAMED_ENUM)
   @Column(columnDefinition = "establishment_status")
-  var status: EstablishmentStatus = EstablishmentStatus.PENDING,
+  var status: EstablishmentStatus = EstablishmentStatus.pending,
   var delivery: Boolean = false,
   var parking: Boolean = false,
   var wifi: Boolean = false,
@@ -95,7 +95,6 @@ class Establishment(
   @Column(name = "updated_at", insertable = false, updatable = false)
   var updatedAt: Instant? = null,
 
-  // cascade + orphanRemoval: the business profile PUT replaces the whole set
   @OneToMany(mappedBy = "establishment", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
   @OrderBy("dayOfWeek, opensAt")
   var openingHours: MutableList<OpeningHoursEntity> = mutableListOf(),

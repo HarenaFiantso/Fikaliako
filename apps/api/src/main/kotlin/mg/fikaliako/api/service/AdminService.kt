@@ -1,4 +1,5 @@
 package mg.fikaliako.api.service
+
 import mg.fikaliako.api.endpoint.rest.model.ManagerItem
 import mg.fikaliako.api.endpoint.rest.model.Page
 import mg.fikaliako.api.model.AuditLogEntry
@@ -16,9 +17,6 @@ import org.springframework.transaction.annotation.Transactional
 import java.time.Clock
 import java.util.UUID
 
-// Admin back-office: grants BUSINESS accounts management rights over
-// establishments. Every grant/revoke lands in the immutable audit log
-// (book ch. 7.3).
 @Service
 class AdminService(
   private val managers: EstablishmentManagerRepository,
@@ -44,7 +42,6 @@ class AdminService(
     return Page(items)
   }
 
-  // Idempotent PUT: granting twice is not an error and is not re-audited
   @Transactional
   fun grantManager(
     actorId: UUID,
@@ -56,7 +53,7 @@ class AdminService(
         NotFoundException("Establishment '$establishmentId' not found.")
       }
     val user = users.findById(userId).orElseThrow { NotFoundException("User '$userId' not found.") }
-    if (user.role != UserRole.BUSINESS) {
+    if (user.role != UserRole.business) {
       throw BadRequestException("Only business accounts can manage establishments (user role: ${user.role.name.lowercase()}).")
     }
     val id = EstablishmentManagerId(establishmentId = establishmentId, userId = userId)

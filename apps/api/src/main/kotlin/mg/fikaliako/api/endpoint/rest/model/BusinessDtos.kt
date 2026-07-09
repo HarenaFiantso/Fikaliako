@@ -8,10 +8,6 @@ import jakarta.validation.constraints.Size
 import java.time.Instant
 import java.util.UUID
 
-// PATCH /v1/business/establishments/{id} — the fields a premium (BUSINESS)
-// account may edit on its own establishment. Absent fields stay untouched.
-// Position and verification are excluded on purpose: pin moves go through the
-// community/moderation loop (book ch. 4.8), verification is a moderator act.
 data class BusinessEstablishmentUpdate(
   @field:Size(min = 2, max = 120)
   val name: String? = null,

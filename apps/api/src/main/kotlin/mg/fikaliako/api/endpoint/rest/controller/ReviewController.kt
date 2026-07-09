@@ -1,4 +1,5 @@
 package mg.fikaliako.api.endpoint.rest.controller
+
 import jakarta.validation.Valid
 import mg.fikaliako.api.endpoint.rest.model.Page
 import mg.fikaliako.api.endpoint.rest.model.ReviewInput

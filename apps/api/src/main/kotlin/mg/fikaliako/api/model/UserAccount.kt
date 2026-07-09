@@ -18,24 +18,22 @@ class UserAccount(
   @Column(name = "display_name", columnDefinition = "text")
   var displayName: String = "",
 
-  // E.164 phone number; the sole login identifier (book ch. 4.7, no email at MVP)
   @Column(columnDefinition = "text")
   var phone: String = "",
 
   @Column(name = "phone_verified")
   var phoneVerified: Boolean = false,
 
-  // Argon2id hash, opaque to the application (book ch. 7.3)
   @Column(name = "password_hash", columnDefinition = "text")
   var passwordHash: String = "",
 
   @JdbcTypeCode(SqlTypes.NAMED_ENUM)
   @Column(columnDefinition = "user_role")
-  var role: UserRole = UserRole.USER,
+  var role: UserRole = UserRole.user,
 
   @JdbcTypeCode(SqlTypes.NAMED_ENUM)
   @Column(columnDefinition = "account_status")
-  var status: AccountStatus = AccountStatus.ACTIVE,
+  var status: AccountStatus = AccountStatus.active,
 
   @Column(columnDefinition = "text")
   var locale: String = "fr",

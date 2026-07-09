@@ -25,11 +25,6 @@ import org.springframework.security.web.SecurityFilterChain
 import tools.jackson.databind.ObjectMapper
 import javax.crypto.spec.SecretKeySpec
 
-// Stateless security (book ch. 7.3): browsing is public, writes need a JWT.
-// Access tokens are 15-minute HS256 JWTs carrying the user id (sub) and a
-// `role` claim; refresh tokens are opaque, rotated and revocable (see
-// TokenService). Role model: USER (consumer) < BUSINESS (premium establishment
-// account, /v1/business/**) / MODERATOR < ADMIN (/v1/admin/**).
 @Configuration
 @EnableWebSecurity
 @EnableConfigurationProperties(AuthProperties::class)

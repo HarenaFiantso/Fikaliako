@@ -52,10 +52,8 @@ class Review(
 
   @JdbcTypeCode(SqlTypes.NAMED_ENUM)
   @Column(columnDefinition = "review_status")
-  var status: ReviewStatus = ReviewStatus.PUBLISHED,
+  var status: ReviewStatus = ReviewStatus.published,
 
-  // set by the service on insert so the freshly created review can be echoed
-  // without a DB round-trip; never touched on update
   @Column(name = "created_at", updatable = false)
   var createdAt: Instant? = null,
 

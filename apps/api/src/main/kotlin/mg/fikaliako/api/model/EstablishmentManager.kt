@@ -22,9 +22,6 @@ data class EstablishmentManagerId(
   val userId: UUID = UUID(0, 0),
 ) : Serializable
 
-// Grants a BUSINESS account management rights over one establishment.
-// Created by an admin (audit-logged); the restaurateur onboarding flow of the
-// book's V2 will feed this table.
 @Entity
 @Table(name = "establishment_managers")
 class EstablishmentManager(

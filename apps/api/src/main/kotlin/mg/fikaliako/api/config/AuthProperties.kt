@@ -3,7 +3,6 @@ package mg.fikaliako.api.config
 import org.springframework.boot.context.properties.ConfigurationProperties
 import java.time.Duration
 
-// Knobs of the accounts/security module (book ch. 7.3); see application.yml
 @ConfigurationProperties("fikaliako.auth")
 data class AuthProperties(
   val jwtSecret: String,

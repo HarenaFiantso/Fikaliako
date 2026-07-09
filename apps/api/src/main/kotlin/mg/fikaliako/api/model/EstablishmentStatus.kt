@@ -1,7 +1,8 @@
 package mg.fikaliako.api.model
 
+@Suppress("ktlint:standard:enum-entry-name-case", "EnumEntryName")
 enum class EstablishmentStatus {
-  ACTIVE,
-  CLOSED,
-  PENDING,
+  active,
+  closed,
+  pending,
 }

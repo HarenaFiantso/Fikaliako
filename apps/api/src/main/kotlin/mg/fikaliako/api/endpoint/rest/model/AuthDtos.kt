@@ -6,9 +6,6 @@ import jakarta.validation.constraints.Size
 import java.time.Instant
 import java.util.UUID
 
-// Wire DTOs of the accounts module (book ch. 4.7, 7.3). Identity is the E.164
-// phone number — no email at MVP; verification and password reset are OTP SMS.
-
 const val E164_PATTERN = "^\\+[1-9][0-9]{7,14}$"
 const val OTP_PATTERN = "^[0-9]{6}$"
 

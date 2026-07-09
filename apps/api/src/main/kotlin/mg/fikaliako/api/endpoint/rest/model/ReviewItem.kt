@@ -7,7 +7,6 @@ import java.math.BigDecimal
 import java.time.Instant
 import java.util.UUID
 
-// POST /v1/establishments/{id}/reviews — five criteria, 1–5 each (book ch. 4.4)
 data class ReviewInput(
   @field:Min(1) @field:Max(5)
   val ratingQuality: Int = 0,
