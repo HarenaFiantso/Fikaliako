@@ -56,6 +56,10 @@ kotlin {
   }
 }
 
+tasks.withType<Test> {
+  useJUnitPlatform()
+}
+
 allOpen {
   annotation("jakarta.persistence.Entity")
   annotation("jakarta.persistence.MappedSuperclass")
