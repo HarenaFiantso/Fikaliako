@@ -10,9 +10,6 @@ import org.springframework.security.web.AuthenticationEntryPoint
 import org.springframework.security.web.access.AccessDeniedHandler
 import tools.jackson.databind.ObjectMapper
 
-// Spring Security rejections happen before @RestControllerAdvice can run, so
-// 401/403 get their RFC 9457 problem+json bodies (with correlation_id) here.
-
 class ProblemAuthenticationEntryPoint(
   private val objectMapper: ObjectMapper,
 ) : AuthenticationEntryPoint {

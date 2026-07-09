@@ -1,7 +1,8 @@
 package mg.fikaliako.api.model
 
+@Suppress("ktlint:standard:enum-entry-name-case", "EnumEntryName")
 enum class AccountStatus {
-  ACTIVE,
-  SUSPENDED,
-  DELETED,
+  active,
+  suspended,
+  deleted,
 }

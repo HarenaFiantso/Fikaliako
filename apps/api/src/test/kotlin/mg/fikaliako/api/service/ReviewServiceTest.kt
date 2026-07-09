@@ -75,7 +75,7 @@ class ReviewServiceTest {
         review("cccccccc-0000-0000-0000-000000000003", now.minusSeconds(2)),
       )
     Mockito
-      .`when`(reviewRepo.findPublished(estId, ReviewStatus.PUBLISHED, Limit.of(3)))
+      .`when`(reviewRepo.findPublished(estId, ReviewStatus.published, Limit.of(3)))
       .thenReturn(rows)
 
     val page = service.listForEstablishment(estId, 2, null)
@@ -88,7 +88,7 @@ class ReviewServiceTest {
     assertEquals("Tsara be", first.comment)
 
     Mockito
-      .`when`(reviewRepo.findPublished(estId, ReviewStatus.PUBLISHED, Limit.of(3)))
+      .`when`(reviewRepo.findPublished(estId, ReviewStatus.published, Limit.of(3)))
       .thenReturn(rows.take(2))
     assertNull(service.listForEstablishment(estId, 2, null).nextCursor)
   }
@@ -106,10 +106,9 @@ class ReviewServiceTest {
     val captor = ArgumentCaptor.forClass(Review::class.java)
     Mockito.verify(reviewRepo).save(captor.capture())
     val saved = captor.value
-    assertEquals(ReviewStatus.PUBLISHED, saved.status)
+    assertEquals(ReviewStatus.published, saved.status)
     assertEquals("Tsara be", saved.comment)
     assertEquals(now, saved.createdAt)
-    // (5×2 + 4 + 4 + 3 + 5) / 6 = 4.33 — quality counted twice
     assertEquals(BigDecimal("4.33"), item.globalNote)
     assertEquals("Naina", item.authorName)
   }
@@ -138,7 +137,7 @@ class ReviewServiceTest {
       .`when`(
         reviewRepo.findPublishedAfter(
           estId,
-          ReviewStatus.PUBLISHED,
+          ReviewStatus.published,
           now,
           cursorId,
           Limit.of(ReviewService.DEFAULT_LIMIT + 1),

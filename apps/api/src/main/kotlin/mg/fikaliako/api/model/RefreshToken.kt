@@ -10,9 +10,6 @@ import jakarta.persistence.Table
 import java.time.Instant
 import java.util.UUID
 
-// One row per issued refresh token; only the SHA-256 hash of the opaque token
-// is stored. family_id groups the rotation chain of one login session so that
-// token-reuse detection can revoke the whole session (book ch. 7.3).
 @Entity
 @Table(name = "refresh_tokens")
 class RefreshToken(

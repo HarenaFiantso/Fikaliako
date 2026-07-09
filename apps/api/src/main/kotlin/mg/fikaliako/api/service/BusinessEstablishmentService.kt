@@ -20,9 +20,6 @@ import java.time.LocalTime
 import java.time.format.DateTimeParseException
 import java.util.UUID
 
-// The premium account's own corner (restaurateur space, brought forward from
-// the book's V2 for BUSINESS roles): manage the profile of establishments a
-// manager link grants. Admins pass every ownership check.
 @Service
 class BusinessEstablishmentService(
   private val managers: EstablishmentManagerRepository,
@@ -37,7 +34,6 @@ class BusinessEstablishmentService(
       ratings
         .findAllById(managed.mapNotNull { it.id })
         .associateBy { it.establishmentId }
-    // a business manages a handful of establishments: one page, no cursor
     return Page(managed.map { it.toSummary(ratingsById[it.id]) })
   }
 
@@ -57,7 +53,7 @@ class BusinessEstablishmentService(
     patch.facebookUrl?.let { establishment.facebookUrl = it.trim() }
     patch.website?.let { establishment.website = it.trim() }
     patch.avgPriceAr?.let { establishment.avgPriceAr = it }
-    patch.status?.let { establishment.status = EstablishmentStatus.valueOf(it.uppercase()) }
+    patch.status?.let { establishment.status = EstablishmentStatus.valueOf(it) }
     patch.amenities?.let { a ->
       a.delivery?.let { establishment.delivery = it }
       a.parking?.let { establishment.parking = it }
@@ -117,7 +113,6 @@ class BusinessEstablishmentService(
     try {
       LocalTime.parse(value)
     } catch (e: DateTimeParseException) {
-      // Bean Validation's HH:mm pattern runs first; this is the safety net
       throw BadRequestException("Invalid time '$value' (expected HH:mm).", e)
     }
 }

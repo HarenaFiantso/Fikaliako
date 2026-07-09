@@ -13,9 +13,6 @@ import java.time.Clock
 import java.util.Base64
 import java.util.UUID
 
-// Token primitives (book ch. 7.3): 15-minute HS256 access JWTs and opaque
-// 256-bit refresh tokens. The refresh value is handed out once and only its
-// SHA-256 hash is persisted; AuthService owns rotation/revocation semantics.
 @Service
 class TokenService(
   private val jwtEncoder: JwtEncoder,

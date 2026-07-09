@@ -15,8 +15,6 @@ import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
 
-// Back-office (ROLE_ADMIN via the /v1/admin/** route rule): who manages which
-// establishment. Grants/revokes are audit-logged in AdminService.
 @RestController
 @RequestMapping("/v1/admin/establishments/{establishmentId}/managers")
 class AdminController(

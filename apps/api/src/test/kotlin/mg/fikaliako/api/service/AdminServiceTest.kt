@@ -39,7 +39,7 @@ class AdminServiceTest {
       id = businessUserId,
       displayName = "Chez Bao",
       phone = "+261340000002",
-      role = UserRole.BUSINESS,
+      role = UserRole.business,
       createdAt = now,
     )
 
@@ -74,7 +74,7 @@ class AdminServiceTest {
 
   @Test
   fun `only business accounts can be granted management`() {
-    val consumer = businessUser().apply { role = UserRole.USER }
+    val consumer = businessUser().apply { role = UserRole.user }
     Mockito.`when`(establishments.findById(estId)).thenReturn(Optional.of(Establishment(id = estId)))
     Mockito.`when`(users.findById(businessUserId)).thenReturn(Optional.of(consumer))
 

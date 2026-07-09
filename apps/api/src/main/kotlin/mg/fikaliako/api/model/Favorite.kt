@@ -22,7 +22,6 @@ data class FavoriteId(
   val establishmentId: UUID = UUID(0, 0),
 ) : Serializable
 
-// N–N user ↔ establishment (book ch. 4.6); PUT/DELETE toggle the row.
 @Entity
 @Table(name = "favorites")
 class Favorite(

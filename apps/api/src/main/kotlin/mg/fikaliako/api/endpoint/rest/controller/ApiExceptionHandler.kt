@@ -1,4 +1,5 @@
 package mg.fikaliako.api.endpoint.rest.controller
+
 import jakarta.servlet.http.HttpServletRequest
 import mg.fikaliako.api.config.CorrelationIdFilter
 import mg.fikaliako.api.model.exception.BadRequestException

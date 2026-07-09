@@ -11,8 +11,6 @@ import org.hibernate.type.SqlTypes
 import java.time.Instant
 import java.util.UUID
 
-// Append-only audit trail for moderation/admin actions (book ch. 7.3).
-// Rows are immutable by contract: inserted, never updated or deleted.
 @Entity
 @Table(name = "audit_log")
 class AuditLogEntry(
@@ -32,8 +30,6 @@ class AuditLogEntry(
   @Column(name = "entity_id")
   var entityId: UUID? = null,
 
-  // JSON document as text; String pass-through avoids coupling Hibernate to a
-  // Jackson 2 format mapper (the app is on Jackson 3)
   @JdbcTypeCode(SqlTypes.JSON)
   @Column(columnDefinition = "jsonb")
   var details: String? = null,

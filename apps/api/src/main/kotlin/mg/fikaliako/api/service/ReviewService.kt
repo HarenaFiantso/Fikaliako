@@ -56,11 +56,9 @@ class ReviewService(
         ratingSpeed = input.ratingSpeed.toShort(),
         ratingWelcome = input.ratingWelcome.toShort(),
         comment = input.comment?.trim()?.takeIf { it.isNotEmpty() },
-        status = ReviewStatus.PUBLISHED,
+        status = ReviewStatus.published,
         createdAt = clock.instant(),
       )
-    // global_note stays DB-generated; the echo computes the same weighted mean
-    // (quality ×2, weights sum to 6 — book ch. 4.4)
     review.globalNote = weightedGlobalNote(input)
     reviewRepository.save(review)
     return toItem(review)
@@ -86,11 +84,11 @@ class ReviewService(
     val fetch = Limit.of(cappedLimit + 1)
     val rows =
       if (cursor == null) {
-        reviewRepository.findPublished(establishmentId, ReviewStatus.PUBLISHED, fetch)
+        reviewRepository.findPublished(establishmentId, ReviewStatus.published, fetch)
       } else {
         reviewRepository.findPublishedAfter(
           establishmentId,
-          ReviewStatus.PUBLISHED,
+          ReviewStatus.published,
           cursor.createdAt,
           cursor.id,
           fetch,

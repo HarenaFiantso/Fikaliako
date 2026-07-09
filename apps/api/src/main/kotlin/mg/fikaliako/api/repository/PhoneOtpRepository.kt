@@ -11,7 +11,6 @@ interface PhoneOtpRepository : JpaRepository<PhoneOtp, UUID> {
     purpose: OtpPurpose,
   ): PhoneOtp?
 
-  // Backs the 5-codes/hour/number issuance limit (book ch. 7.3)
   fun countByPhoneAndPurposeAndCreatedAtAfter(
     phone: String,
     purpose: OtpPurpose,

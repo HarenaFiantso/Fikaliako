@@ -15,7 +15,6 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.put
 import java.util.UUID
 
-// RBAC around /v1/admin/**: only ROLE_ADMIN passes
 @WebMvcTest(AdminController::class)
 @Import(SecurityConfig::class)
 class AdminControllerTest {

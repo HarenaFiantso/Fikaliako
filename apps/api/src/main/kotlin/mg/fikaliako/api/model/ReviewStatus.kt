@@ -1,7 +1,8 @@
 package mg.fikaliako.api.model
 
+@Suppress("ktlint:standard:enum-entry-name-case", "EnumEntryName")
 enum class ReviewStatus {
-  PUBLISHED,
-  HIDDEN,
-  FLAGGED,
+  published,
+  hidden,
+  flagged,
 }

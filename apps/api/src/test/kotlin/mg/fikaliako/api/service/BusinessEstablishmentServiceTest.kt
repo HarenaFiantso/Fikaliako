@@ -45,7 +45,7 @@ class BusinessEstablishmentServiceTest {
       name = "Gargotte Chez Bao",
       slug = "gargotte-chez-bao",
       position = geometryFactory.createPoint(Coordinate(47.5210, -18.9092)),
-      status = EstablishmentStatus.ACTIVE,
+      status = EstablishmentStatus.active,
     )
 
   private fun detailStub() =
@@ -145,7 +145,7 @@ class BusinessEstablishmentServiceTest {
     assertEquals("Gargotte Chez Bao", stored.name)
     assertEquals("+261 34 00 000 01", stored.phone)
     assertEquals(4000, stored.avgPriceAr)
-    assertEquals(EstablishmentStatus.CLOSED, stored.status)
+    assertEquals(EstablishmentStatus.closed, stored.status)
     assertTrue(stored.wifi)
     assertTrue(stored.terrace)
     assertEquals(false, stored.delivery)

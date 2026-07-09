@@ -27,7 +27,7 @@ class TokenServiceTest {
       id = UUID.fromString("bbbbbbbb-0000-0000-0000-000000000001"),
       displayName = "Chez Bao",
       phone = "+261340000001",
-      role = UserRole.BUSINESS,
+      role = UserRole.business,
     )
 
   @Test

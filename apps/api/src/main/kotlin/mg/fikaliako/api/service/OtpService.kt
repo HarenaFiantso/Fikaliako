@@ -1,4 +1,5 @@
 package mg.fikaliako.api.service
+
 import mg.fikaliako.api.config.AuthProperties
 import mg.fikaliako.api.model.OtpPurpose
 import mg.fikaliako.api.model.PhoneOtp
@@ -13,9 +14,6 @@ import java.time.Clock
 import java.time.Duration
 import java.util.UUID
 
-// One-time SMS codes (book ch. 4.7): 6 digits, short-lived, stored hashed.
-// Issuance is capped at otp-max-per-hour per number (ch. 7.3) and each code
-// allows otp-max-attempts guesses before it dies.
 @Service
 class OtpService(
   private val repository: PhoneOtpRepository,
@@ -47,9 +45,7 @@ class OtpService(
     smsSender.send(phone, "Fikaliako: code $code (valide ${props.otpTtl.toMinutes()} min). Aza zaraina.")
   }
 
-  // Consumes the latest live code for (phone, purpose); one failure message on
-  // purpose, so a guesser learns nothing about which check failed.
-  @Transactional
+  @Transactional(noRollbackFor = [BadRequestException::class])
   fun verify(
     phone: String,
     purpose: OtpPurpose,

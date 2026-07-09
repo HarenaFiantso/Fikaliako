@@ -9,8 +9,6 @@ import org.hibernate.type.SqlTypes
 import java.time.Instant
 import java.util.UUID
 
-// One-time SMS code for phone verification or password reset (book ch. 4.7).
-// The code itself is never stored — only its hash; attempts bounds guessing.
 @Entity
 @Table(name = "phone_otps")
 class PhoneOtp(
@@ -22,7 +20,7 @@ class PhoneOtp(
 
   @JdbcTypeCode(SqlTypes.NAMED_ENUM)
   @Column(columnDefinition = "otp_purpose")
-  var purpose: OtpPurpose = OtpPurpose.VERIFY_PHONE,
+  var purpose: OtpPurpose = OtpPurpose.verify_phone,
 
   @Column(name = "code_hash", columnDefinition = "text")
   var codeHash: String = "",
