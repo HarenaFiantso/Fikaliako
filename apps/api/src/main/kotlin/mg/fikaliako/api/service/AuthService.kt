@@ -62,7 +62,7 @@ class AuthService(
       )
     users.save(user)
     otpService.issue(user.phone, OtpPurpose.VERIFY_PHONE)
-    return toProfile(user)
+    return user.toProfile()
   }
 
   @Transactional
@@ -76,7 +76,7 @@ class AuthService(
       users.save(user)
     }
     requireActive(user)
-    return AuthSession(user = toProfile(user), tokens = openSession(user))
+    return AuthSession(user = user.toProfile(), tokens = openSession(user))
   }
 
   // Always answers 202: whether the number has an unverified account is not
@@ -102,7 +102,7 @@ class AuthService(
     if (!user.phoneVerified) {
       throw ForbiddenException("Phone number not verified. Verify it with the code sent by SMS (/v1/auth/verify-phone).")
     }
-    return AuthSession(user = toProfile(user), tokens = openSession(user))
+    return AuthSession(user = user.toProfile(), tokens = openSession(user))
   }
 
   @Transactional
@@ -202,17 +202,6 @@ class AuthService(
       throw ForbiddenException("This account is ${user.status.name.lowercase()}.")
     }
   }
-
-  private fun toProfile(user: UserAccount): UserProfile =
-    UserProfile(
-      id = requireNotNull(user.id),
-      phone = user.phone,
-      displayName = user.displayName,
-      role = user.role.name.lowercase(),
-      phoneVerified = user.phoneVerified,
-      locale = user.locale,
-      createdAt = requireNotNull(user.createdAt),
-    )
 
   companion object {
     const val BAD_CREDENTIALS = "Invalid phone number or password."

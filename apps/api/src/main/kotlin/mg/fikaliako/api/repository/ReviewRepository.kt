@@ -9,6 +9,12 @@ import java.time.Instant
 import java.util.UUID
 
 interface ReviewRepository : JpaRepository<Review, UUID> {
+  // one review per user per establishment (book ch. 4.4, UNIQUE in V4)
+  fun existsByEstablishmentIdAndAuthorId(
+    establishmentId: UUID,
+    authorId: UUID,
+  ): Boolean
+
   @Query(
     """
         SELECT r FROM Review r JOIN FETCH r.author
