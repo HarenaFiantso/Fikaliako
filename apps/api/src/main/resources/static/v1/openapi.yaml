@@ -2,7 +2,7 @@ openapi: 3.1.0
 
 info:
   title: Fikaliako API
-  version: 0.2.0
+  version: 0.3.0
   summary: Geolocated food discovery for Madagascar
   description: |
     REST API of **Fikaliako**, the platform for discovering places to eat in
@@ -22,11 +22,30 @@ info:
     Endpoints not yet implemented are marked with a (planned) note in their
     description; they define the target contract for the modules to come.
 
+    ## Authentication (project book ch. 4.7, 7.3)
+
+    Identity is the **E.164 phone number** — no email at MVP; phone
+    verification and password reset are OTP SMS flows. `POST /v1/auth/login`
+    (or `verify-phone` on signup) returns a 15-minute HS256 **access JWT**
+    plus an opaque, revocable **refresh token**:
+
+    - Send the access token as `Authorization: Bearer <token>`.
+    - `POST /v1/auth/refresh` rotates the refresh token; each token is
+      single-use and replaying a rotated token revokes the whole session.
+    - `POST /v1/auth/logout` revokes the session server-side; password reset
+      and change revoke every session of the account.
+
+    Roles (the `role` claim): `user` (consumer), `business` (premium
+    establishment account — manages its establishments under
+    `/v1/business/**`), `moderator`, and `admin` (back-office,
+    `/v1/admin/**`).
+
     ## Conventions
 
     - All endpoints are rooted at `/v1`.
-    - Reads (`GET`) are public; writes require authentication (JWT, arriving
-      with the accounts module — project book ch. 4.7).
+    - Reads (`GET`) are public; writes require authentication, and the
+      `/v1/business` and `/v1/admin` trees additionally require the matching
+      role (403 otherwise).
     - Errors use RFC 9457 Problem Details (`application/problem+json`) and carry
       a `correlation_id`, also returned in the `X-Correlation-Id` header.
     - Prices are integers in **ariary** (`*_ar` fields).
@@ -48,6 +67,10 @@ security: []
 tags:
   - name: Health
     description: Liveness and service metadata.
+  - name: Auth
+    description: >
+      Phone-number accounts (book ch. 4.7): registration, OTP verification,
+      login, token rotation and the password lifecycle.
   - name: Establishments
     description: Browse and read establishments (restaurants, gargottes, vendors…).
   - name: Search
@@ -55,7 +78,13 @@ tags:
   - name: Reviews
     description: Five-criteria community reviews.
   - name: Account
-    description: Authenticated user, favorites, contributions (planned).
+    description: The authenticated user's profile and favorites.
+  - name: Business
+    description: >
+      Premium establishment accounts (`business` role) managing the profile of
+      the establishments an admin granted them.
+  - name: Admin
+    description: Back-office (`admin` role) — manager grants, audit-logged.
 
 paths:
   /v1/ping:
@@ -77,6 +106,235 @@ paths:
               example:
                 service: fikaliako-api
                 message: "Aiza no hisakafo androany ?"
+
+  /v1/auth/register:
+    post:
+      tags: [Auth]
+      operationId: register
+      summary: Create an account
+      description: >
+        Creates a phone-number account (project book ch. 4.7). `account_type`
+        picks the role: `consumer` (default) or `business` (premium
+        establishment account — managing an establishment additionally
+        requires an admin-granted link). The password is hashed with Argon2id
+        and a 6-digit verification code is sent by SMS; the account cannot log
+        in until `/v1/auth/verify-phone` succeeds.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterRequest"
+      responses:
+        "201":
+          description: Account created; verification code sent by SMS.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "409":
+          $ref: "#/components/responses/Conflict"
+
+  /v1/auth/verify-phone:
+    post:
+      tags: [Auth]
+      operationId: verifyPhone
+      summary: Verify the phone number with the SMS code
+      description: >
+        Consumes the 6-digit code (10-minute lifetime, 5 attempts) and opens
+        the first session. Whether a number is registered is never revealed:
+        an unknown number answers the same 400 as a bad code.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VerifyPhoneRequest"
+      responses:
+        "200":
+          description: Phone verified; the account is now active.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthSession"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /v1/auth/resend-otp:
+    post:
+      tags: [Auth]
+      operationId: resendOtp
+      summary: Re-send the verification code
+      description: >
+        Always answers 202 so account existence is not revealed. Issuance is
+        capped at 5 codes/hour/number (book ch. 7.3).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResendOtpRequest"
+      responses:
+        "202":
+          description: If the number has an unverified account, a code was sent.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+
+  /v1/auth/login:
+    post:
+      tags: [Auth]
+      operationId: login
+      summary: Log in with phone number and password
+      description: >
+        Opens a session: a 15-minute access JWT plus a 30-day single-use
+        refresh token. Unverified phones get a 403 pointing at
+        `/v1/auth/verify-phone`; suspended accounts get a 403 too.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Authenticated.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthSession"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /v1/auth/refresh:
+    post:
+      tags: [Auth]
+      operationId: refreshTokens
+      summary: Rotate the refresh token
+      description: >
+        Exchanges a live refresh token for a fresh access JWT and a new
+        refresh token. Each refresh token is single-use: presenting an
+        already-rotated one is treated as theft and revokes the whole session
+        family.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RefreshRequest"
+      responses:
+        "200":
+          description: New token pair.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthTokens"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /v1/auth/logout:
+    post:
+      tags: [Auth]
+      operationId: logout
+      summary: Log out (revoke the session)
+      description: >
+        Revokes the session the refresh token belongs to, server-side and
+        idempotently. The current access token stays valid for its remaining
+        lifetime (≤ 15 min) — clients should also drop it locally.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LogoutRequest"
+      responses:
+        "204":
+          description: Session revoked (or the token was already unknown).
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  /v1/auth/forgot-password:
+    post:
+      tags: [Auth]
+      operationId: forgotPassword
+      summary: Request a password-reset code
+      description: >
+        Sends a reset code by SMS if the number has an account. Always answers
+        202 so account existence is not revealed; issuance shares the
+        5/hour/number cap.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ForgotPasswordRequest"
+      responses:
+        "202":
+          description: If the number has an account, a reset code was sent.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+
+  /v1/auth/reset-password:
+    post:
+      tags: [Auth]
+      operationId: resetPassword
+      summary: Reset the password with the SMS code
+      description: >
+        Sets a new password after validating the reset code, then revokes
+        every live session of the account (the reset proves control of the
+        number, not of every device).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResetPasswordRequest"
+      responses:
+        "204":
+          description: Password changed; all sessions revoked. Log in again.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  /v1/auth/change-password:
+    post:
+      tags: [Auth]
+      operationId: changePassword
+      summary: Change the password (authenticated)
+      description: >
+        Requires the current password. Every other session is revoked and a
+        fresh token pair is returned so the calling device stays logged in.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChangePasswordRequest"
+      responses:
+        "200":
+          description: Password changed; fresh tokens for this device.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthTokens"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
 
   /v1/nearby:
     get:
@@ -235,10 +493,11 @@ paths:
     post:
       tags: [Reviews]
       operationId: createReview
-      summary: Post a review (planned)
+      summary: Post a review
       description: >
-        (planned) One review per user per establishment, scored 1–5 on five
-        criteria (project book ch. 4.4). Arrives with the community module.
+        One review per user per establishment, scored 1–5 on five criteria
+        (project book ch. 4.4). The global note is the weighted mean with
+        quality counted twice. A second review from the same account is a 409.
       security:
         - bearerAuth: []
       parameters:
@@ -256,44 +515,271 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ReviewItem"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
 
   /v1/users/me:
     get:
       tags: [Account]
       operationId: getCurrentUser
-      summary: Current authenticated user (planned)
-      description: "(planned) Arrives with the accounts module (project book ch. 4.7)."
+      summary: Current authenticated user
       security:
         - bearerAuth: []
       responses:
         "200":
           description: The authenticated user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+    patch:
+      tags: [Account]
+      operationId: updateCurrentUser
+      summary: Update the profile
+      description: Partial update — absent fields stay untouched.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateProfileRequest"
+      responses:
+        "200":
+          description: The updated profile.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /v1/users/me/favorites:
+    get:
+      tags: [Account]
+      operationId: listFavorites
+      summary: The user's favorites
+      description: >
+        Favorited establishments, most recently added first, cursor-paginated
+        (project book ch. 4.6).
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/LimitParam"
+        - $ref: "#/components/parameters/CursorParam"
+      responses:
+        "200":
+          description: A page of favorited establishments.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EstablishmentPage"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
 
   /v1/users/me/favorites/{establishmentId}:
     put:
       tags: [Account]
       operationId: addFavorite
-      summary: Add a favorite (planned)
-      description: "(planned) Idempotent add to the user's favorites (project book ch. 4.6)."
+      summary: Add a favorite
+      description: Idempotent add to the user's favorites (project book ch. 4.6).
       security:
         - bearerAuth: []
       parameters:
         - $ref: "#/components/parameters/EstablishmentId"
       responses:
         "204":
-          description: Favorited.
+          description: Favorited (already-favorited is not an error).
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
     delete:
       tags: [Account]
       operationId: removeFavorite
-      summary: Remove a favorite (planned)
-      description: "(planned) Idempotent removal from the user's favorites."
+      summary: Remove a favorite
+      description: Idempotent removal from the user's favorites.
       security:
         - bearerAuth: []
       parameters:
         - $ref: "#/components/parameters/EstablishmentId"
       responses:
         "204":
-          description: Un-favorited.
+          description: Un-favorited (or was never favorited).
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /v1/business/establishments:
+    get:
+      tags: [Business]
+      operationId: listManagedEstablishments
+      summary: Establishments managed by this account
+      description: >
+        The establishments an admin granted this `business` account. One page,
+        no cursor — an account manages a handful at most.
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: The managed establishments.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EstablishmentPage"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /v1/business/establishments/{establishmentId}:
+    patch:
+      tags: [Business]
+      operationId: updateManagedEstablishment
+      summary: Update the business profile
+      description: >
+        Partial update of an establishment this account manages: contact
+        fields, average price, amenities, and `active`/`closed` status.
+        Position changes go through the community loop (book ch. 4.8) and
+        `verified` is a moderator act — neither is editable here. Admins pass
+        the ownership check.
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/EstablishmentId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BusinessEstablishmentUpdate"
+      responses:
+        "200":
+          description: The updated establishment.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EstablishmentDetail"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /v1/business/establishments/{establishmentId}/opening-hours:
+    put:
+      tags: [Business]
+      operationId: replaceOpeningHours
+      summary: Replace the opening hours
+      description: >
+        Full replacement of the opening intervals (multiple per day allowed,
+        day 0 = Monday — book ch. 6.1).
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/EstablishmentId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OpeningHoursUpdate"
+      responses:
+        "200":
+          description: The establishment with its new hours.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EstablishmentDetail"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /v1/admin/establishments/{establishmentId}/managers:
+    get:
+      tags: [Admin]
+      operationId: listEstablishmentManagers
+      summary: Managers of an establishment
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/EstablishmentId"
+      responses:
+        "200":
+          description: The accounts managing this establishment.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ManagerPage"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /v1/admin/establishments/{establishmentId}/managers/{userId}:
+    put:
+      tags: [Admin]
+      operationId: grantEstablishmentManager
+      summary: Grant management of an establishment
+      description: >
+        Links a `business` account to the establishment. Idempotent; every
+        effective grant lands in the immutable audit log (book ch. 7.3).
+        Granting to a non-business account is a 400.
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/EstablishmentId"
+        - $ref: "#/components/parameters/UserId"
+      responses:
+        "204":
+          description: Granted (or already granted).
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      tags: [Admin]
+      operationId: revokeEstablishmentManager
+      summary: Revoke management of an establishment
+      description: Idempotent; effective revocations are audit-logged.
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/EstablishmentId"
+        - $ref: "#/components/parameters/UserId"
+      responses:
+        "204":
+          description: Revoked (or was never granted).
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
 
 components:
   securitySchemes:
@@ -302,8 +788,11 @@ components:
       scheme: bearer
       bearerFormat: JWT
       description: >
-        (planned) Arrives with the accounts module (project book ch. 7.3). Required
-        on write operations (reviews, contributions, favorites).
+        15-minute HS256 access token from `/v1/auth/login`,
+        `/v1/auth/verify-phone` or `/v1/auth/refresh` (project book ch. 7.3).
+        Carries the user id (`sub`) and a `role` claim
+        (user/business/moderator/admin) that gates the `/v1/business` and
+        `/v1/admin` trees.
 
   parameters:
     LimitParam:
@@ -321,6 +810,12 @@ components:
       in: path
       required: true
       description: Establishment UUID.
+      schema: { type: string, format: uuid }
+    UserId:
+      name: userId
+      in: path
+      required: true
+      description: User account UUID.
       schema: { type: string, format: uuid }
     TypeFilter:
       name: type
@@ -371,8 +866,32 @@ components:
         application/problem+json:
           schema:
             $ref: "#/components/schemas/Problem"
+    Unauthorized:
+      description: Missing/invalid bearer token, or invalid credentials.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    Forbidden:
+      description: Authenticated but not allowed to perform this action.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
     NotFound:
       description: Resource not found.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    Conflict:
+      description: The request conflicts with existing state.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    TooManyRequests:
+      description: Rate limit hit (e.g. 5 OTP codes/hour/number).
       content:
         application/problem+json:
           schema:
@@ -406,6 +925,157 @@ components:
         correlation_id:
           type: string
           description: Echoes the `X-Correlation-Id` response header.
+
+    PhoneNumber:
+      type: string
+      description: E.164 phone number — the account identifier (book ch. 4.7).
+      pattern: "^\\+[1-9][0-9]{7,14}$"
+      examples: ["+261340000001"]
+
+    OtpCode:
+      type: string
+      description: 6-digit one-time code received by SMS.
+      pattern: "^[0-9]{6}$"
+      examples: ["123456"]
+
+    UserRole:
+      type: string
+      description: >
+        Account role: `user` = consumer, `business` = premium establishment
+        account, `moderator` and `admin` = back-office.
+      enum: [user, business, moderator, admin]
+
+    UserProfile:
+      type: object
+      description: The account as its owner sees it.
+      required: [id, phone, display_name, role, phone_verified, locale, created_at]
+      properties:
+        id: { type: string, format: uuid }
+        phone:
+          $ref: "#/components/schemas/PhoneNumber"
+        display_name: { type: string, examples: [Naina] }
+        role:
+          $ref: "#/components/schemas/UserRole"
+        phone_verified: { type: boolean }
+        locale: { type: string, enum: [fr, mg] }
+        created_at: { type: string, format: date-time }
+
+    RegisterRequest:
+      type: object
+      required: [phone, password, display_name]
+      properties:
+        phone:
+          $ref: "#/components/schemas/PhoneNumber"
+        password: { type: string, minLength: 8, maxLength: 128 }
+        display_name: { type: string, minLength: 2, maxLength: 60 }
+        account_type:
+          type: string
+          description: >
+            `consumer` (default) or `business` — a premium establishment
+            account (restaurant, gargotte, café…).
+          enum: [consumer, business]
+          default: consumer
+        locale: { type: string, enum: [fr, mg], default: fr }
+
+    VerifyPhoneRequest:
+      type: object
+      required: [phone, code]
+      properties:
+        phone:
+          $ref: "#/components/schemas/PhoneNumber"
+        code:
+          $ref: "#/components/schemas/OtpCode"
+
+    ResendOtpRequest:
+      type: object
+      required: [phone]
+      properties:
+        phone:
+          $ref: "#/components/schemas/PhoneNumber"
+
+    LoginRequest:
+      type: object
+      required: [phone, password]
+      properties:
+        phone:
+          $ref: "#/components/schemas/PhoneNumber"
+        password: { type: string }
+
+    RefreshRequest:
+      type: object
+      required: [refresh_token]
+      properties:
+        refresh_token: { type: string }
+
+    LogoutRequest:
+      type: object
+      required: [refresh_token]
+      properties:
+        refresh_token: { type: string }
+
+    ForgotPasswordRequest:
+      type: object
+      required: [phone]
+      properties:
+        phone:
+          $ref: "#/components/schemas/PhoneNumber"
+
+    ResetPasswordRequest:
+      type: object
+      required: [phone, code, new_password]
+      properties:
+        phone:
+          $ref: "#/components/schemas/PhoneNumber"
+        code:
+          $ref: "#/components/schemas/OtpCode"
+        new_password: { type: string, minLength: 8, maxLength: 128 }
+
+    ChangePasswordRequest:
+      type: object
+      required: [current_password, new_password]
+      properties:
+        current_password: { type: string }
+        new_password: { type: string, minLength: 8, maxLength: 128 }
+
+    AuthTokens:
+      type: object
+      description: >
+        A session: short-lived access JWT plus the single-use refresh token
+        (book ch. 7.3). Store the refresh token securely — it is shown once.
+      required: [token_type, access_token, expires_in, refresh_token, refresh_expires_in]
+      properties:
+        token_type: { type: string, enum: [Bearer] }
+        access_token: { type: string, description: "HS256 JWT, 15-minute lifetime." }
+        expires_in:
+          type: integer
+          format: int64
+          description: Access-token lifetime in seconds.
+          examples: [900]
+        refresh_token:
+          type: string
+          description: Opaque, single-use; rotate via `/v1/auth/refresh`.
+        refresh_expires_in:
+          type: integer
+          format: int64
+          description: Refresh-token lifetime in seconds.
+          examples: [2592000]
+
+    AuthSession:
+      type: object
+      description: Login/verification result — the user and their tokens.
+      required: [user, tokens]
+      properties:
+        user:
+          $ref: "#/components/schemas/UserProfile"
+        tokens:
+          $ref: "#/components/schemas/AuthTokens"
+
+    UpdateProfileRequest:
+      type: object
+      description: Partial profile update — absent fields stay untouched.
+      properties:
+        display_name: { type: string, minLength: 2, maxLength: 60 }
+        locale: { type: string, enum: [fr, mg] }
 
     EstablishmentType:
       type: string
@@ -575,6 +1245,74 @@ components:
         created_at: { type: string, format: date-time }
         updated_at: { type: string, format: date-time }
 
+    BusinessEstablishmentUpdate:
+      type: object
+      description: >
+        Partial business-profile update; absent fields stay untouched.
+        Position and `verified` are not editable through this endpoint.
+      properties:
+        name: { type: string, minLength: 2, maxLength: 120 }
+        address: { type: string, maxLength: 255 }
+        district: { type: string, maxLength: 120 }
+        phone: { type: string, maxLength: 30 }
+        whatsapp: { type: string, maxLength: 30 }
+        facebook_url: { type: string, maxLength: 255 }
+        website: { type: string, maxLength: 255 }
+        avg_price_ar: { type: integer, minimum: 0 }
+        status:
+          type: string
+          description: An owner can close or reopen, not self-approve out of `pending`.
+          enum: [active, closed]
+        amenities:
+          $ref: "#/components/schemas/AmenitiesUpdate"
+
+    AmenitiesUpdate:
+      type: object
+      description: Partial amenities update — absent flags stay untouched.
+      properties:
+        delivery: { type: boolean }
+        parking: { type: boolean }
+        wifi: { type: boolean }
+        wheelchair_access: { type: boolean }
+        air_conditioning: { type: boolean }
+        terrace: { type: boolean }
+        family_friendly: { type: boolean }
+        romantic: { type: boolean }
+        student_friendly: { type: boolean }
+        scenic_view: { type: boolean }
+        open_24h: { type: boolean }
+
+    OpeningHoursUpdate:
+      type: object
+      description: Full replacement of an establishment's opening intervals.
+      required: [intervals]
+      properties:
+        intervals:
+          type: array
+          items:
+            $ref: "#/components/schemas/OpeningInterval"
+
+    ManagerItem:
+      type: object
+      description: A business account managing an establishment.
+      required: [user_id, display_name, phone, granted_at]
+      properties:
+        user_id: { type: string, format: uuid }
+        display_name: { type: string, examples: [Chez Bao] }
+        phone:
+          $ref: "#/components/schemas/PhoneNumber"
+        granted_at: { type: string, format: date-time }
+
+    ManagerPage:
+      type: object
+      description: The managers of one establishment (no pagination).
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/ManagerItem"
+
     ReviewItem:
       type: object
       description: A published review (project book ch. 4.4).
@@ -605,7 +1343,7 @@ components:
 
     ReviewInput:
       type: object
-      description: (planned) Payload to create a review.
+      description: Payload to create a review.
       required:
         - rating_quality
         - rating_price
