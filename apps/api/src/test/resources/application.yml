@@ -16,3 +16,15 @@ spring:
   jackson:
     property-naming-strategy: SNAKE_CASE
     default-property-inclusion: non_null
+
+# This file fully shadows the main application.yml, so the auth block must be
+# duplicated for slice tests that import SecurityConfig.
+fikaliako:
+  auth:
+    jwt-secret: test-only-fikaliako-jwt-secret-0123456789abcdef
+    issuer: fikaliako-api
+    access-token-ttl: 15m
+    refresh-token-ttl: 30d
+    otp-ttl: 10m
+    otp-max-per-hour: 5
+    otp-max-attempts: 5

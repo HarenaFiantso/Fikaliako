@@ -28,6 +28,20 @@ spring:
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
 
+fikaliako:
+  auth:
+    # HS256 signing secret, >= 32 bytes. The dev default is for local use only;
+    # production MUST set AUTH_JWT_SECRET.
+    jwt-secret: ${AUTH_JWT_SECRET:dev-only-fikaliako-jwt-secret-0123456789abcdef}
+    issuer: fikaliako-api
+    # Short-lived access JWTs + revocable refresh tokens (book ch. 7.3)
+    access-token-ttl: 15m
+    refresh-token-ttl: 30d
+    otp-ttl: 10m
+    # 5 OTP sends/hour/number and 5 guesses per code (book ch. 7.3)
+    otp-max-per-hour: 5
+    otp-max-attempts: 5
+
 server:
   port: ${SERVER_PORT:8080}
   shutdown: graceful
