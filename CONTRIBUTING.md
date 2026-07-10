@@ -75,6 +75,7 @@ Formatting is enforced, not optional — unformatted Kotlin fails `gradlew build
 - Stack conventions: TanStack Query for data fetching (hooks in `hooks/`), Zustand for client state (`lib/auth/*-store.ts`), Zod for validation (`lib/validation/`), Motion for animations, shadcn-style primitives in `components/ui/`.
 - Styling is Tailwind CSS v4 — design tokens live in `app/globals.css`; use the semantic tokens (`bg-primary`, `text-muted-foreground`…), not raw colors.
 - Keep comments minimal: only document genuinely non-obvious logic.
+- **E2E tests are Cypress** (`apps/web/cypress/`), stubbing the API with `cy.intercept` so no backend is needed: `pnpm --filter web e2e` (headless, boots the dev server itself) or `e2e:open` for the UI. New user-facing flows should come with a spec; future client apps (back office…) get their own suite following the same pattern.
 
 ### Translations (`apps/web/messages/`)
 
