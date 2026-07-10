@@ -1,0 +1,41 @@
+name: Translation improvement
+description: Fix or extend the Malagasy or French copy
+title: '[i18n] '
+labels: ['i18n']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Malagasy improvements are especially welcome — the current `mg.json` covers only the basics, and every translated key helps. French (`fr.json`) is the complete reference; `mg.json` and `en.json` fall back to it for any missing key, so partial contributions are perfectly fine. Catalogs live in [`apps/web/messages/`](https://github.com/HarenaFiantso/Fikaliako/tree/main/apps/web/messages).
+
+  - type: dropdown
+    id: locale
+    attributes:
+      label: Language
+      options:
+        - Malagasy (mg)
+        - French (fr)
+        - English (en)
+    validations:
+      required: true
+
+  - type: textarea
+    id: changes
+    attributes:
+      label: What should change?
+      description: The keys or screens concerned, the current text, and your proposed text. If you'd rather open a PR directly, that works too — this issue form is for suggestions without one.
+      placeholder: |
+        Key: auth.verify-phone.resend
+        Current (fr fallback): « Renvoyer le code »
+        Proposed (mg): « Alefaso indray ny kaody »
+        Why: …
+    validations:
+      required: true
+
+  - type: input
+    id: fluency
+    attributes:
+      label: Your familiarity with the language
+      description: Native speaker, fluent, learner… helps us weigh conflicting suggestions.
+    validations:
+      required: false

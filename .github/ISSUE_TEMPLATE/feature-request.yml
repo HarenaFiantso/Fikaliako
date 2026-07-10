@@ -1,0 +1,68 @@
+name: Feature request
+description: Suggest an idea or improvement
+title: '[feature] '
+labels: ['enhancement']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Ideas are welcome! One thing to know first: Fikaliako's scope is governed by the project book — the MVP is a contract, and features like menus, reservations, push notifications, or a public API are already planned for **V2/V3** rather than missing. See the [roadmap](https://github.com/HarenaFiantso/Fikaliako/blob/main/README.md#roadmap) and [CONTRIBUTING.md](https://github.com/HarenaFiantso/Fikaliako/blob/main/CONTRIBUTING.md#ground-rules).
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: Describe the user need, not the solution — who is stuck, and on what?
+      placeholder: As someone eating out in Analakely at lunch, I can't tell which gargottes accept MVola without walking there…
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: What would you like to happen? Sketches and examples welcome.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Other ways to solve the same problem, and why they fall short.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Web app (apps/web)
+        - API (apps/api)
+        - Typed client (packages/api-client)
+        - Documentation / project
+        - Not sure
+    validations:
+      required: true
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Where does it fit the roadmap?
+      description: Best guess is fine — "Not sure" is a valid answer.
+      options:
+        - MVP — core map/search/reviews/accounts experience
+        - V2 — restaurateur space, menus, promotions, push, reservation
+        - V3 — recommendations, gamification, offline, public API
+        - Not sure
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues and this isn't a duplicate.
+          required: true
+        - label: I understand MVP additions require removing something equivalent (project book ch. 5.2), so this may be scheduled for a later version.
+          required: true

@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Report a security vulnerability
+    url: https://github.com/HarenaFiantso/Fikaliako/security/advisories/new
+    about: Please report security or privacy problems privately — never in a public issue.
+  - name: Contributing guide
+    url: https://github.com/HarenaFiantso/Fikaliako/blob/main/CONTRIBUTING.md
+    about: How to set up the project, coding conventions, and the PR checklist.

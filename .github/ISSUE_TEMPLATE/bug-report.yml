@@ -1,0 +1,77 @@
+name: Bug report
+description: Something doesn't work as it should
+title: '[bug] '
+labels: ['bug']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Misaotra for taking the time to report! A few well-filled fields save a whole round-trip of questions.
+
+        > [!IMPORTANT]
+        > **Security or privacy problem?** Please don't open an issue — report it privately as described in [SECURITY.md](https://github.com/HarenaFiantso/Fikaliako/blob/main/SECURITY.md).
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      description: Where does the problem live?
+      options:
+        - Web app (apps/web)
+        - API (apps/api)
+        - Typed client (packages/api-client)
+        - Local dev setup (Docker, Gradle, pnpm)
+        - Documentation
+        - Not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you do, what did you expect, and what happened instead?
+      placeholder: |
+        1. Registered an account on /register with a 034 number
+        2. Expected to land on the verification screen
+        3. Got a network error toast instead
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs, error output, or API response
+      description: |
+        Anything the app printed — browser console, API log lines, or a problem+json body.
+        For API errors, include the `X-Correlation-Id` response header if you have it: it lets us find the exact request in the logs.
+        This field is auto-formatted as code, no backticks needed.
+      render: text
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: For anything visual — drag and drop images here. Light and dark theme if relevant.
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Only what's relevant to your report.
+      placeholder: |
+        Browser/OS: Firefox 141 on Fedora 44
+        Node/pnpm: 22.22 / 9.0
+        Commit: main @ b29405d
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues and this isn't a duplicate.
+          required: true
+        - label: This is not a security or privacy vulnerability (those go through SECURITY.md).
+          required: true
