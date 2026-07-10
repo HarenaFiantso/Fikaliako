@@ -1,6 +1,13 @@
+import { getTranslations } from 'next-intl/server';
+
 import { createFikaliakoClient, type PingResponse } from '@fikaliako/api-client';
 
-const api = createFikaliakoClient(process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080');
+import { LandingHero } from '@/components/landing-hero';
+import { SiteHeader } from '@/components/site-header';
+
+import { API_BASE_URL } from '@/lib/api/base-url';
+
+const api = createFikaliakoClient(API_BASE_URL);
 
 async function fetchPing(): Promise<PingResponse | null> {
   try {
@@ -12,18 +19,21 @@ async function fetchPing(): Promise<PingResponse | null> {
 }
 
 export default async function Home() {
-  const ping = await fetchPing();
+  const [ping, t] = await Promise.all([fetchPing(), getTranslations('landing')]);
 
   return (
-    <main>
-      <h1>This is the home screen</h1>
-      {ping ? (
-        <p>
-          {ping.service} says: {ping.message}
+    <div className="flex min-h-dvh flex-col">
+      <SiteHeader />
+      <main className="flex-1">
+        <LandingHero />
+      </main>
+      <footer className="border-border/60 border-t py-5">
+        <p className="text-muted-foreground mx-auto max-w-6xl px-4 text-center text-xs sm:px-6">
+          {ping
+            ? t('api-says', { service: ping.service, message: ping.message })
+            : t('api-unreachable')}
         </p>
-      ) : (
-        <p>API is unreachable — start it with `pnpm turbo dev --filter=api`.</p>
-      )}
-    </main>
+      </footer>
+    </div>
   );
 }
