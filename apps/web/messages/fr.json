@@ -1,0 +1,133 @@
+{
+  "common": {
+    "app-name": "Fikaliako",
+    "tagline": "Où manger aujourd'hui ?",
+    "loading": "Chargement…",
+    "back": "Retour",
+    "or": "ou",
+    "language": "Langue",
+    "theme": {
+      "label": "Thème",
+      "light": "Clair",
+      "dark": "Sombre",
+      "system": "Système"
+    }
+  },
+  "landing": {
+    "hero-title": "Trouvez où manger, ici et maintenant",
+    "hero-subtitle": "Restaurants, gargottes et vendeurs de rue d'Antananarivo, selon votre position, votre budget et votre envie.",
+    "cta-explore": "Explorer la carte",
+    "cta-register": "Rejoindre la communauté",
+    "api-unreachable": "L'API est injoignable — démarrez-la avec « pnpm turbo dev --filter=api ».",
+    "api-says": "{service} répond : {message}"
+  },
+  "header": {
+    "login": "Se connecter",
+    "register": "Créer un compte",
+    "profile": "Mon profil",
+    "logout": "Se déconnecter",
+    "logout-success": "Vous êtes déconnecté·e. À bientôt !"
+  },
+  "auth": {
+    "brand-panel": {
+      "headline": "Votre prochain repas vous attend",
+      "taglines": [
+        "Où manger aujourd'hui ?",
+        "Un romazava à moins de 5 000 Ar ?",
+        "La meilleure gargotte du quartier ?",
+        "Un mofo gasy pour la route ?"
+      ],
+      "footnote": "Fait avec cœur à Antananarivo"
+    },
+    "fields": {
+      "phone": {
+        "label": "Numéro de téléphone",
+        "placeholder": "034 12 345 67",
+        "description": "Votre numéro malgache, il restera privé."
+      },
+      "password": {
+        "label": "Mot de passe",
+        "placeholder": "••••••••",
+        "show": "Afficher le mot de passe",
+        "hide": "Masquer le mot de passe"
+      },
+      "new-password": {
+        "label": "Nouveau mot de passe"
+      },
+      "display-name": {
+        "label": "Nom affiché",
+        "placeholder": "Naina",
+        "description": "Le nom que verront les autres gourmands."
+      },
+      "account-type": {
+        "label": "Type de compte",
+        "consumer": "Gourmand",
+        "consumer-hint": "Je cherche où manger",
+        "business": "Établissement",
+        "business-hint": "Je gère un restaurant ou une gargotte"
+      },
+      "code": {
+        "label": "Code de vérification"
+      }
+    },
+    "login": {
+      "title": "Bon retour !",
+      "subtitle": "Connectez-vous pour retrouver vos adresses préférées.",
+      "submit": "Se connecter",
+      "forgot-password": "Mot de passe oublié ?",
+      "no-account": "Pas encore de compte ?",
+      "register-link": "Créer un compte",
+      "success": "Content de vous revoir, {name} !"
+    },
+    "register": {
+      "title": "Créer un compte",
+      "subtitle": "Rejoignez la communauté et partagez vos bonnes adresses.",
+      "submit": "Créer mon compte",
+      "have-account": "Déjà un compte ?",
+      "login-link": "Se connecter",
+      "success": "Compte créé ! Vérifions votre numéro."
+    },
+    "verify-phone": {
+      "title": "Vérifiez votre numéro",
+      "subtitle": "Un code à 6 chiffres a été envoyé par SMS au {phone}.",
+      "subtitle-no-phone": "Saisissez le numéro à vérifier et le code reçu par SMS.",
+      "submit": "Vérifier",
+      "resend": "Renvoyer le code",
+      "resend-in": "Renvoyer dans {seconds} s",
+      "resend-sent": "Un nouveau code est en route.",
+      "code-hint": "Le code expire au bout de 10 minutes.",
+      "success": "Numéro vérifié. Tongasoa, {name} !",
+      "wrong-phone": "Ce n'est pas votre numéro ?"
+    },
+    "forgot-password": {
+      "title": "Mot de passe oublié",
+      "subtitle": "Indiquez votre numéro : si un compte existe, un code de réinitialisation vous sera envoyé par SMS.",
+      "submit": "Recevoir le code",
+      "sent": "Si un compte existe avec ce numéro, un code est en route.",
+      "back-to-login": "Retour à la connexion"
+    },
+    "reset-password": {
+      "title": "Nouveau mot de passe",
+      "subtitle": "Saisissez le code reçu par SMS et choisissez un nouveau mot de passe.",
+      "submit": "Réinitialiser",
+      "success": "Mot de passe réinitialisé. Connectez-vous avec votre nouveau mot de passe."
+    },
+    "errors": {
+      "phone-invalid": "Numéro invalide. Utilisez le format 034 12 345 67 ou +261 34 12 345 67.",
+      "phone-required": "Le numéro de téléphone est requis.",
+      "password-required": "Le mot de passe est requis.",
+      "password-too-short": "Au moins {min} caractères.",
+      "display-name-too-short": "Au moins {min} caractères.",
+      "code-invalid": "Le code doit contenir 6 chiffres.",
+      "invalid-credentials": "Numéro ou mot de passe incorrect.",
+      "phone-not-verified": "Votre numéro n'est pas encore vérifié. Un nouveau code vient de vous être envoyé.",
+      "account-suspended": "Ce compte est suspendu. Contactez le support.",
+      "phone-taken": "Un compte existe déjà avec ce numéro.",
+      "otp-invalid": "Code incorrect ou expiré. Réessayez ou demandez un nouveau code.",
+      "too-many-requests": "Trop de tentatives. Patientez quelques minutes avant de réessayer.",
+      "session-expired": "Votre session a expiré. Reconnectez-vous.",
+      "network": "Impossible de joindre le serveur. Vérifiez votre connexion.",
+      "generic": "Une erreur est survenue. Réessayez."
+    }
+  }
+}

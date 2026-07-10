@@ -1,0 +1,133 @@
+{
+  "common": {
+    "app-name": "Fikaliako",
+    "tagline": "Where to eat today?",
+    "loading": "Loading…",
+    "back": "Back",
+    "or": "or",
+    "language": "Language",
+    "theme": {
+      "label": "Theme",
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    }
+  },
+  "landing": {
+    "hero-title": "Find where to eat, here and now",
+    "hero-subtitle": "Restaurants, gargottes and street vendors of Antananarivo, by your location, budget and craving.",
+    "cta-explore": "Explore the map",
+    "cta-register": "Join the community",
+    "api-unreachable": "The API is unreachable — start it with \"pnpm turbo dev --filter=api\".",
+    "api-says": "{service} says: {message}"
+  },
+  "header": {
+    "login": "Sign in",
+    "register": "Create account",
+    "profile": "My profile",
+    "logout": "Sign out",
+    "logout-success": "You are signed out. See you soon!"
+  },
+  "auth": {
+    "brand-panel": {
+      "headline": "Your next meal awaits",
+      "taglines": [
+        "Where to eat today?",
+        "A romazava under 5,000 Ar?",
+        "The best gargotte nearby?",
+        "A mofo gasy for the road?"
+      ],
+      "footnote": "Made with heart in Antananarivo"
+    },
+    "fields": {
+      "phone": {
+        "label": "Phone number",
+        "placeholder": "034 12 345 67",
+        "description": "Your Malagasy number, it stays private."
+      },
+      "password": {
+        "label": "Password",
+        "placeholder": "••••••••",
+        "show": "Show password",
+        "hide": "Hide password"
+      },
+      "new-password": {
+        "label": "New password"
+      },
+      "display-name": {
+        "label": "Display name",
+        "placeholder": "Naina",
+        "description": "The name other food lovers will see."
+      },
+      "account-type": {
+        "label": "Account type",
+        "consumer": "Food lover",
+        "consumer-hint": "I'm looking for places to eat",
+        "business": "Establishment",
+        "business-hint": "I run a restaurant or a gargotte"
+      },
+      "code": {
+        "label": "Verification code"
+      }
+    },
+    "login": {
+      "title": "Welcome back!",
+      "subtitle": "Sign in to find your favorite spots again.",
+      "submit": "Sign in",
+      "forgot-password": "Forgot password?",
+      "no-account": "No account yet?",
+      "register-link": "Create account",
+      "success": "Good to see you again, {name}!"
+    },
+    "register": {
+      "title": "Create an account",
+      "subtitle": "Join the community and share your good finds.",
+      "submit": "Create my account",
+      "have-account": "Already have an account?",
+      "login-link": "Sign in",
+      "success": "Account created! Let's verify your number."
+    },
+    "verify-phone": {
+      "title": "Verify your number",
+      "subtitle": "A 6-digit code was sent by SMS to {phone}.",
+      "subtitle-no-phone": "Enter the number to verify and the code received by SMS.",
+      "submit": "Verify",
+      "resend": "Resend code",
+      "resend-in": "Resend in {seconds} s",
+      "resend-sent": "A new code is on its way.",
+      "code-hint": "The code expires after 10 minutes.",
+      "success": "Number verified. Tongasoa, {name}!",
+      "wrong-phone": "Not your number?"
+    },
+    "forgot-password": {
+      "title": "Forgot password",
+      "subtitle": "Enter your number: if an account exists, a reset code will be sent by SMS.",
+      "submit": "Send me the code",
+      "sent": "If an account exists with this number, a code is on its way.",
+      "back-to-login": "Back to sign in"
+    },
+    "reset-password": {
+      "title": "New password",
+      "subtitle": "Enter the code received by SMS and choose a new password.",
+      "submit": "Reset",
+      "success": "Password reset. Sign in with your new password."
+    },
+    "errors": {
+      "phone-invalid": "Invalid number. Use the format 034 12 345 67 or +261 34 12 345 67.",
+      "phone-required": "Phone number is required.",
+      "password-required": "Password is required.",
+      "password-too-short": "At least {min} characters.",
+      "display-name-too-short": "At least {min} characters.",
+      "code-invalid": "The code must be 6 digits.",
+      "invalid-credentials": "Wrong number or password.",
+      "phone-not-verified": "Your number is not verified yet. A new code was just sent to you.",
+      "account-suspended": "This account is suspended. Contact support.",
+      "phone-taken": "An account already exists with this number.",
+      "otp-invalid": "Wrong or expired code. Try again or request a new one.",
+      "too-many-requests": "Too many attempts. Wait a few minutes before retrying.",
+      "session-expired": "Your session has expired. Sign in again.",
+      "network": "Cannot reach the server. Check your connection.",
+      "generic": "Something went wrong. Try again."
+    }
+  }
+}

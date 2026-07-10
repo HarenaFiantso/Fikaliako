@@ -1,7 +1,10 @@
 import { Metadata } from 'next';
+import { NextIntlClientProvider } from 'next-intl';
+import { getLocale, getMessages } from 'next-intl/server';
 import { Raleway } from 'next/font/google';
 
 import './globals.css';
+import { Providers } from './providers';
 
 const raleway = Raleway({
   subsets: ['latin'],
@@ -17,14 +20,20 @@ export const metadata: Metadata = {
   description: 'Plateforme de découverte culinaire géolocalisée à Madagascar',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const [locale, messages] = await Promise.all([getLocale(), getMessages()]);
+
   return (
-    <html lang="fr" suppressHydrationWarning>
-      <body className={`${raleway.variable} font-sans antialiased`}>{children}</body>
+    <html lang={locale} suppressHydrationWarning>
+      <body className={`${raleway.variable} font-sans antialiased`}>
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <Providers>{children}</Providers>
+        </NextIntlClientProvider>
+      </body>
     </html>
   );
 }
