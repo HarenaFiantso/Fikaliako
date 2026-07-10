@@ -1,0 +1,56 @@
+{
+  "common": {
+    "app-name": "Fikaliako",
+    "tagline": "Aiza no hisakafo anio?",
+    "loading": "Miandrasa kely…",
+    "back": "Hiverina",
+    "or": "na",
+    "language": "Fiteny"
+  },
+  "landing": {
+    "cta-register": "Hiditra ao amin'ny fiaraha-monina"
+  },
+  "header": {
+    "login": "Hiditra",
+    "register": "Hamorona kaonty",
+    "profile": "Ny mombamomba ahy",
+    "logout": "Hivoaka",
+    "logout-success": "Tafavoaka ianao. Mandra-pihaona!"
+  },
+  "auth": {
+    "fields": {
+      "phone": {
+        "label": "Laharana finday"
+      },
+      "password": {
+        "label": "Teny miafina"
+      },
+      "new-password": {
+        "label": "Teny miafina vaovao"
+      },
+      "display-name": {
+        "label": "Anarana aseho"
+      },
+      "code": {
+        "label": "Kaody fanamarinana"
+      }
+    },
+    "login": {
+      "title": "Tongasoa indray!",
+      "submit": "Hiditra",
+      "no-account": "Mbola tsy manana kaonty?",
+      "register-link": "Hamorona kaonty"
+    },
+    "register": {
+      "title": "Hamorona kaonty",
+      "submit": "Hamorona ny kaontiko",
+      "have-account": "Efa manana kaonty?",
+      "login-link": "Hiditra"
+    },
+    "verify-phone": {
+      "title": "Hamarino ny laharanao",
+      "submit": "Hamarina",
+      "resend": "Alefaso indray ny kaody"
+    }
+  }
+}
