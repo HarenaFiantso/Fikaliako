@@ -33,6 +33,8 @@ fikaliako:
     otp-ttl: 10m
     otp-max-per-hour: 5
     otp-max-attempts: 5
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000}
 
 server:
   port: ${SERVER_PORT:8080}

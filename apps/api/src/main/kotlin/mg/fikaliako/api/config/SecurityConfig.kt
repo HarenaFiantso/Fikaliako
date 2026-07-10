@@ -22,14 +22,18 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter
 import org.springframework.security.web.SecurityFilterChain
+import org.springframework.web.cors.CorsConfiguration
+import org.springframework.web.cors.CorsConfigurationSource
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 import tools.jackson.databind.ObjectMapper
 import javax.crypto.spec.SecretKeySpec
 
 @Configuration
 @EnableWebSecurity
-@EnableConfigurationProperties(AuthProperties::class)
+@EnableConfigurationProperties(AuthProperties::class, CorsProperties::class)
 class SecurityConfig(
   private val props: AuthProperties,
+  private val corsProps: CorsProperties,
 ) {
   @Bean
   fun filterChain(
@@ -41,6 +45,7 @@ class SecurityConfig(
     val entryPoint = ProblemAuthenticationEntryPoint(objectMapper)
     val deniedHandler = ProblemAccessDeniedHandler(objectMapper)
     http
+      .cors {}
       .csrf { it.disable() }
       .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
       .oauth2ResourceServer { rs ->
@@ -78,6 +83,19 @@ class SecurityConfig(
           .authenticated()
       }
     return http.build()
+  }
+
+  @Bean
+  fun corsConfigurationSource(): CorsConfigurationSource {
+    val config =
+      CorsConfiguration().apply {
+        allowedOrigins = corsProps.allowedOrigins
+        allowedMethods = listOf("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
+        allowedHeaders = listOf("Authorization", "Content-Type", "Accept")
+        exposedHeaders = listOf("X-Correlation-Id")
+        maxAge = 3600
+      }
+    return UrlBasedCorsConfigurationSource().apply { registerCorsConfiguration("/**", config) }
   }
 
   // Argon2id with OWASP parameters (book ch. 7.3): m=19 MiB, t=2, p=1
