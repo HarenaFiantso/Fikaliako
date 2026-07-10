@@ -6,12 +6,15 @@ import './globals.css';
 const raleway = Raleway({
   subsets: ['latin'],
   display: 'swap',
-  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
+  variable: '--font-raleway',
 });
 
 export const metadata: Metadata = {
-  title: 'Fikaliako',
-  description: 'Plateforme de decouverte culinaire geolocalisee',
+  title: {
+    default: 'Fikaliako',
+    template: '%s · Fikaliako',
+  },
+  description: 'Plateforme de découverte culinaire géolocalisée à Madagascar',
 };
 
 export default function RootLayout({
@@ -20,8 +23,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${raleway.className} antialiased`}>{children}</body>
+    <html lang="fr" suppressHydrationWarning>
+      <body className={`${raleway.variable} font-sans antialiased`}>{children}</body>
     </html>
   );
 }

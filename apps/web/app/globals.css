@@ -1,0 +1,133 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Fikaliako design tokens — warm, food-first palette: terracotta primary,
+ * cream surfaces, espresso text. All colors in OKLCH.
+ */
+:root {
+  --background: oklch(0.985 0.006 84);
+  --foreground: oklch(0.235 0.02 50);
+  --card: oklch(0.995 0.003 84);
+  --card-foreground: oklch(0.235 0.02 50);
+  --popover: oklch(0.995 0.003 84);
+  --popover-foreground: oklch(0.235 0.02 50);
+  --primary: oklch(0.55 0.15 40);
+  --primary-foreground: oklch(0.985 0.01 84);
+  --secondary: oklch(0.945 0.02 75);
+  --secondary-foreground: oklch(0.3 0.025 45);
+  --muted: oklch(0.955 0.012 80);
+  --muted-foreground: oklch(0.5 0.025 55);
+  --accent: oklch(0.93 0.035 65);
+  --accent-foreground: oklch(0.3 0.025 45);
+  --destructive: oklch(0.55 0.2 27);
+  --destructive-foreground: oklch(0.985 0.01 84);
+  --border: oklch(0.9 0.015 75);
+  --input: oklch(0.9 0.015 75);
+  --ring: oklch(0.62 0.14 42);
+  --radius: 0.625rem;
+}
+
+.dark {
+  --background: oklch(0.155 0.012 50);
+  --foreground: oklch(0.955 0.008 84);
+  --card: oklch(0.195 0.014 52);
+  --card-foreground: oklch(0.955 0.008 84);
+  --popover: oklch(0.195 0.014 52);
+  --popover-foreground: oklch(0.955 0.008 84);
+  --primary: oklch(0.72 0.145 48);
+  --primary-foreground: oklch(0.17 0.02 45);
+  --secondary: oklch(0.25 0.015 55);
+  --secondary-foreground: oklch(0.94 0.01 80);
+  --muted: oklch(0.24 0.012 55);
+  --muted-foreground: oklch(0.68 0.02 70);
+  --accent: oklch(0.27 0.02 55);
+  --accent-foreground: oklch(0.94 0.01 80);
+  --destructive: oklch(0.65 0.18 27);
+  --destructive-foreground: oklch(0.155 0.012 50);
+  --border: oklch(0.27 0.015 60);
+  --input: oklch(0.29 0.015 60);
+  --ring: oklch(0.72 0.145 48);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --font-sans: var(--font-raleway), ui-sans-serif, system-ui, sans-serif;
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 10px);
+
+  --animate-aurora: aurora 18s ease-in-out infinite alternate;
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-shimmer: shimmer 2.2s linear infinite;
+
+  @keyframes aurora {
+    0% {
+      transform: translate(-8%, -6%) scale(1);
+    }
+    50% {
+      transform: translate(6%, 8%) scale(1.15);
+    }
+    100% {
+      transform: translate(-4%, 10%) scale(0.95);
+    }
+  }
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-12px);
+    }
+  }
+
+  @keyframes shimmer {
+    from {
+      background-position: 200% 0;
+    }
+    to {
+      background-position: -200% 0;
+    }
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-feature-settings: 'lnum' 1;
+  }
+
+  ::selection {
+    @apply bg-primary/20;
+  }
+}
