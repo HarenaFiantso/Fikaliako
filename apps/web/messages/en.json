@@ -19,7 +19,9 @@
     "cta-explore": "Explore the map",
     "cta-register": "Join the community",
     "api-unreachable": "The API is unreachable — start it with \"pnpm turbo dev --filter=api\".",
-    "api-says": "{service} says: {message}"
+    "api-says": "{service} says: {message}",
+    "welcome": "Tongasoa, {name}! The map of good spots is coming soon.",
+    "status-title": "API status"
   },
   "header": {
     "login": "Sign in",

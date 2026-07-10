@@ -19,7 +19,9 @@
     "cta-explore": "Explorer la carte",
     "cta-register": "Rejoindre la communauté",
     "api-unreachable": "L'API est injoignable — démarrez-la avec « pnpm turbo dev --filter=api ».",
-    "api-says": "{service} répond : {message}"
+    "api-says": "{service} répond : {message}",
+    "welcome": "Tongasoa, {name} ! La carte des bonnes adresses arrive bientôt.",
+    "status-title": "État de l'API"
   },
   "header": {
     "login": "Se connecter",
