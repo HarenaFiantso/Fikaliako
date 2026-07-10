@@ -9,7 +9,7 @@ This guide covers how to contribute. For what the project is and how to run it, 
 - **The project book is the spec.** Every v1 feature decision traces to a section of _Fikaliako, Livre de Projet v1.0_ (referenced in code comments as "project book ch. N"). The MVP scope is a contract (book ch. 5.2): adding something to the MVP means removing something equivalent. If your idea is outside the current scope (menus, reservations, push notifications, public API, EN locale…), open an issue to discuss it before writing code — it may belong to V2/V3.
 - **Two languages, no more**: Kotlin in `apps/api`, TypeScript everywhere else.
 - **English everywhere** in code, comments, and identifiers. Product vocabulary stays in domain terms: gargotte, ariary (Ar), laoka, romazava, mofo gasy…
-- Be kind and constructive in issues and reviews. We're building for a community; act like part of one.
+- Be kind and constructive in issues and reviews — this project follows the [Code of Conduct](CODE_OF_CONDUCT.md). We're building for a community; act like part of one.
 
 ## Getting set up
 
