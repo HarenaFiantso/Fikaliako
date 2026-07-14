@@ -1,0 +1,12 @@
+{
+  "extends": "@fikaliako/typescript-config/base.json",
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "types": ["cypress", "node"],
+    "declaration": false,
+    "declarationMap": false,
+    "noEmit": true
+  },
+  "include": ["**/*.ts", "../cypress.config.ts"]
+}

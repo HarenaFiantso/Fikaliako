@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgis/postgis:16-3.4
+    image: postgis/postgis:17-3.5
     labels:
       # non-standard image name (postgis/postgis): tells Spring Boot this is a Postgres service
       org.springframework.boot.service-connection: postgres
@@ -15,7 +15,7 @@ services:
       - pgdata:/var/lib/postgresql/data
 
   redis:
-    image: redis:7-alpine
+    image: redis:8-alpine
     ports:
       - '6379:6379'
 
