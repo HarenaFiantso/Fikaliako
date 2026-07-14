@@ -1,9 +1,9 @@
 plugins {
-  kotlin("jvm") version "2.3.21"
-  kotlin("plugin.spring") version "2.3.21"
+  kotlin("jvm") version "2.4.0"
+  kotlin("plugin.spring") version "2.4.0"
   id("org.springframework.boot") version "4.1.0"
   id("io.spring.dependency-management") version "1.1.7"
-  kotlin("plugin.jpa") version "2.3.21"
+  kotlin("plugin.jpa") version "2.4.0"
   id("com.diffplug.spotless") version "8.8.0"
   jacoco
 }
@@ -34,12 +34,12 @@ dependencies {
   implementation("org.springframework.security:spring-security-oauth2-jose")
   implementation("org.springframework.security:spring-security-oauth2-resource-server")
   // Argon2id password hashing (book ch. 7.3) — Spring Security delegates to BouncyCastle
-  implementation("org.bouncycastle:bcprov-jdk18on:1.80")
+  implementation("org.bouncycastle:bcprov-jdk18on:1.84")
   implementation("org.flywaydb:flyway-database-postgresql")
   implementation("org.jetbrains.kotlin:kotlin-reflect")
   implementation("tools.jackson.module:jackson-module-kotlin")
   implementation("org.hibernate.orm:hibernate-spatial")
-  runtimeOnly("org.webjars:swagger-ui:5.25.3")
+  runtimeOnly("org.webjars:swagger-ui:5.32.8")
   runtimeOnly("org.webjars:webjars-locator-lite")
   developmentOnly("org.springframework.boot:spring-boot-docker-compose")
   runtimeOnly("org.postgresql:postgresql")
