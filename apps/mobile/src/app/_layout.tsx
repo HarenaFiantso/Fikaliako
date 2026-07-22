@@ -15,12 +15,14 @@ import { useColorScheme } from 'react-native';
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
 
 import { useSession } from '@/lib/auth/session-store';
+import { useOnboarding } from '@/lib/onboarding-store';
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const restore = useSession((state) => state.restore);
+  const restoreOnboarding = useOnboarding((state) => state.restore);
   const [fontsReady, fontsError] = useFonts({
     Raleway_400Regular,
     Raleway_500Medium,
@@ -31,7 +33,8 @@ export default function RootLayout() {
 
   useEffect(() => {
     void restore();
-  }, [restore]);
+    void restoreOnboarding();
+  }, [restore, restoreOnboarding]);
 
   if (!fontsReady && !fontsError) {
     return null;
@@ -42,6 +45,7 @@ export default function RootLayout() {
       <AnimatedSplashOverlay />
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="(onboarding)" options={{ animation: 'fade' }} />
         <Stack.Screen name="(auth)" options={{ presentation: 'modal' }} />
       </Stack>
     </ThemeProvider>
