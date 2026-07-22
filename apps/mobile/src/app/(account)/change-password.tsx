@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Redirect, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { Controller, useForm } from 'react-hook-form';
 
 import { AlertBanner } from '@/components/ui/alert-banner';
@@ -14,7 +14,6 @@ import { useSession } from '@/lib/auth/session-store';
 
 export default function ChangePasswordScreen() {
   const router = useRouter();
-  const status = useSession((state) => state.status);
   const changePassword = useSession((state) => state.changePassword);
   const [formError, setFormError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
@@ -27,10 +26,6 @@ export default function ChangePasswordScreen() {
     resolver: zodResolver(changePasswordSchema),
     defaultValues: { currentPassword: '', newPassword: '' },
   });
-
-  if (status === 'signedOut') {
-    return <Redirect href="/profile" />;
-  }
 
   const submit = handleSubmit(async (values) => {
     setFormError(null);

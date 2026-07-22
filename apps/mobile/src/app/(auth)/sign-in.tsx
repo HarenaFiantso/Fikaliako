@@ -37,7 +37,6 @@ export default function SignInScreen() {
     setFormError(null);
     try {
       await signIn(values);
-      router.dismissTo('/profile');
     } catch (error) {
       if (error instanceof AuthError && error.kind === 'phoneUnverified') {
         router.push({ pathname: '/verify-phone', params: { phone: values.phone } });

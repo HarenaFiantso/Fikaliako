@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 
 import { AlertBanner } from '@/components/ui/alert-banner';
@@ -18,7 +18,6 @@ import { Spacing } from '@/constants/theme';
 const RESEND_DELAY_SECONDS = 30;
 
 export default function VerifyPhoneScreen() {
-  const router = useRouter();
   const { phone = '' } = useLocalSearchParams<{ phone?: string }>();
   const verifyPhone = useSession((state) => state.verifyPhone);
   const resendOtp = useSession((state) => state.resendOtp);
@@ -45,7 +44,6 @@ export default function VerifyPhoneScreen() {
     setNotice(null);
     try {
       await verifyPhone({ phone, code: value });
-      router.dismissTo('/profile');
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Could not verify the number');
       setCode('');

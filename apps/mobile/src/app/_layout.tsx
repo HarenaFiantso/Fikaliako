@@ -21,7 +21,10 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  const status = useSession((state) => state.status);
   const restore = useSession((state) => state.restore);
+  const onboardingReady = useOnboarding((state) => state.ready);
+  const onboarded = useOnboarding((state) => state.completed);
   const restoreOnboarding = useOnboarding((state) => state.restore);
   const [fontsReady, fontsError] = useFonts({
     Raleway_400Regular,
@@ -36,17 +39,27 @@ export default function RootLayout() {
     void restoreOnboarding();
   }, [restore, restoreOnboarding]);
 
-  if (!fontsReady && !fontsError) {
+  const ready = (fontsReady || fontsError) && status !== 'restoring' && onboardingReady;
+  if (!ready) {
     return null;
   }
+
+  const signedIn = status === 'signedIn';
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <AnimatedSplashOverlay />
       <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="(tabs)" />
-        <Stack.Screen name="(onboarding)" options={{ animation: 'fade' }} />
-        <Stack.Screen name="(auth)" options={{ presentation: 'modal' }} />
+        <Stack.Protected guard={signedIn}>
+          <Stack.Screen name="(tabs)" />
+          <Stack.Screen name="(account)" />
+        </Stack.Protected>
+        <Stack.Protected guard={!signedIn && !onboarded}>
+          <Stack.Screen name="(onboarding)" options={{ animation: 'fade' }} />
+        </Stack.Protected>
+        <Stack.Protected guard={!signedIn}>
+          <Stack.Screen name="(auth)" />
+        </Stack.Protected>
       </Stack>
     </ThemeProvider>
   );

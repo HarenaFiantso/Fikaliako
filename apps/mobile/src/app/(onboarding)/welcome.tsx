@@ -23,19 +23,11 @@ import { ThemedText } from '@/components/themed-text';
 
 import { useTheme } from '@/hooks/use-theme';
 
-import { useOnboarding } from '@/lib/onboarding-store';
-
 import { MaxContentWidth, Radius, Spacing } from '@/constants/theme';
 
 export default function WelcomeScreen() {
   const router = useRouter();
   const theme = useTheme();
-  const complete = useOnboarding((state) => state.complete);
-
-  const browse = () => {
-    void complete();
-    router.replace('/');
-  };
 
   return (
     <View style={[styles.root, { backgroundColor: theme.background }]}>
@@ -77,7 +69,6 @@ export default function WelcomeScreen() {
 
         <Animated.View entering={FadeInDown.duration(400).delay(550)} style={styles.actions}>
           <Button title="Get started" onPress={() => router.push('/onboarding')} />
-          <Button title="I'll just browse" variant="ghost" onPress={browse} />
         </Animated.View>
       </SafeAreaView>
     </View>

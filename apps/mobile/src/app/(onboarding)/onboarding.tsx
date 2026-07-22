@@ -57,12 +57,9 @@ export default function OnboardingScreen() {
     scrollX.value = event.contentOffset.x;
   });
 
-  const finish = (destination: 'sign-up' | 'sign-in' | 'browse') => {
+  const finish = (destination: '/sign-up' | '/sign-in') => {
+    router.replace(destination);
     void complete();
-    router.replace(destination === 'browse' ? '/' : '/profile');
-    if (destination !== 'browse') {
-      router.push(destination === 'sign-up' ? '/sign-up' : '/sign-in');
-    }
   };
 
   return (
@@ -70,7 +67,7 @@ export default function OnboardingScreen() {
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.topBar}>
           {page < lastPage && (
-            <Button title="Skip" variant="ghost" onPress={() => finish('browse')} />
+            <Button title="Skip" variant="ghost" onPress={() => finish('/sign-in')} />
           )}
         </View>
 
@@ -104,11 +101,11 @@ export default function OnboardingScreen() {
             />
           ) : (
             <Animated.View entering={FadeInDown.duration(300)} style={styles.finalActions}>
-              <Button title="Create an account" onPress={() => finish('sign-up')} />
+              <Button title="Create an account" onPress={() => finish('/sign-up')} />
               <Button
                 title="I already have one"
                 variant="secondary"
-                onPress={() => finish('sign-in')}
+                onPress={() => finish('/sign-in')}
               />
             </Animated.View>
           )}
