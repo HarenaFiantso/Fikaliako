@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { ActivityIndicator, Alert, Platform, Pressable, StyleSheet, View } from 'react-native';
+import { Alert, Platform, Pressable, StyleSheet, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -17,49 +17,6 @@ import { useSession } from '@/lib/auth/session-store';
 import { BottomTabInset, MaxContentWidth, Radius, Spacing } from '@/constants/theme';
 
 export default function ProfileScreen() {
-  const status = useSession((state) => state.status);
-
-  return (
-    <ThemedView style={styles.root}>
-      <SafeAreaView style={styles.safeArea}>
-        {status === 'restoring' && <ActivityIndicator style={styles.flex} />}
-        {status === 'signedOut' && <SignedOutView />}
-        {status === 'signedIn' && <SignedInView />}
-      </SafeAreaView>
-    </ThemedView>
-  );
-}
-
-function SignedOutView() {
-  const router = useRouter();
-  const theme = useTheme();
-
-  return (
-    <View style={styles.signedOut}>
-      <Animated.View entering={FadeInDown.duration(300)} style={styles.hero}>
-        <View style={[styles.heroIcon, { backgroundColor: theme.backgroundElement }]}>
-          <Ionicons name="person-outline" size={40} color={theme.textSecondary} />
-        </View>
-        <ThemedText type="subtitle" style={styles.centered}>
-          Your account
-        </ThemedText>
-        <ThemedText type="default" themeColor="textSecondary" style={styles.centered}>
-          Sign in to save favorites, rate the places you eat at and put new gargottes on the map.
-        </ThemedText>
-      </Animated.View>
-      <Animated.View entering={FadeInDown.duration(300).delay(80)} style={styles.actions}>
-        <Button title="Sign in" onPress={() => router.push('/sign-in')} />
-        <Button
-          title="Create an account"
-          variant="secondary"
-          onPress={() => router.push('/sign-up')}
-        />
-      </Animated.View>
-    </View>
-  );
-}
-
-function SignedInView() {
   const router = useRouter();
   const theme = useTheme();
   const user = useSession((state) => state.user);
@@ -90,44 +47,46 @@ function SignedInView() {
   };
 
   return (
-    <View style={styles.signedIn}>
-      <Animated.View entering={FadeInDown.duration(300)} style={styles.identity}>
-        <View style={[styles.avatar, { backgroundColor: theme.primary }]}>
-          <ThemedText type="subtitle" style={{ color: theme.onPrimary }}>
-            {initials}
-          </ThemedText>
-        </View>
-        <ThemedText type="subtitle">{user.display_name}</ThemedText>
-        <View style={styles.identityRow}>
+    <ThemedView style={styles.root}>
+      <SafeAreaView style={styles.safeArea}>
+        <Animated.View entering={FadeInDown.duration(300)} style={styles.identity}>
+          <View style={[styles.avatar, { backgroundColor: theme.primary }]}>
+            <ThemedText type="subtitle" style={{ color: theme.onPrimary }}>
+              {initials}
+            </ThemedText>
+          </View>
+          <ThemedText type="subtitle">{user.display_name}</ThemedText>
+          <View style={styles.identityRow}>
+            <ThemedText type="small" themeColor="textSecondary">
+              {formatPhone(user.phone)}
+            </ThemedText>
+            {user.phone_verified && (
+              <View style={styles.identityRow}>
+                <Ionicons name="checkmark-circle" size={16} color={theme.success} />
+                <ThemedText type="small" style={{ color: theme.success }}>
+                  Verified
+                </ThemedText>
+              </View>
+            )}
+          </View>
           <ThemedText type="small" themeColor="textSecondary">
-            {formatPhone(user.phone)}
+            {user.role === 'business' ? 'Business account' : 'Member'} since {memberSince}
           </ThemedText>
-          {user.phone_verified && (
-            <View style={styles.identityRow}>
-              <Ionicons name="checkmark-circle" size={16} color={theme.success} />
-              <ThemedText type="small" style={{ color: theme.success }}>
-                Verified
-              </ThemedText>
-            </View>
-          )}
-        </View>
-        <ThemedText type="small" themeColor="textSecondary">
-          {user.role === 'business' ? 'Business account' : 'Member'} since {memberSince}
-        </ThemedText>
-      </Animated.View>
+        </Animated.View>
 
-      <Animated.View entering={FadeInDown.duration(300).delay(80)} style={styles.menu}>
-        <MenuRow
-          icon="key-outline"
-          label="Change password"
-          onPress={() => router.push('/change-password')}
-        />
-      </Animated.View>
+        <Animated.View entering={FadeInDown.duration(300).delay(80)} style={styles.menu}>
+          <MenuRow
+            icon="key-outline"
+            label="Change password"
+            onPress={() => router.push('/change-password')}
+          />
+        </Animated.View>
 
-      <Animated.View entering={FadeInDown.duration(300).delay(160)}>
-        <Button title="Sign out" variant="danger" onPress={confirmSignOut} />
-      </Animated.View>
-    </View>
+        <Animated.View entering={FadeInDown.duration(300).delay(160)}>
+          <Button title="Sign out" variant="danger" onPress={confirmSignOut} />
+        </Animated.View>
+      </SafeAreaView>
+    </ThemedView>
   );
 }
 
@@ -171,45 +130,17 @@ const styles = StyleSheet.create({
     maxWidth: MaxContentWidth,
     padding: Spacing.four,
     paddingBottom: BottomTabInset + Spacing.three,
-  },
-  flex: {
-    flex: 1,
-  },
-  centered: {
-    textAlign: 'center',
-  },
-  signedOut: {
-    flex: 1,
-    justifyContent: 'center',
     gap: Spacing.five,
-  },
-  hero: {
-    alignItems: 'center',
-    gap: Spacing.three,
-  },
-  heroIcon: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  actions: {
-    gap: Spacing.three,
-  },
-  signedIn: {
-    flex: 1,
-    gap: Spacing.five,
-    paddingTop: Spacing.six,
   },
   identity: {
     alignItems: 'center',
     gap: Spacing.two,
+    paddingTop: Spacing.six,
   },
   avatar: {
     width: 72,
     height: 72,
-    borderRadius: 36,
+    borderRadius: Radius.full,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: Spacing.two,
@@ -220,6 +151,7 @@ const styles = StyleSheet.create({
     gap: Spacing.one,
   },
   menu: {
+    flex: 1,
     gap: Spacing.two,
   },
   menuRow: {
