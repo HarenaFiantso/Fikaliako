@@ -16,6 +16,13 @@ export const reactNativeConfig = [
   ...expoConfig,
   eslintConfigPrettier,
   {
+    // Reanimated shared values are mutated through `.value` inside event
+    // handlers and effects — a pattern this rule cannot model.
+    rules: {
+      'react-hooks/immutability': 'off',
+    },
+  },
+  {
     plugins: {
       turbo: turboPlugin,
     },
