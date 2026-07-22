@@ -41,7 +41,8 @@
           "locationWhenInUsePermission": "Fikaliako uses your location to find places to eat near you. Your position is never stored."
         }
       ],
-      "@maplibre/maplibre-react-native"
+      "@maplibre/maplibre-react-native",
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true,
