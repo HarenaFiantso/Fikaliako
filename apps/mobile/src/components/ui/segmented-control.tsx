@@ -7,7 +7,7 @@ import { ThemedText } from '@/components/themed-text';
 
 import { useTheme } from '@/hooks/use-theme';
 
-import { Spacing } from '@/constants/theme';
+import { Radius } from '@/constants/theme';
 
 const THUMB_PADDING = 3;
 
@@ -72,7 +72,7 @@ export function SegmentedControl<T extends string>({
 const styles = StyleSheet.create({
   track: {
     flexDirection: 'row',
-    borderRadius: Spacing.three,
+    borderRadius: Radius.xl,
     padding: THUMB_PADDING,
     minHeight: 44,
     alignItems: 'stretch',
@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     top: THUMB_PADDING,
     bottom: THUMB_PADDING,
     left: THUMB_PADDING,
-    borderRadius: Spacing.three - 2,
+    borderRadius: Radius.xl - THUMB_PADDING,
   },
   segment: {
     flex: 1,

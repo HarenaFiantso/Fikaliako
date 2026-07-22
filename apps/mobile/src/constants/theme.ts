@@ -1,6 +1,7 @@
 /**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
+ * Fikaliako design tokens, mirroring the web app (apps/web/app/globals.css):
+ * warm, food-first palette — terracotta primary, cream surfaces, espresso
+ * text — converted from OKLCH to sRGB hex, and Raleway as the brand font.
  */
 import { Platform } from 'react-native';
 
@@ -8,32 +9,44 @@ import '@/global.css';
 
 export const Colors = {
   light: {
-    text: '#000000',
-    background: '#ffffff',
-    backgroundElement: '#F0F0F3',
-    backgroundSelected: '#E0E1E6',
-    textSecondary: '#60646C',
-    primary: '#208AEF',
-    onPrimary: '#FFFFFF',
-    danger: '#CE2C31',
+    text: '#261B16',
+    background: '#FCFAF6',
+    backgroundElement: '#F4EFE7',
+    backgroundSelected: '#F9E4D0',
+    textSecondary: '#6F6056',
+    card: '#FEFDFB',
+    primary: '#B74B21',
+    onPrimary: '#FDFAF3',
+    accent: '#F9E4D0',
+    danger: '#CC2827',
     success: '#218358',
-    border: '#E0E1E6',
+    border: '#E4DDD3',
   },
   dark: {
-    text: '#ffffff',
-    background: '#000000',
-    backgroundElement: '#212225',
-    backgroundSelected: '#2E3135',
-    textSecondary: '#B0B4BA',
-    primary: '#4BA3F5',
-    onPrimary: '#FFFFFF',
-    danger: '#F2555A',
+    text: '#F3F0EA',
+    background: '#110B08',
+    backgroundElement: '#241E1A',
+    backgroundSelected: '#2E241D',
+    textSecondary: '#A1968B',
+    card: '#1A130F',
+    primary: '#EC854D',
+    onPrimary: '#170D08',
+    accent: '#2E241D',
+    danger: '#E8594F',
     success: '#3DD68C',
-    border: '#2E3135',
+    border: '#2C251F',
   },
 } as const;
 
 export type ThemeColor = keyof typeof Colors.light & keyof typeof Colors.dark;
+
+export const FontFamily = {
+  regular: 'Raleway_400Regular',
+  medium: 'Raleway_500Medium',
+  semiBold: 'Raleway_600SemiBold',
+  bold: 'Raleway_700Bold',
+  extraBold: 'Raleway_800ExtraBold',
+} as const;
 
 export const Fonts = Platform.select({
   ios: {
@@ -64,6 +77,15 @@ export const Spacing = {
   four: 24,
   five: 32,
   six: 64,
+} as const;
+
+export const Radius = {
+  sm: 6,
+  md: 8,
+  lg: 10,
+  xl: 14,
+  xxl: 20,
+  full: 999,
 } as const;
 
 export const BottomTabInset = Platform.select({ ios: 50, android: 80 }) ?? 0;

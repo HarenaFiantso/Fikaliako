@@ -1,6 +1,14 @@
 import { useEffect } from 'react';
 
 import * as SplashScreen from 'expo-splash-screen';
+import {
+  Raleway_400Regular,
+  Raleway_500Medium,
+  Raleway_600SemiBold,
+  Raleway_700Bold,
+  Raleway_800ExtraBold,
+} from '@expo-google-fonts/raleway';
+import { useFonts } from 'expo-font';
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import { useColorScheme } from 'react-native';
 
@@ -13,10 +21,21 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const restore = useSession((state) => state.restore);
+  const [fontsReady, fontsError] = useFonts({
+    Raleway_400Regular,
+    Raleway_500Medium,
+    Raleway_600SemiBold,
+    Raleway_700Bold,
+    Raleway_800ExtraBold,
+  });
 
   useEffect(() => {
     void restore();
   }, [restore]);
+
+  if (!fontsReady && !fontsError) {
+    return null;
+  }
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>

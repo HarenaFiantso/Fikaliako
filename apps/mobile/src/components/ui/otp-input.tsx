@@ -13,7 +13,7 @@ import { ThemedText } from '@/components/themed-text';
 
 import { useTheme } from '@/hooks/use-theme';
 
-import { Spacing } from '@/constants/theme';
+import { Radius, Spacing } from '@/constants/theme';
 
 const CODE_LENGTH = 6;
 
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 56,
     borderWidth: 1,
-    borderRadius: Spacing.three,
+    borderRadius: Radius.lg,
     alignItems: 'center',
     justifyContent: 'center',
   },

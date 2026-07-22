@@ -14,7 +14,7 @@ import { useTheme } from '@/hooks/use-theme';
 import { formatPhone } from '@/lib/auth/phone';
 import { useSession } from '@/lib/auth/session-store';
 
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import { BottomTabInset, MaxContentWidth, Radius, Spacing } from '@/constants/theme';
 
 export default function ProfileScreen() {
   const status = useSession((state) => state.status);
@@ -226,7 +226,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.three,
-    borderRadius: Spacing.three,
+    borderRadius: Radius.xl,
     paddingHorizontal: Spacing.three,
     minHeight: 56,
   },

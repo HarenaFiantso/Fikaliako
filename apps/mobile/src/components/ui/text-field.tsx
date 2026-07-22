@@ -16,7 +16,7 @@ import { ThemedText } from '@/components/themed-text';
 
 import { useTheme } from '@/hooks/use-theme';
 
-import { Spacing } from '@/constants/theme';
+import { FontFamily, Radius, Spacing } from '@/constants/theme';
 
 export type TextFieldProps = Omit<TextInputProps, 'style'> & {
   label: string;
@@ -116,11 +116,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderRadius: Spacing.three,
+    borderRadius: Radius.xl,
     paddingHorizontal: Spacing.three,
   },
   input: {
     flex: 1,
+    fontFamily: FontFamily.medium,
     fontSize: 16,
     paddingVertical: 14,
     minHeight: 48,

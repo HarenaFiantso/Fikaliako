@@ -6,7 +6,7 @@ import { ThemedText } from '@/components/themed-text';
 
 import { useTheme } from '@/hooks/use-theme';
 
-import { Spacing } from '@/constants/theme';
+import { Radius, Spacing } from '@/constants/theme';
 
 export type AlertBannerProps = {
   kind: 'error' | 'success';
@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: Spacing.two,
     borderWidth: 1,
-    borderRadius: Spacing.three,
+    borderRadius: Radius.xl,
     paddingHorizontal: Spacing.three,
     paddingVertical: Spacing.two + Spacing.one,
   },

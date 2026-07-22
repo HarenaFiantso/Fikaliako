@@ -5,7 +5,7 @@ import { ThemedText } from '@/components/themed-text';
 
 import { useTheme } from '@/hooks/use-theme';
 
-import { Spacing } from '@/constants/theme';
+import { FontFamily, Radius, Spacing } from '@/constants/theme';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -81,12 +81,12 @@ export function Button({
 const styles = StyleSheet.create({
   base: {
     minHeight: 52,
-    borderRadius: Spacing.three,
+    borderRadius: Radius.xl,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: Spacing.four,
   },
   title: {
-    fontWeight: 600,
+    fontFamily: FontFamily.bold,
   },
 });
