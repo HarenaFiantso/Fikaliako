@@ -24,10 +24,7 @@ export type FikaliakoClient = ReturnType<typeof createFikaliakoClient>;
  * (e.g. POST /v1/auth/refresh once `expires_in` has elapsed).
  */
 export type AccessTokenProvider = () =>
-  | string
-  | null
-  | undefined
-  | Promise<string | null | undefined>;
+  string | null | undefined | Promise<string | null | undefined>;
 
 /**
  * openapi-fetch middleware adding `Authorization: Bearer <token>` to every
