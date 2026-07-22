@@ -19,3 +19,6 @@ apps/api/src
 # IDE / misc
 .idea
 CLAUDE.md
+
+android/
+ios/

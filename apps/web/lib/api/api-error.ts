@@ -13,12 +13,7 @@ export class ApiError extends Error {
 }
 
 export type AuthErrorContext =
-  | 'login'
-  | 'register'
-  | 'verify-phone'
-  | 'resend-otp'
-  | 'forgot-password'
-  | 'reset-password';
+  'login' | 'register' | 'verify-phone' | 'resend-otp' | 'forgot-password' | 'reset-password';
 
 type AuthErrorKey =
   | 'invalid-credentials'

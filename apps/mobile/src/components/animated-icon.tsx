@@ -2,9 +2,11 @@ import { useState } from 'react';
 
 import * as SplashScreen from 'expo-splash-screen';
 import { Image } from 'expo-image';
-import { Dimensions, StyleSheet, View } from 'react-native';
+import { Dimensions, StyleSheet, Text, View } from 'react-native';
 import Animated, { Easing, Keyframe } from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
+
+import { FontFamily } from '@/constants/theme';
 
 const INITIAL_SCALE_FACTOR = Dimensions.get('screen').height / 90;
 const DURATION = 600;
@@ -34,7 +36,7 @@ export function AnimatedSplashOverlay() {
     },
   });
 
-  const image = <Image style={styles.image} source={require('@/assets/images/expo-logo.png')} />;
+  const wordmark = <Text style={styles.wordmark}>Fikaliako</Text>;
 
   return animate ? (
     <Animated.View
@@ -46,7 +48,7 @@ export function AnimatedSplashOverlay() {
       })}
       style={styles.splashOverlay}
     >
-      {image}
+      {wordmark}
     </Animated.View>
   ) : (
     <View
@@ -57,7 +59,7 @@ export function AnimatedSplashOverlay() {
       }}
       style={styles.splashOverlay}
     >
-      {image}
+      {wordmark}
     </View>
   );
 }
@@ -143,9 +145,14 @@ const styles = StyleSheet.create({
   },
   splashOverlay: {
     ...StyleSheet.absoluteFill,
-    backgroundColor: '#208AEF',
+    backgroundColor: '#B74B21',
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 1000,
+  },
+  wordmark: {
+    fontFamily: FontFamily.extraBold,
+    fontSize: 40,
+    color: '#FDFAF3',
   },
 });
