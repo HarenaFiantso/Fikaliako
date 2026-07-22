@@ -1,4 +1,5 @@
 package mg.fikaliako.api.endpoint.rest.controller
+
 import mg.fikaliako.api.endpoint.rest.model.ManagerItem
 import mg.fikaliako.api.endpoint.rest.model.Page
 import mg.fikaliako.api.service.AdminService

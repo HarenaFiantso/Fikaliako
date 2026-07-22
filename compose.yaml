@@ -1,8 +1,9 @@
 services:
   postgres:
-    image: postgis/postgis:17-3.5
+    # imresamu/postgis: multi-arch build of postgis/postgis (which has no arm64 images)
+    image: imresamu/postgis:17-3.5
     labels:
-      # non-standard image name (postgis/postgis): tells Spring Boot this is a Postgres service
+      # non-standard image name: tells Spring Boot this is a Postgres service
       org.springframework.boot.service-connection: postgres
     environment:
       POSTGRES_DB: fikaliako
