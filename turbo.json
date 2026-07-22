@@ -1,6 +1,7 @@
 {
   "$schema": "https://turborepo.dev/schema.json",
   "ui": "tui",
+  "globalEnv": ["EXPO_OS"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
