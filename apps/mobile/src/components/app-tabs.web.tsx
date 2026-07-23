@@ -61,9 +61,7 @@ export function CustomTabList(props: TabListProps) {
         <ThemedText type="smallBold" style={styles.brandText}>
           Expo Starter
         </ThemedText>
-
         {props.children}
-
         <ExternalLink href="https://docs.expo.dev" asChild>
           <Pressable style={styles.externalPressable}>
             <ThemedText type="link">Docs</ThemedText>

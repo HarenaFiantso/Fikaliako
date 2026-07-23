@@ -26,8 +26,11 @@ export type OtpInputProps = {
 
 export function OtpInput({ value, onChange, error, autoFocus = false }: OtpInputProps) {
   const theme = useTheme();
+
   const inputRef = useRef<TextInput>(null);
+
   const [focused, setFocused] = useState(false);
+
   const shake = useSharedValue(0);
 
   useEffect(() => {

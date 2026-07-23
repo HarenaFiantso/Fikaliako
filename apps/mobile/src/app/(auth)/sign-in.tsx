@@ -20,8 +20,11 @@ import { Spacing } from '@/constants/theme';
 
 export default function SignInScreen() {
   const router = useRouter();
+
   const { reset } = useLocalSearchParams<{ reset?: string }>();
+
   const signIn = useSession((state) => state.signIn);
+
   const [formError, setFormError] = useState<string | null>(null);
 
   const {
@@ -52,7 +55,6 @@ export default function SignInScreen() {
         <AlertBanner kind="success" message="Password reset. Sign in with your new password." />
       )}
       {formError && <AlertBanner kind="error" message={formError} />}
-
       <Controller
         control={control}
         name="phone"
@@ -87,13 +89,10 @@ export default function SignInScreen() {
           />
         )}
       />
-
       <Link href="/forgot-password" style={styles.forgotLink}>
         <ThemedText type="linkPrimary">Forgot password?</ThemedText>
       </Link>
-
       <Button title="Sign in" loading={isSubmitting} onPress={() => void submit()} />
-
       <View style={styles.footer}>
         <ThemedText type="small" themeColor="textSecondary">
           New to Fikaliako?

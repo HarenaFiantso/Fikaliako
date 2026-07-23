@@ -14,7 +14,9 @@ import { useSession } from '@/lib/auth/session-store';
 
 export default function ForgotPasswordScreen() {
   const router = useRouter();
+
   const forgotPassword = useSession((state) => state.forgotPassword);
+
   const [formError, setFormError] = useState<string | null>(null);
 
   const {
@@ -42,7 +44,6 @@ export default function ForgotPasswordScreen() {
       subtitle="If this number has an account, we will text a reset code to it."
     >
       {formError && <AlertBanner kind="error" message={formError} />}
-
       <Controller
         control={control}
         name="phone"
@@ -60,7 +61,6 @@ export default function ForgotPasswordScreen() {
           />
         )}
       />
-
       <Button title="Send reset code" loading={isSubmitting} onPress={() => void submit()} />
     </FormScreen>
   );

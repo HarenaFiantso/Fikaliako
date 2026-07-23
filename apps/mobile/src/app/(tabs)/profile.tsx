@@ -18,7 +18,9 @@ import { BottomTabInset, MaxContentWidth, Radius, Spacing } from '@/constants/th
 
 export default function ProfileScreen() {
   const router = useRouter();
+
   const theme = useTheme();
+
   const user = useSession((state) => state.user);
   const signOut = useSession((state) => state.signOut);
 
@@ -73,7 +75,6 @@ export default function ProfileScreen() {
             {user.role === 'business' ? 'Business account' : 'Member'} since {memberSince}
           </ThemedText>
         </Animated.View>
-
         <Animated.View entering={FadeInDown.duration(300).delay(80)} style={styles.menu}>
           <MenuRow
             icon="key-outline"
@@ -81,7 +82,6 @@ export default function ProfileScreen() {
             onPress={() => router.push('/change-password')}
           />
         </Animated.View>
-
         <Animated.View entering={FadeInDown.duration(300).delay(160)}>
           <Button title="Sign out" variant="danger" onPress={confirmSignOut} />
         </Animated.View>

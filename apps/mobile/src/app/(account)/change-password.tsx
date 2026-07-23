@@ -14,7 +14,9 @@ import { useSession } from '@/lib/auth/session-store';
 
 export default function ChangePasswordScreen() {
   const router = useRouter();
+
   const changePassword = useSession((state) => state.changePassword);
+
   const [formError, setFormError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
 
@@ -45,7 +47,6 @@ export default function ChangePasswordScreen() {
     >
       {formError && <AlertBanner kind="error" message={formError} />}
       {done && <AlertBanner kind="success" message="Password changed." />}
-
       <Controller
         control={control}
         name="currentPassword"
@@ -81,7 +82,6 @@ export default function ChangePasswordScreen() {
           />
         )}
       />
-
       <Button
         title="Change password"
         loading={isSubmitting}

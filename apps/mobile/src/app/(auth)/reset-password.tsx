@@ -16,8 +16,11 @@ import { useSession } from '@/lib/auth/session-store';
 
 export default function ResetPasswordScreen() {
   const router = useRouter();
+
   const { phone = '' } = useLocalSearchParams<{ phone?: string }>();
+
   const resetPassword = useSession((state) => state.resetPassword);
+
   const [formError, setFormError] = useState<string | null>(null);
 
   const displayPhone = formatPhone(normalizePhone(phone) ?? phone);
@@ -47,7 +50,6 @@ export default function ResetPasswordScreen() {
       subtitle={`Enter the code sent to ${displayPhone} and pick a new password.`}
     >
       {formError && <AlertBanner kind="error" message={formError} />}
-
       <Controller
         control={control}
         name="code"
@@ -78,7 +80,6 @@ export default function ResetPasswordScreen() {
           />
         )}
       />
-
       <Button title="Reset password" loading={isSubmitting} onPress={() => void submit()} />
     </FormScreen>
   );

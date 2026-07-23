@@ -20,6 +20,7 @@ export default function TabTwoScreen() {
     ...safeAreaInsets,
     bottom: safeAreaInsets.bottom + BottomTabInset + Spacing.three,
   };
+
   const theme = useTheme();
 
   const contentPlatformStyle = Platform.select({
@@ -47,7 +48,6 @@ export default function TabTwoScreen() {
           <ThemedText style={styles.centerText} themeColor="textSecondary">
             This starter app includes example{'\n'}code to help you get started.
           </ThemedText>
-
           <ExternalLink href="https://docs.expo.dev" asChild>
             <Pressable style={({ pressed }) => pressed && styles.pressed}>
               <ThemedView type="backgroundElement" style={styles.linkButton}>
@@ -61,7 +61,6 @@ export default function TabTwoScreen() {
             </Pressable>
           </ExternalLink>
         </ThemedView>
-
         <ThemedView style={styles.sectionsWrapper}>
           <Collapsible title="File-based routing">
             <ThemedText type="small">
@@ -76,7 +75,6 @@ export default function TabTwoScreen() {
               <ThemedText type="linkPrimary">Learn more</ThemedText>
             </ExternalLink>
           </Collapsible>
-
           <Collapsible title="Android, iOS, and web support">
             <ThemedView type="backgroundElement" style={styles.collapsibleContent}>
               <ThemedText type="small">
@@ -90,7 +88,6 @@ export default function TabTwoScreen() {
               />
             </ThemedView>
           </Collapsible>
-
           <Collapsible title="Images">
             <ThemedText type="small">
               For static images, you can use the <ThemedText type="code">@2x</ThemedText> and{' '}
@@ -102,7 +99,6 @@ export default function TabTwoScreen() {
               <ThemedText type="linkPrimary">Learn more</ThemedText>
             </ExternalLink>
           </Collapsible>
-
           <Collapsible title="Light and dark mode components">
             <ThemedText type="small">
               This template has light and dark mode support. The{' '}
@@ -113,7 +109,6 @@ export default function TabTwoScreen() {
               <ThemedText type="linkPrimary">Learn more</ThemedText>
             </ExternalLink>
           </Collapsible>
-
           <Collapsible title="Animations">
             <ThemedText type="small">
               This template includes an example of an animated component. The{' '}

@@ -28,6 +28,7 @@ export function SegmentedControl<T extends string>({
   onChange,
 }: SegmentedControlProps<T>) {
   const theme = useTheme();
+
   const [width, setWidth] = useState(0);
   const index = Math.max(
     0,
