@@ -75,6 +75,8 @@ tags:
     description: Browse and read establishments (restaurants, gargottes, vendors…).
   - name: Search
     description: Geolocated and text discovery.
+  - name: Rankings
+    description: Nightly thematic tops (book ch. 4.6) — shareable discovery lists.
   - name: Reviews
     description: Five-criteria community reviews.
   - name: Account
@@ -442,6 +444,51 @@ paths:
                 $ref: "#/components/schemas/SearchPage"
         "400":
           $ref: "#/components/responses/BadRequest"
+
+  /v1/rankings:
+    get:
+      tags: [Rankings]
+      operationId: listRankings
+      summary: Catalog of thematic tops
+      description: >
+        The shareable thematic tops of project book ch. 4.6: best rated, best
+        gargottes, best value for money, monthly revelations, plus one top per
+        cuisine of the referential. Orderings read the Bayesian note the
+        nightly aggregation computes, so tops move once a day.
+      responses:
+        "200":
+          description: Available tops.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RankingCatalog"
+
+  /v1/rankings/{topicId}:
+    get:
+      tags: [Rankings]
+      operationId: getRanking
+      summary: One thematic top
+      description: >
+        Up to 20 establishments for a topic from the catalog (e.g. `top-rated`,
+        `best-gargottes`, `best-value`, `revelations`, `cuisine-malagasy`).
+        Entry requires at least 3 reviews (1 for revelations, which also must
+        have been added within the last 30 days); the ordering key is the
+        volume-damped Bayesian note (ch. 4.6).
+      parameters:
+        - name: topicId
+          in: path
+          required: true
+          description: Topic identifier from the rankings catalog.
+          schema: { type: string }
+      responses:
+        "200":
+          description: The ranked establishments, best first.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RankingPage"
+        "404":
+          $ref: "#/components/responses/NotFound"
 
   /v1/establishments:
     get:
@@ -1458,6 +1505,38 @@ components:
           properties:
             interpretation:
               $ref: "#/components/schemas/SearchInterpretation"
+
+    RankingTopic:
+      type: object
+      description: One shareable thematic top (project book ch. 4.6).
+      required: [id, title_fr, title_mg]
+      properties:
+        id:
+          type: string
+          description: Topic identifier, e.g. `top-rated` or `cuisine-malagasy`.
+        title_fr: { type: string }
+        title_mg: { type: string }
+
+    RankingCatalog:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/RankingTopic"
+
+    RankingPage:
+      type: object
+      description: A thematic top — at most 20 establishments, best first.
+      required: [topic, items]
+      properties:
+        topic:
+          $ref: "#/components/schemas/RankingTopic"
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/EstablishmentSummary"
 
     ReviewPage:
       type: object

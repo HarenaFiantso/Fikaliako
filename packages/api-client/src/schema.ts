@@ -244,6 +244,46 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/v1/rankings': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Catalog of thematic tops
+     * @description The shareable thematic tops of project book ch. 4.6: best rated, best gargottes, best value for money, monthly revelations, plus one top per cuisine of the referential. Orderings read the Bayesian note the nightly aggregation computes, so tops move once a day.
+     */
+    get: operations['listRankings'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/rankings/{topicId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * One thematic top
+     * @description Up to 20 establishments for a topic from the catalog (e.g. `top-rated`, `best-gargottes`, `best-value`, `revelations`, `cuisine-malagasy`). Entry requires at least 3 reviews (1 for revelations, which also must have been added within the last 30 days); the ordering key is the volume-damped Bayesian note (ch. 4.6).
+     */
+    get: operations['getRanking'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/v1/establishments': {
     parameters: {
       query?: never;
@@ -860,6 +900,21 @@ export interface components {
     SearchPage: components['schemas']['EstablishmentPage'] & {
       interpretation?: components['schemas']['SearchInterpretation'];
     };
+    /** @description One shareable thematic top (project book ch. 4.6). */
+    RankingTopic: {
+      /** @description Topic identifier, e.g. `top-rated` or `cuisine-malagasy`. */
+      id: string;
+      title_fr: string;
+      title_mg: string;
+    };
+    RankingCatalog: {
+      items: components['schemas']['RankingTopic'][];
+    };
+    /** @description A thematic top — at most 20 establishments, best first. */
+    RankingPage: {
+      topic: components['schemas']['RankingTopic'];
+      items: components['schemas']['EstablishmentSummary'][];
+    };
     /** @description A cursor-paginated page of reviews. */
     ReviewPage: {
       items: components['schemas']['ReviewItem'][];
@@ -1292,6 +1347,50 @@ export interface operations {
         };
       };
       400: components['responses']['BadRequest'];
+    };
+  };
+  listRankings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Available tops. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RankingCatalog'];
+        };
+      };
+    };
+  };
+  getRanking: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Topic identifier from the rankings catalog. */
+        topicId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description The ranked establishments, best first. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RankingPage'];
+        };
+      };
+      404: components['responses']['NotFound'];
     };
   };
   listEstablishments: {
