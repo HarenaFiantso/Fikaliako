@@ -59,7 +59,7 @@ class EstablishmentServiceTest {
 
   @Test
   fun `nearby rejects a radius beyond the cap`() {
-    assertFailsWith<BadRequestException> { service.nearby(-18.9, 47.5, 9999.0, filters, null) }
+    assertFailsWith<BadRequestException> { service.nearby(-18.9, 47.5, 10_001.0, filters, null) }
   }
 
   @Test

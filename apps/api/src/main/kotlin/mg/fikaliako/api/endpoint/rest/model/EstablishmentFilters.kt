@@ -1,7 +1,7 @@
 package mg.fikaliako.api.endpoint.rest.model
 
 data class EstablishmentFilters(
-  val type: String? = null,
+  val types: List<String> = emptyList(),
   val minPrice: Int? = null,
   val maxPrice: Int? = null,
   val cuisine: String? = null,

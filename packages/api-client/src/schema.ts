@@ -232,8 +232,8 @@ export interface paths {
       cookie?: never;
     };
     /**
-     * Typo-tolerant text search (planned)
-     * @description (planned) Full-text search backed by Meilisearch synced from Postgres (project book ch. 7.2). Same combinable filters as `/v1/nearby`, plus a free-text `q`. Arrives with the search module.
+     * Typo-tolerant text search
+     * @description Free-text discovery over names, districts, cities, cuisine labels and dish words, with FR/MG synonym expansion — searching `romazava` also surfaces Malagasy-cuisine establishments whose name never mentions the dish (project book ch. 4.2). Typo tolerance runs on PostgreSQL trigram similarity behind a port, so the target Meilisearch engine (ch. 7.1) can replace it without an API change. Results are relevance-ordered, then by Bayesian note; `next_cursor` carries an offset. All `/v1/nearby` filters combine, and an optional (`lat`, `lng`) pair annotates each hit with `distance_m` and unlocks `radius` narrowing — search anywhere on the map, not only around the user (ch. 4.1).
      */
     get: operations['search'];
     put?: never;
@@ -1182,7 +1182,7 @@ export interface operations {
       query: {
         lat: number;
         lng: number;
-        /** @description Search radius in metres (default 1000, max 5000). */
+        /** @description Search radius in metres (default 1000, max 10000 — the 10 km distance tier of book ch. 4.2). */
         radius?: number;
         /** @description Filter by establishment type. */
         type?: components['parameters']['TypeFilter'];
@@ -1222,9 +1222,30 @@ export interface operations {
   search: {
     parameters: {
       query: {
+        /** @description Free text — name, district, city, cuisine or dish (FR/MG). */
         q: string;
-        /** @description Page size (default 50 for establishments, 20 for reviews; max 100). */
-        limit?: components['parameters']['LimitParam'];
+        /** @description Optional focus latitude; requires `lng`. */
+        lat?: number;
+        /** @description Optional focus longitude; requires `lat`. */
+        lng?: number;
+        /** @description Restrict to a radius in metres around (`lat`, `lng`); max 10000. */
+        radius?: number;
+        /** @description Filter by establishment type. */
+        type?: components['parameters']['TypeFilter'];
+        /** @description Minimum average price in ariary. */
+        min_price?: components['parameters']['MinPriceFilter'];
+        /** @description Maximum average price in ariary (the budget king filter, book ch. 3). */
+        max_price?: components['parameters']['MaxPriceFilter'];
+        /** @description Filter by cuisine referential code (e.g. `malagasy`, `grill`). */
+        cuisine?: components['parameters']['CuisineFilter'];
+        /** @description A payment-method code (e.g. `mvola`) or the literal `mobile` to match any mobile-money operator (book ch. 4.3). */
+        payment?: components['parameters']['PaymentFilter'];
+        /** @description Comma-separated boolean amenities that must all be true. One of: `delivery, parking, wifi, wheelchair_access, air_conditioning, terrace, family_friendly, romantic, student_friendly, scenic_view, open_24h`. */
+        filters?: components['parameters']['BooleanFilters'];
+        /** @description When true, keep only establishments open now (Indian/Antananarivo). */
+        open_now?: components['parameters']['OpenNowFilter'];
+        /** @description Page size (default 20, max 100). */
+        limit?: number;
         /** @description Opaque pagination cursor from a previous response's `next_cursor`. */
         cursor?: components['parameters']['CursorParam'];
       };
@@ -1234,7 +1255,7 @@ export interface operations {
     };
     requestBody?: never;
     responses: {
-      /** @description Matching establishments. */
+      /** @description Matching establishments, most relevant first. */
       200: {
         headers: {
           [name: string]: unknown;
@@ -1243,6 +1264,7 @@ export interface operations {
           'application/json': components['schemas']['EstablishmentPage'];
         };
       };
+      400: components['responses']['BadRequest'];
     };
   };
   listEstablishments: {

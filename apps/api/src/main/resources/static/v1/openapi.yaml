@@ -358,8 +358,8 @@ paths:
           schema: { type: number, format: double, minimum: -180, maximum: 180 }
         - name: radius
           in: query
-          description: Search radius in metres (default 1000, max 5000).
-          schema: { type: number, format: double, default: 1000, maximum: 5000 }
+          description: Search radius in metres (default 1000, max 10000 — the 10 km distance tier of book ch. 4.2).
+          schema: { type: number, format: double, default: 1000, maximum: 10000 }
         - $ref: "#/components/parameters/TypeFilter"
         - $ref: "#/components/parameters/MinPriceFilter"
         - $ref: "#/components/parameters/MaxPriceFilter"
@@ -385,25 +385,57 @@ paths:
     get:
       tags: [Search]
       operationId: search
-      summary: Typo-tolerant text search (planned)
+      summary: Typo-tolerant text search
       description: >
-        (planned) Full-text search backed by Meilisearch synced from Postgres
-        (project book ch. 7.2). Same combinable filters as `/v1/nearby`, plus a
-        free-text `q`. Arrives with the search module.
+        Free-text discovery over names, districts, cities, cuisine labels and
+        dish words, with FR/MG synonym expansion — searching `romazava` also
+        surfaces Malagasy-cuisine establishments whose name never mentions the
+        dish (project book ch. 4.2). Typo tolerance runs on PostgreSQL trigram
+        similarity behind a port, so the target Meilisearch engine (ch. 7.1)
+        can replace it without an API change. Results are relevance-ordered,
+        then by Bayesian note; `next_cursor` carries an offset. All `/v1/nearby`
+        filters combine, and an optional (`lat`, `lng`) pair annotates each hit
+        with `distance_m` and unlocks `radius` narrowing — search anywhere on
+        the map, not only around the user (ch. 4.1).
       parameters:
         - name: q
           in: query
           required: true
-          schema: { type: string }
-        - $ref: "#/components/parameters/LimitParam"
+          description: Free text — name, district, city, cuisine or dish (FR/MG).
+          schema: { type: string, minLength: 1, maxLength: 120 }
+        - name: lat
+          in: query
+          description: Optional focus latitude; requires `lng`.
+          schema: { type: number, format: double, minimum: -90, maximum: 90 }
+        - name: lng
+          in: query
+          description: Optional focus longitude; requires `lat`.
+          schema: { type: number, format: double, minimum: -180, maximum: 180 }
+        - name: radius
+          in: query
+          description: Restrict to a radius in metres around (`lat`, `lng`); max 10000.
+          schema: { type: number, format: double, maximum: 10000 }
+        - $ref: "#/components/parameters/TypeFilter"
+        - $ref: "#/components/parameters/MinPriceFilter"
+        - $ref: "#/components/parameters/MaxPriceFilter"
+        - $ref: "#/components/parameters/CuisineFilter"
+        - $ref: "#/components/parameters/PaymentFilter"
+        - $ref: "#/components/parameters/BooleanFilters"
+        - $ref: "#/components/parameters/OpenNowFilter"
+        - name: limit
+          in: query
+          description: Page size (default 20, max 100).
+          schema: { type: integer, minimum: 1, maximum: 100, default: 20 }
         - $ref: "#/components/parameters/CursorParam"
       responses:
         "200":
-          description: Matching establishments.
+          description: Matching establishments, most relevant first.
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/EstablishmentPage"
+        "400":
+          $ref: "#/components/responses/BadRequest"
 
   /v1/establishments:
     get:
