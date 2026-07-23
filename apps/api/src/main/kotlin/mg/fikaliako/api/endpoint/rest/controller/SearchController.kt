@@ -1,7 +1,6 @@
 package mg.fikaliako.api.endpoint.rest.controller
 
-import mg.fikaliako.api.endpoint.rest.model.EstablishmentSummary
-import mg.fikaliako.api.endpoint.rest.model.Page
+import mg.fikaliako.api.endpoint.rest.model.SearchPage
 import mg.fikaliako.api.service.EstablishmentFilterParams
 import mg.fikaliako.api.service.SearchService
 import org.springframework.web.bind.annotation.GetMapping
@@ -29,7 +28,7 @@ class SearchController(
     @RequestParam(name = "open_now", defaultValue = "false") openNow: Boolean,
     @RequestParam(required = false) limit: Int?,
     @RequestParam(required = false) cursor: String?,
-  ): Page<EstablishmentSummary> {
+  ): SearchPage {
     val parsed = EstablishmentFilterParams.build(type, minPrice, maxPrice, cuisine, payment, filters, openNow)
     return service.search(q, parsed, lat, lng, radius, limit, cursor)
   }

@@ -4,7 +4,8 @@ import mg.fikaliako.api.config.SecurityConfig
 import mg.fikaliako.api.endpoint.rest.model.EstablishmentFilters
 import mg.fikaliako.api.endpoint.rest.model.EstablishmentSummary
 import mg.fikaliako.api.endpoint.rest.model.GeoPoint
-import mg.fikaliako.api.endpoint.rest.model.Page
+import mg.fikaliako.api.endpoint.rest.model.SearchInterpretation
+import mg.fikaliako.api.endpoint.rest.model.SearchPage
 import mg.fikaliako.api.service.SearchService
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
@@ -52,7 +53,7 @@ class SearchControllerTest {
           null,
           null,
         ),
-      ).thenReturn(Page(listOf(item)))
+      ).thenReturn(SearchPage(listOf(item)))
 
     mockMvc
       .get("/v1/search") {
@@ -62,6 +63,38 @@ class SearchControllerTest {
         status { isOk() }
         jsonPath("$.items[0].slug") { value("mama-fara") }
         jsonPath("$.items[0].avg_price_ar") { value(4000) }
+      }
+  }
+
+  @Test
+  fun `the smart interpretation is echoed on the wire`() {
+    Mockito
+      .`when`(
+        service.search("j'ai faim", EstablishmentFilters(), -18.91, 47.52, null, null, null),
+      ).thenReturn(
+        SearchPage(
+          items = emptyList(),
+          interpretation =
+            SearchInterpretation(
+              intents = listOf("hungry"),
+              openNow = true,
+              radiusM = 1000.0,
+              ordering = "discovery_score",
+            ),
+        ),
+      )
+
+    mockMvc
+      .get("/v1/search") {
+        param("q", "j'ai faim")
+        param("lat", "-18.91")
+        param("lng", "47.52")
+      }.andExpect {
+        status { isOk() }
+        jsonPath("$.interpretation.intents[0]") { value("hungry") }
+        jsonPath("$.interpretation.open_now") { value(true) }
+        jsonPath("$.interpretation.radius_m") { value(1000.0) }
+        jsonPath("$.interpretation.ordering") { value("discovery_score") }
       }
   }
 

@@ -385,18 +385,24 @@ paths:
     get:
       tags: [Search]
       operationId: search
-      summary: Typo-tolerant text search
+      summary: Typo-tolerant text and smart search
       description: >
         Free-text discovery over names, districts, cities, cuisine labels and
         dish words, with FR/MG synonym expansion — searching `romazava` also
         surfaces Malagasy-cuisine establishments whose name never mentions the
         dish (project book ch. 4.2). Typo tolerance runs on PostgreSQL trigram
         similarity behind a port, so the target Meilisearch engine (ch. 7.1)
-        can replace it without an API change. Results are relevance-ordered,
-        then by Bayesian note; `next_cursor` carries an offset. All `/v1/nearby`
-        filters combine, and an optional (`lat`, `lng`) pair annotates each hit
-        with `distance_m` and unlocks `radius` narrowing — search anywhere on
-        the map, not only around the user (ch. 4.1).
+        can replace it without an API change. Deterministic smart rules first
+        turn natural-language phrases into filters: "j'ai faim" becomes
+        open-now within 1 km ranked by the ch. 4.2 discovery score (Bayesian
+        note + recent reviews + budget adequacy), "pizza pas cher" keeps
+        searching "pizza" under 5 000 Ar. What was applied is echoed in
+        `interpretation`; explicit query parameters always win over interpreted
+        ones. Results are relevance-ordered (or discovery-scored for
+        filter-only smart queries); `next_cursor` carries an offset. All
+        `/v1/nearby` filters combine, and an optional (`lat`, `lng`) pair
+        annotates each hit with `distance_m` and unlocks `radius` narrowing —
+        search anywhere on the map, not only around the user (ch. 4.1).
       parameters:
         - name: q
           in: query
@@ -433,7 +439,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/EstablishmentPage"
+                $ref: "#/components/schemas/SearchPage"
         "400":
           $ref: "#/components/responses/BadRequest"
 
@@ -1402,6 +1408,56 @@ components:
         next_cursor:
           type: string
           description: Pass back as `?cursor=`; absent on the last page.
+
+    SearchInterpretation:
+      type: object
+      description: >
+        What the deterministic smart-search rules (project book ch. 4.2)
+        applied. Only present when at least one natural-language intent
+        matched; values reflect the effective filters after explicit query
+        parameters took precedence.
+      required: [intents, ordering]
+      properties:
+        intents:
+          type: array
+          description: Matched intent identifiers (e.g. `hungry`, `cheap`, `breakfast`).
+          items: { type: string }
+        open_now:
+          type: boolean
+          description: Present (true) when the query restricted to open establishments.
+        max_price_ar:
+          type: integer
+          description: Effective budget ceiling in ariary.
+        types:
+          type: array
+          items:
+            $ref: "#/components/schemas/EstablishmentType"
+        amenities:
+          type: array
+          description: Boolean amenity filters switched on by the query.
+          items: { type: string }
+        payment:
+          type: string
+          description: Payment-method filter derived from the query (e.g. `mvola`, `mobile`).
+        radius_m:
+          type: number
+          format: double
+          description: Effective search radius, when a position was supplied.
+        ordering:
+          type: string
+          enum: [relevance, discovery_score]
+          description: >
+            `discovery_score` for filter-only smart queries (Bayesian note +
+            recent reviews + budget adequacy); `relevance` when text matching
+            still applies.
+
+    SearchPage:
+      allOf:
+        - $ref: "#/components/schemas/EstablishmentPage"
+        - type: object
+          properties:
+            interpretation:
+              $ref: "#/components/schemas/SearchInterpretation"
 
     ReviewPage:
       type: object
