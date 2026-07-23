@@ -2,7 +2,8 @@ import { useState } from 'react';
 
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { StyleSheet, useWindowDimensions, View } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+import { Pressable, StyleSheet, useWindowDimensions, View } from 'react-native';
 import Animated, {
   FadeInDown,
   interpolate,
@@ -11,47 +12,60 @@ import Animated, {
   useAnimatedScrollHandler,
   useAnimatedStyle,
   useSharedValue,
+  ZoomIn,
 } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { Button } from '@/components/ui/button';
+import { RoundButton } from '@/components/ui/round-button';
 
+import { Brand, BrandMark, Motif } from '@/components/brand-decor';
+import { type OnboardingVisual, VisualCard } from '@/components/onboarding-visuals';
 import { ThemedText } from '@/components/themed-text';
-
-import { useTheme } from '@/hooks/use-theme';
 
 import { useOnboarding } from '@/lib/onboarding-store';
 
-import { Radius, Spacing } from '@/constants/theme';
+import { FontFamily, Radius, Spacing } from '@/constants/theme';
 
-const SLIDES = [
+const SLIDES: {
+  visual: OnboardingVisual;
+  title: string;
+  body: string;
+  caption: string;
+}[] = [
   {
-    icon: 'location-outline',
+    visual: 'nearby',
     title: 'Eat well, wherever you are',
     body: 'See what is cooking around you — from street vendors to restaurants, every spot earns its place on the map.',
+    caption: 'Open now, within 1 km',
   },
   {
-    icon: 'wallet-outline',
+    visual: 'budget',
     title: 'Your budget leads the way',
     body: 'Filter by what you want to spend, from a 3 000 Ar plate at the corner gargotte to a full table out.',
+    caption: 'The budget slider comes first',
   },
   {
-    icon: 'people-outline',
+    visual: 'community',
     title: 'Powered by locals',
     body: 'Rate places on five criteria, add the spots only you know about and help the map stay honest.',
+    caption: 'Rated by people who eat there',
   },
-] as const;
+];
 
 export default function OnboardingScreen() {
   const router = useRouter();
-  const theme = useTheme();
+
   const complete = useOnboarding((state) => state.complete);
+
   const { width } = useWindowDimensions();
 
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
+
   const scrollX = useSharedValue(0);
+
   const [page, setPage] = useState(0);
   const lastPage = SLIDES.length - 1;
+  const onLastPage = page === lastPage;
 
   const scrollHandler = useAnimatedScrollHandler((event) => {
     scrollX.value = event.contentOffset.x;
@@ -63,14 +77,26 @@ export default function OnboardingScreen() {
   };
 
   return (
-    <View style={[styles.root, { backgroundColor: theme.background }]}>
+    <View style={styles.root}>
+      <StatusBar style="light" />
+      <Motif shape="ring" size={300} x={-130} y={-80} opacity={0.08} />
+      <Motif shape="disc" size={120} x={290} y={120} delay={500} opacity={0.06} />
+      <Motif shape="pill" size={220} x={230} y={560} rotate={40} delay={900} opacity={0.06} />
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.topBar}>
-          {page < lastPage && (
-            <Button title="Skip" variant="ghost" onPress={() => finish('/sign-in')} />
+          <BrandMark size={38} />
+          {!onLastPage && (
+            <Pressable
+              accessibilityRole="button"
+              hitSlop={Spacing.two}
+              onPress={() => finish('/sign-in')}
+            >
+              <ThemedText type="smallBold" style={styles.skip}>
+                Skip
+              </ThemedText>
+            </Pressable>
           )}
         </View>
-
         <Animated.ScrollView
           ref={scrollRef}
           horizontal
@@ -86,27 +112,48 @@ export default function OnboardingScreen() {
             <Slide key={slide.title} slide={slide} index={index} scrollX={scrollX} width={width} />
           ))}
         </Animated.ScrollView>
-
-        <View style={styles.footer}>
+        {onLastPage && (
+          <Animated.View entering={FadeInDown.duration(300)} style={styles.signInRow}>
+            <Pressable
+              accessibilityRole="button"
+              hitSlop={Spacing.two}
+              onPress={() => finish('/sign-in')}
+            >
+              <ThemedText type="smallBold" style={styles.signInLink}>
+                I already have an account · Sign in
+              </ThemedText>
+            </Pressable>
+          </Animated.View>
+        )}
+        <View style={styles.actionBar}>
           <View style={styles.dots}>
             {SLIDES.map((slide, index) => (
               <Dot key={slide.title} index={index} scrollX={scrollX} width={width} />
             ))}
           </View>
-
-          {page < lastPage ? (
-            <Button
-              title="Next"
-              onPress={() => scrollRef.current?.scrollTo({ x: (page + 1) * width, animated: true })}
-            />
+          {onLastPage ? (
+            <Animated.View key="done" entering={ZoomIn.duration(250).springify().damping(15)}>
+              <RoundButton
+                size={52}
+                backgroundColor={Brand.success}
+                accessibilityLabel="Create an account"
+                onPress={() => finish('/sign-up')}
+              >
+                <Ionicons name="checkmark" size={26} color={Brand.cream} />
+              </RoundButton>
+            </Animated.View>
           ) : (
-            <Animated.View entering={FadeInDown.duration(300)} style={styles.finalActions}>
-              <Button title="Create an account" onPress={() => finish('/sign-up')} />
-              <Button
-                title="I already have one"
-                variant="secondary"
-                onPress={() => finish('/sign-in')}
-              />
+            <Animated.View key="next" entering={ZoomIn.duration(250)}>
+              <RoundButton
+                size={52}
+                backgroundColor={Brand.cream}
+                accessibilityLabel="Next"
+                onPress={() =>
+                  scrollRef.current?.scrollTo({ x: (page + 1) * width, animated: true })
+                }
+              >
+                <Ionicons name="chevron-forward" size={24} color={Brand.espresso} />
+              </RoundButton>
             </Animated.View>
           )}
         </View>
@@ -126,39 +173,34 @@ function Slide({
   scrollX: SharedValue<number>;
   width: number;
 }) {
-  const theme = useTheme();
   const range = [(index - 1) * width, index * width, (index + 1) * width];
-
-  const iconStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(scrollX.value, range, [0, 1, 0]),
-    transform: [
-      { translateX: interpolate(scrollX.value, range, [width * 0.35, 0, -width * 0.35]) },
-      { scale: interpolate(scrollX.value, range, [0.6, 1, 0.6]) },
-    ],
-  }));
 
   const textStyle = useAnimatedStyle(() => ({
     opacity: interpolate(scrollX.value, range, [0, 1, 0]),
+    transform: [{ translateX: interpolate(scrollX.value, range, [width * 0.2, 0, -width * 0.2]) }],
+  }));
+
+  const cardStyle = useAnimatedStyle(() => ({
+    opacity: interpolate(scrollX.value, range, [0.2, 1, 0.2]),
     transform: [
-      { translateX: interpolate(scrollX.value, range, [width * 0.18, 0, -width * 0.18]) },
+      { translateX: interpolate(scrollX.value, range, [width * 0.45, 0, -width * 0.45]) },
+      { rotate: `${interpolate(scrollX.value, range, [10, -5, -20])}deg` },
     ],
   }));
 
   return (
     <View style={[styles.slide, { width }]}>
-      <Animated.View
-        style={[styles.slideIcon, { backgroundColor: theme.backgroundSelected }, iconStyle]}
-      >
-        <Ionicons name={slide.icon} size={64} color={theme.primary} />
-      </Animated.View>
       <Animated.View style={[styles.slideText, textStyle]}>
-        <ThemedText type="subtitle" style={styles.centered}>
-          {slide.title}
-        </ThemedText>
-        <ThemedText type="default" themeColor="textSecondary" style={styles.centered}>
+        <ThemedText style={styles.slideTitle}>{slide.title}</ThemedText>
+        <ThemedText type="default" style={styles.slideBody}>
           {slide.body}
         </ThemedText>
       </Animated.View>
+      <View style={styles.slideCardZone}>
+        <Animated.View style={cardStyle}>
+          <VisualCard visual={slide.visual} caption={slide.caption} />
+        </Animated.View>
+      </View>
     </View>
   );
 }
@@ -172,65 +214,89 @@ function Dot({
   scrollX: SharedValue<number>;
   width: number;
 }) {
-  const theme = useTheme();
   const range = [(index - 1) * width, index * width, (index + 1) * width];
 
   const dotStyle = useAnimatedStyle(() => ({
     width: interpolate(scrollX.value, range, [8, 24, 8], 'clamp'),
-    opacity: interpolate(scrollX.value, range, [0.35, 1, 0.35], 'clamp'),
+    opacity: interpolate(scrollX.value, range, [0.4, 1, 0.4], 'clamp'),
   }));
 
-  return <Animated.View style={[styles.dot, { backgroundColor: theme.primary }, dotStyle]} />;
+  return <Animated.View style={[styles.dot, dotStyle]} />;
 }
 
 const styles = StyleSheet.create({
   root: {
     flex: 1,
+    backgroundColor: Brand.terracotta,
+    overflow: 'hidden',
   },
   safeArea: {
     flex: 1,
   },
   topBar: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
-    paddingHorizontal: Spacing.three,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: Spacing.four,
+    paddingVertical: Spacing.two,
     minHeight: 52,
   },
-  slide: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: Spacing.five,
-    paddingHorizontal: Spacing.five,
+  skip: {
+    color: Brand.cream,
+    opacity: 0.85,
   },
-  slideIcon: {
-    width: 160,
-    height: 160,
-    borderRadius: Radius.full,
-    alignItems: 'center',
-    justifyContent: 'center',
+  slide: {
+    paddingHorizontal: Spacing.five,
+    paddingTop: Spacing.four,
+    gap: Spacing.four,
   },
   slideText: {
     gap: Spacing.three,
-    maxWidth: 420,
+    maxWidth: 460,
   },
-  centered: {
-    textAlign: 'center',
+  slideTitle: {
+    color: Brand.cream,
+    fontFamily: FontFamily.extraBold,
+    fontSize: 36,
+    lineHeight: 42,
   },
-  footer: {
-    padding: Spacing.four,
-    gap: Spacing.four,
+  slideBody: {
+    color: Brand.cream,
+    opacity: 0.85,
+  },
+  slideCardZone: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  signInRow: {
+    alignItems: 'center',
+    paddingBottom: Spacing.three,
+  },
+  signInLink: {
+    color: Brand.cream,
+    textDecorationLine: 'underline',
+  },
+  actionBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: Brand.espresso,
+    borderRadius: Radius.full,
+    marginHorizontal: Spacing.four,
+    marginBottom: Spacing.three,
+    padding: Spacing.two,
+    paddingLeft: Spacing.four,
+    minHeight: 68,
   },
   dots: {
     flexDirection: 'row',
-    justifyContent: 'center',
     alignItems: 'center',
     gap: Spacing.two,
   },
   dot: {
     height: 8,
     borderRadius: Radius.full,
-  },
-  finalActions: {
-    gap: Spacing.two,
+    backgroundColor: Brand.cream,
   },
 });

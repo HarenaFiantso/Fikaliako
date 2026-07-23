@@ -1,122 +1,70 @@
-import { useEffect } from 'react';
-
 import { Ionicons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View } from 'react-native';
-import Animated, {
-  Easing,
-  FadeInDown,
-  interpolate,
-  useAnimatedStyle,
-  useSharedValue,
-  withDelay,
-  withRepeat,
-  withTiming,
-  ZoomIn,
-} from 'react-native-reanimated';
+import Animated, { FadeInDown, FadeInLeft, ZoomIn } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { Button } from '@/components/ui/button';
+import { RoundButton } from '@/components/ui/round-button';
 
+import { Brand, BrandMark, Motif } from '@/components/brand-decor';
 import { ThemedText } from '@/components/themed-text';
 
-import { useTheme } from '@/hooks/use-theme';
-
-import { MaxContentWidth, Radius, Spacing } from '@/constants/theme';
+import { FontFamily, MaxContentWidth, Spacing } from '@/constants/theme';
 
 export default function WelcomeScreen() {
   const router = useRouter();
-  const theme = useTheme();
 
   return (
-    <View style={[styles.root, { backgroundColor: theme.background }]}>
-      <LinearGradient
-        colors={[theme.accent, theme.background]}
-        style={StyleSheet.absoluteFill}
-        start={{ x: 0.5, y: 0 }}
-        end={{ x: 0.5, y: 0.7 }}
-      />
-      <FloatingBlob color={theme.primary} size={260} x={-90} y={-40} delay={0} drift={26} />
-      <FloatingBlob color={theme.accent} size={200} x={220} y={140} delay={900} drift={34} />
-      <FloatingBlob color={theme.primary} size={160} x={40} y={420} delay={400} drift={20} />
-
+    <View style={styles.root}>
+      <StatusBar style="light" />
+      <Motif shape="ring" size={340} x={180} y={-110} opacity={0.09} />
+      <Motif shape="pill" size={260} x={-120} y={230} rotate={-32} delay={600} opacity={0.07} />
+      <Motif shape="diamond" size={150} x={250} y={420} rotate={12} delay={1100} opacity={0.08} />
+      <Motif shape="disc" size={90} x={40} y={560} delay={300} opacity={0.07} />
       <SafeAreaView style={styles.safeArea}>
-        <View style={styles.hero}>
-          <Animated.View
-            entering={ZoomIn.duration(500).springify().damping(14)}
-            style={[styles.brandIcon, { backgroundColor: theme.primary }]}
-          >
-            <Ionicons name="restaurant" size={44} color={theme.onPrimary} />
-          </Animated.View>
-          <Animated.View entering={FadeInDown.duration(400).delay(150)}>
-            <ThemedText type="title" style={styles.centered}>
-              Fikaliako
-            </ThemedText>
-          </Animated.View>
-          <Animated.View entering={FadeInDown.duration(400).delay(280)}>
-            <ThemedText type="subtitle" style={styles.centered}>
-              What am I going to eat today?
-            </ThemedText>
-          </Animated.View>
-          <Animated.View entering={FadeInDown.duration(400).delay(410)}>
-            <ThemedText type="default" themeColor="textSecondary" style={styles.centered}>
-              Antananarivo&apos;s street food, gargottes and restaurants — found by budget, craving
-              and distance.
-            </ThemedText>
-          </Animated.View>
-        </View>
-
-        <Animated.View entering={FadeInDown.duration(400).delay(550)} style={styles.actions}>
-          <Button title="Get started" onPress={() => router.push('/onboarding')} />
+        <Animated.View entering={FadeInDown.duration(400)} style={styles.topBar}>
+          <BrandMark />
+          <ThemedText type="smallBold" style={styles.wordmark}>
+            Fikaliako
+          </ThemedText>
         </Animated.View>
+        <View style={styles.spacer} />
+        <View style={styles.bottom}>
+          <Animated.View entering={FadeInLeft.duration(450).delay(150)}>
+            <ThemedText type="smallBold" style={styles.eyebrow}>
+              ANTANANARIVO · STREET FOOD TO TABLES
+            </ThemedText>
+          </Animated.View>
+          <Animated.View entering={FadeInLeft.duration(450).delay(280)}>
+            <ThemedText style={styles.headline}>What am I going to eat today?</ThemedText>
+          </Animated.View>
+          <View style={styles.actionRow}>
+            <Animated.View entering={FadeInLeft.duration(450).delay(410)} style={styles.tagline}>
+              <ThemedText type="default" style={styles.taglineText}>
+                Gargottes, street vendors and restaurants — found by budget, craving and distance.
+              </ThemedText>
+            </Animated.View>
+            <Animated.View entering={ZoomIn.duration(400).delay(550).springify().damping(14)}>
+              <RoundButton
+                size={72}
+                backgroundColor={Brand.espresso}
+                accessibilityLabel="Get started"
+                onPress={() => router.push('/onboarding')}
+              >
+                <Ionicons name="chevron-forward" size={26} color={Brand.cream} />
+                <Ionicons
+                  name="chevron-forward"
+                  size={26}
+                  color={Brand.cream}
+                  style={styles.chevronOverlap}
+                />
+              </RoundButton>
+            </Animated.View>
+          </View>
+        </View>
       </SafeAreaView>
     </View>
-  );
-}
-
-function FloatingBlob({
-  color,
-  size,
-  x,
-  y,
-  delay,
-  drift,
-}: {
-  color: string;
-  size: number;
-  x: number;
-  y: number;
-  delay: number;
-  drift: number;
-}) {
-  const progress = useSharedValue(0);
-
-  useEffect(() => {
-    progress.value = withDelay(
-      delay,
-      withRepeat(withTiming(1, { duration: 6000, easing: Easing.inOut(Easing.sin) }), -1, true)
-    );
-  }, [delay, progress]);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [
-      { translateY: interpolate(progress.value, [0, 1], [0, -drift]) },
-      { translateX: interpolate(progress.value, [0, 1], [0, drift / 2]) },
-      { scale: interpolate(progress.value, [0, 1], [1, 1.12]) },
-    ],
-  }));
-
-  return (
-    <Animated.View
-      pointerEvents="none"
-      style={[
-        styles.blob,
-        { backgroundColor: color, width: size, height: size, borderRadius: size / 2 },
-        { left: x, top: y },
-        animatedStyle,
-      ]}
-    />
   );
 }
 
@@ -124,37 +72,58 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     alignItems: 'center',
+    backgroundColor: Brand.terracotta,
+    overflow: 'hidden',
   },
   safeArea: {
     flex: 1,
     width: '100%',
     maxWidth: MaxContentWidth,
     padding: Spacing.four,
-    gap: Spacing.five,
   },
-  hero: {
+  topBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.two + Spacing.one,
+  },
+  wordmark: {
+    color: Brand.cream,
+    fontSize: 18,
+  },
+  spacer: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+  },
+  bottom: {
     gap: Spacing.three,
-    paddingHorizontal: Spacing.three,
   },
-  brandIcon: {
-    width: 96,
-    height: 96,
-    borderRadius: Radius.full,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: Spacing.two,
+  eyebrow: {
+    color: Brand.cream,
+    opacity: 0.75,
+    fontSize: 12,
+    letterSpacing: 2,
   },
-  centered: {
-    textAlign: 'center',
+  headline: {
+    color: Brand.cream,
+    fontFamily: FontFamily.extraBold,
+    fontSize: 46,
+    lineHeight: 52,
   },
-  actions: {
-    gap: Spacing.two,
+  actionRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'space-between',
+    gap: Spacing.four,
+    marginTop: Spacing.two,
   },
-  blob: {
-    position: 'absolute',
-    opacity: 0.14,
+  tagline: {
+    flex: 1,
+    maxWidth: 420,
+  },
+  taglineText: {
+    color: Brand.cream,
+    opacity: 0.85,
+  },
+  chevronOverlap: {
+    marginLeft: -18,
   },
 });
