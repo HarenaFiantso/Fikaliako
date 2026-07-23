@@ -15,17 +15,19 @@ const passwordField = z
 
 const codeField = z.string().regex(/^[0-9]{6}$/, 'Enter the 6-digit code');
 
+const displayNameField = z
+  .string()
+  .trim()
+  .min(2, 'Use at least 2 characters')
+  .max(60, 'Use at most 60 characters');
+
 export const signInSchema = z.object({
   phone: phoneField,
   password: z.string().min(1, 'Password is required'),
 });
 
 export const signUpSchema = z.object({
-  displayName: z
-    .string()
-    .trim()
-    .min(2, 'Use at least 2 characters')
-    .max(60, 'Use at most 60 characters'),
+  displayName: displayNameField,
   phone: phoneField,
   password: passwordField,
   accountType: z.enum(['consumer', 'business']),
@@ -49,9 +51,15 @@ export const changePasswordSchema = z.object({
   newPassword: passwordField,
 });
 
+export const editProfileSchema = z.object({
+  displayName: displayNameField,
+  locale: z.enum(['fr', 'mg']),
+});
+
 export type SignInValues = z.infer<typeof signInSchema>;
 export type SignUpValues = z.infer<typeof signUpSchema>;
 export type VerifyPhoneValues = z.infer<typeof verifyPhoneSchema>;
 export type ForgotPasswordValues = z.infer<typeof forgotPasswordSchema>;
 export type ResetPasswordValues = z.infer<typeof resetPasswordSchema>;
 export type ChangePasswordValues = z.infer<typeof changePasswordSchema>;
+export type EditProfileValues = z.infer<typeof editProfileSchema>;

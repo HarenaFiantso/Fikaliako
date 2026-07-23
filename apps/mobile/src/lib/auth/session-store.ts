@@ -45,6 +45,11 @@ interface ChangePasswordInput {
   newPassword: string;
 }
 
+interface UpdateProfileInput {
+  displayName: string;
+  locale: 'fr' | 'mg';
+}
+
 interface SessionState {
   status: SessionStatus;
   user: UserProfile | null;
@@ -56,6 +61,7 @@ interface SessionState {
   forgotPassword: (phone: string) => Promise<void>;
   resetPassword: (input: ResetPasswordInput) => Promise<void>;
   changePassword: (input: ChangePasswordInput) => Promise<void>;
+  updateProfile: (input: UpdateProfileInput) => Promise<void>;
   refreshProfile: () => Promise<void>;
   signOut: () => Promise<void>;
 }
@@ -221,6 +227,24 @@ export const useSession = create<SessionState>((set, get) => {
         throw new AuthError(problemMessage(error, 'Current password is incorrect'));
       }
       throw new AuthError(problemMessage(error, 'Could not change the password'));
+    },
+
+    async updateProfile({ displayName, locale }) {
+      let result;
+      try {
+        result = await api.PATCH('/v1/users/me', {
+          body: { display_name: displayName, locale },
+        });
+      } catch {
+        throw networkError();
+      }
+      const { data, error } = result;
+      if (data) {
+        await saveUser(data);
+        set({ user: data });
+        return;
+      }
+      throw new AuthError(problemMessage(error, 'Could not update the profile'));
     },
 
     async refreshProfile() {
