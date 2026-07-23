@@ -130,7 +130,7 @@ function GlassTabBar({ children, ...props }: TabListProps) {
       style={[styles.wrap, { bottom: insets.bottom + Spacing.two }]}
     >
       {liquidGlass ? (
-        <GlassView glassEffectStyle="regular" style={styles.bar} onLayout={onBarLayout}>
+        <GlassView glassEffectStyle="clear" style={styles.bar} onLayout={onBarLayout}>
           {barContent}
         </GlassView>
       ) : (
