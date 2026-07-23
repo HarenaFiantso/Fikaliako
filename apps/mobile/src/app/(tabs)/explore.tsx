@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { ActivityIndicator, RefreshControl, StyleSheet, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import type { EstablishmentSummary } from '@fikaliako/api-client';
 
@@ -22,6 +22,7 @@ import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
 
 export default function ExploreScreen() {
   const theme = useTheme();
+  const insets = useSafeAreaInsets();
 
   const ensureFavorites = useFavorites((state) => state.ensureLoaded);
 
@@ -94,7 +95,10 @@ export default function ExploreScreen() {
                 <EstablishmentCard establishment={item} />
               </Animated.View>
             )}
-            contentContainerStyle={styles.listContent}
+            contentContainerStyle={[
+              styles.listContent,
+              { paddingBottom: insets.bottom + BottomTabInset },
+            ]}
             showsVerticalScrollIndicator={false}
             onEndReached={() => void loadMore()}
             onEndReachedThreshold={0.4}
@@ -153,7 +157,6 @@ const styles = StyleSheet.create({
   },
   listContent: {
     gap: Spacing.two,
-    paddingBottom: BottomTabInset + Spacing.three,
   },
   footerSpinner: {
     marginVertical: Spacing.three,
