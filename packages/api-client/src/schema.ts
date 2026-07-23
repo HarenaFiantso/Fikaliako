@@ -232,8 +232,8 @@ export interface paths {
       cookie?: never;
     };
     /**
-     * Typo-tolerant text search
-     * @description Free-text discovery over names, districts, cities, cuisine labels and dish words, with FR/MG synonym expansion — searching `romazava` also surfaces Malagasy-cuisine establishments whose name never mentions the dish (project book ch. 4.2). Typo tolerance runs on PostgreSQL trigram similarity behind a port, so the target Meilisearch engine (ch. 7.1) can replace it without an API change. Results are relevance-ordered, then by Bayesian note; `next_cursor` carries an offset. All `/v1/nearby` filters combine, and an optional (`lat`, `lng`) pair annotates each hit with `distance_m` and unlocks `radius` narrowing — search anywhere on the map, not only around the user (ch. 4.1).
+     * Typo-tolerant text and smart search
+     * @description Free-text discovery over names, districts, cities, cuisine labels and dish words, with FR/MG synonym expansion — searching `romazava` also surfaces Malagasy-cuisine establishments whose name never mentions the dish (project book ch. 4.2). Typo tolerance runs on PostgreSQL trigram similarity behind a port, so the target Meilisearch engine (ch. 7.1) can replace it without an API change. Deterministic smart rules first turn natural-language phrases into filters: "j'ai faim" becomes open-now within 1 km ranked by the ch. 4.2 discovery score (Bayesian note + recent reviews + budget adequacy), "pizza pas cher" keeps searching "pizza" under 5 000 Ar. What was applied is echoed in `interpretation`; explicit query parameters always win over interpreted ones. Results are relevance-ordered (or discovery-scored for filter-only smart queries); `next_cursor` carries an offset. All `/v1/nearby` filters combine, and an optional (`lat`, `lng`) pair annotates each hit with `distance_m` and unlocks `radius` narrowing — search anywhere on the map, not only around the user (ch. 4.1).
      */
     get: operations['search'];
     put?: never;
@@ -833,6 +833,33 @@ export interface components {
       /** @description Pass back as `?cursor=`; absent on the last page. */
       next_cursor?: string;
     };
+    /** @description What the deterministic smart-search rules (project book ch. 4.2) applied. Only present when at least one natural-language intent matched; values reflect the effective filters after explicit query parameters took precedence. */
+    SearchInterpretation: {
+      /** @description Matched intent identifiers (e.g. `hungry`, `cheap`, `breakfast`). */
+      intents: string[];
+      /** @description Present (true) when the query restricted to open establishments. */
+      open_now?: boolean;
+      /** @description Effective budget ceiling in ariary. */
+      max_price_ar?: number;
+      types?: components['schemas']['EstablishmentType'][];
+      /** @description Boolean amenity filters switched on by the query. */
+      amenities?: string[];
+      /** @description Payment-method filter derived from the query (e.g. `mvola`, `mobile`). */
+      payment?: string;
+      /**
+       * Format: double
+       * @description Effective search radius, when a position was supplied.
+       */
+      radius_m?: number;
+      /**
+       * @description `discovery_score` for filter-only smart queries (Bayesian note + recent reviews + budget adequacy); `relevance` when text matching still applies.
+       * @enum {string}
+       */
+      ordering: 'relevance' | 'discovery_score';
+    };
+    SearchPage: components['schemas']['EstablishmentPage'] & {
+      interpretation?: components['schemas']['SearchInterpretation'];
+    };
     /** @description A cursor-paginated page of reviews. */
     ReviewPage: {
       items: components['schemas']['ReviewItem'][];
@@ -1261,7 +1288,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          'application/json': components['schemas']['EstablishmentPage'];
+          'application/json': components['schemas']['SearchPage'];
         };
       };
       400: components['responses']['BadRequest'];

@@ -104,5 +104,62 @@ class SearchServiceTest {
 
     val page = service.search("sakafo", filters, -18.91, 47.52, 1000.0, null, null)
     assertEquals(0, page.items.size)
+    assertNull(page.interpretation)
+  }
+
+  @Test
+  fun `j'ai faim near a position becomes a discovery-ranked open-now query within 1 km`() {
+    val geo = GeoSearchContext(-18.91, 47.52, 1000.0)
+    val smartFilters = filters.copy(openNow = true)
+    Mockito
+      .`when`(
+        repo.searchDiscovery(geo, smartFilters, SearchService.DEFAULT_LIMIT + 1, 0, now),
+      ).thenReturn(listOf(summary(1)))
+
+    val page = service.search("j'ai faim", filters, -18.91, 47.52, null, null, null)
+
+    assertEquals(1, page.items.size)
+    val interpretation = page.interpretation!!
+    assertEquals(listOf("hungry"), interpretation.intents)
+    assertEquals(true, interpretation.openNow)
+    assertEquals(1000.0, interpretation.radiusM)
+    assertEquals(SearchService.ORDERING_DISCOVERY, interpretation.ordering)
+  }
+
+  @Test
+  fun `a dish with a smart phrase keeps text-searching the dish under the interpreted budget`() {
+    val smartFilters = filters.copy(maxPrice = 5000)
+    Mockito
+      .`when`(
+        repo.searchText(
+          "pizza",
+          setOf("fast_food"),
+          emptySet(),
+          smartFilters,
+          null,
+          SearchService.DEFAULT_LIMIT + 1,
+          0,
+          now,
+        ),
+      ).thenReturn(listOf(summary(1)))
+
+    val page = service.search("pizza pas cher", filters, null, null, null, null, null)
+
+    assertEquals(1, page.items.size)
+    val interpretation = page.interpretation!!
+    assertEquals(5000, interpretation.maxPriceAr)
+    assertEquals(SearchService.ORDERING_RELEVANCE, interpretation.ordering)
+  }
+
+  @Test
+  fun `explicit parameters win over interpreted ones`() {
+    val explicit = EstablishmentFilters(maxPrice = 3000)
+    Mockito
+      .`when`(
+        repo.searchDiscovery(null, explicit, SearchService.DEFAULT_LIMIT + 1, 0, now),
+      ).thenReturn(emptyList())
+
+    val page = service.search("pas cher", explicit, null, null, null, null, null)
+    assertEquals(3000, page.interpretation!!.maxPriceAr)
   }
 }

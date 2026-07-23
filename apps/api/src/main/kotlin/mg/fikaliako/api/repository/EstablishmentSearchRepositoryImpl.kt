@@ -84,4 +84,57 @@ class EstablishmentSearchRepositoryImpl(
       )
     }
   }
+
+  override fun searchDiscovery(
+    geo: GeoSearchContext?,
+    filters: EstablishmentFilters,
+    limit: Int,
+    offset: Int,
+    now: Instant,
+  ): List<EstablishmentSummary> {
+    val where = WhereBuilder(now)
+    where.add("e.status = 'active'")
+    where.applyFilters(filters)
+    if (geo?.radiusM != null) {
+      where.add("ST_DWithin(e.position, $POINT, :radius)")
+    }
+
+    // Ch. 4.2 management rule — a deterministic score mixing the (Bayesian)
+    // note, the recent review volume and the budget adequacy. `:maxPrice` is
+    // already bound by the budget filter when one applies.
+    val budgetFit =
+      if (filters.maxPrice != null) {
+        "CASE WHEN e.avg_price_ar IS NULL THEN 0 " +
+          "ELSE GREATEST(0, CAST(:maxPrice - e.avg_price_ar AS double precision)) / :maxPrice END"
+      } else {
+        "0"
+      }
+    val score =
+      "0.5 * COALESCE(r.bayesian_note, 0) / 5 " +
+        "+ 0.3 * LEAST(COALESCE(r.recent_review_count, 0), 20) / 20.0 " +
+        "+ 0.2 * ($budgetFit)"
+
+    val distanceExpr = if (geo != null) "ST_Distance(e.position, $POINT)" else "CAST(NULL AS double precision)"
+    val sql =
+      """
+      SELECT $SUMMARY_COLUMNS, $distanceExpr AS distance_m, ($score) AS discovery_score
+      FROM establishments e
+      LEFT JOIN establishment_ratings r ON r.establishment_id = e.id
+      WHERE ${where.sql()}
+      ORDER BY discovery_score DESC, distance_m ASC NULLS LAST, e.id
+      LIMIT :limit OFFSET :offset
+      """.trimIndent()
+
+    val query =
+      em
+        .createNativeQuery(sql, Tuple::class.java)
+        .setParameter("limit", limit)
+        .setParameter("offset", offset)
+    if (geo != null) {
+      query.setParameter("lat", geo.lat).setParameter("lng", geo.lng)
+      geo.radiusM?.let { query.setParameter("radius", it) }
+    }
+    where.bind(query)
+    return SummaryRowMapping.tuples(query).map { SummaryRowMapping.toSummary(it, withDistance = geo != null) }
+  }
 }

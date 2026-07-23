@@ -35,4 +35,17 @@ interface EstablishmentSearchRepository {
     cursor: Cursor?,
     now: Instant,
   ): List<EstablishmentListRow>
+
+  /**
+   * Filter-only smart search (project book ch. 4.2): establishments ordered by
+   * the deterministic discovery score mixing Bayesian note, recent review
+   * volume and budget adequacy.
+   */
+  fun searchDiscovery(
+    geo: GeoSearchContext?,
+    filters: EstablishmentFilters,
+    limit: Int,
+    offset: Int,
+    now: Instant,
+  ): List<EstablishmentSummary>
 }

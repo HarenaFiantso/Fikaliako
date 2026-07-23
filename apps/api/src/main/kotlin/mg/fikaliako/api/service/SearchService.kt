@@ -2,7 +2,8 @@ package mg.fikaliako.api.service
 
 import mg.fikaliako.api.endpoint.rest.model.EstablishmentFilters
 import mg.fikaliako.api.endpoint.rest.model.EstablishmentSummary
-import mg.fikaliako.api.endpoint.rest.model.Page
+import mg.fikaliako.api.endpoint.rest.model.SearchInterpretation
+import mg.fikaliako.api.endpoint.rest.model.SearchPage
 import mg.fikaliako.api.model.exception.BadRequestException
 import mg.fikaliako.api.repository.EstablishmentRepository
 import mg.fikaliako.api.repository.GeoSearchContext
@@ -12,8 +13,12 @@ import org.springframework.stereotype.Service
 import java.time.Clock
 
 /**
- * Text search (project book ch. 4.2): typo-tolerant, FR/MG synonym-aware,
- * combinable with every ch. 4.3 filter and an optional geographic context.
+ * Search (project book ch. 4.2): the four combinable modes behind one endpoint.
+ * Text goes through typo-tolerant, FR/MG synonym-aware matching; the smart
+ * interpreter first turns natural-language phrases ("j'ai faim", "pas cher")
+ * into filters, and a filter-only smart query is ranked by the deterministic
+ * discovery score instead of text relevance. Budget and distance arrive as
+ * plain parameters. Explicit query parameters always win over interpreted ones.
  */
 @Service
 class SearchService(
@@ -28,29 +33,78 @@ class SearchService(
     radiusM: Double?,
     limit: Int?,
     cursorValue: String?,
-  ): Page<EstablishmentSummary> {
+  ): SearchPage {
     val query = TextNormalization.normalize(rawQuery)
     if (query.isEmpty()) throw BadRequestException("q must not be blank.")
     if (query.length > MAX_QUERY_LENGTH) throw BadRequestException("q must be at most $MAX_QUERY_LENGTH characters.")
-    val geo = resolveGeo(lat, lng, radiusM)
     val cappedLimit = clampLimit(limit)
     val offset = cursorValue?.let { OffsetCursor.decode(it) } ?: 0
-    val expansion = SearchSynonyms.expand(query)
+    val now = clock.instant()
+
+    val interpretation = SmartQueryInterpreter.interpret(query)
+    val merged = mergeFilters(filters, interpretation)
+    var geo = resolveGeo(lat, lng, radiusM)
+    if (geo != null && geo.radiusM == null && interpretation.radiusM != null) {
+      geo = geo.copy(radiusM = interpretation.radiusM)
+    }
+
+    val residual = interpretation.residualQuery
     val rows =
-      repository.searchText(
-        query,
-        expansion.cuisines,
-        expansion.types,
-        filters,
-        geo,
-        cappedLimit + 1,
-        offset,
-        clock.instant(),
-      )
+      if (interpretation.isSmart && residual.isEmpty()) {
+        repository.searchDiscovery(geo, merged, cappedLimit + 1, offset, now)
+      } else {
+        val expansion = SearchSynonyms.expand(residual)
+        repository.searchText(
+          residual,
+          expansion.cuisines,
+          expansion.types,
+          merged,
+          geo,
+          cappedLimit + 1,
+          offset,
+          now,
+        )
+      }
     val page = rows.take(cappedLimit)
     val next = if (rows.size > cappedLimit) OffsetCursor.encode(offset + cappedLimit) else null
-    return Page(page, next)
+    return SearchPage(page, next, interpretationEcho(interpretation, merged, geo))
   }
+
+  private fun mergeFilters(
+    filters: EstablishmentFilters,
+    interpretation: SmartQueryInterpreter.Interpretation,
+  ): EstablishmentFilters =
+    if (!interpretation.isSmart) {
+      filters
+    } else {
+      filters.copy(
+        types = filters.types.ifEmpty { interpretation.types },
+        maxPrice = filters.maxPrice ?: interpretation.maxPriceAr,
+        payment = filters.payment ?: interpretation.payment,
+        amenities = (filters.amenities + interpretation.amenities).distinct(),
+        openNow = filters.openNow || interpretation.openNow,
+      )
+    }
+
+  private fun interpretationEcho(
+    interpretation: SmartQueryInterpreter.Interpretation,
+    merged: EstablishmentFilters,
+    geo: GeoSearchContext?,
+  ): SearchInterpretation? =
+    if (!interpretation.isSmart) {
+      null
+    } else {
+      SearchInterpretation(
+        intents = interpretation.intents,
+        openNow = merged.openNow.takeIf { it },
+        maxPriceAr = merged.maxPrice,
+        types = merged.types.takeIf { it.isNotEmpty() },
+        amenities = merged.amenities.takeIf { it.isNotEmpty() },
+        payment = merged.payment,
+        radiusM = geo?.radiusM,
+        ordering = if (interpretation.residualQuery.isEmpty()) ORDERING_DISCOVERY else ORDERING_RELEVANCE,
+      )
+    }
 
   private fun resolveGeo(
     lat: Double?,
@@ -83,5 +137,8 @@ class SearchService(
 
     /** Book ch. 4.2 — the distance mode goes up to 10 km. */
     const val MAX_RADIUS_M = 10_000.0
+
+    const val ORDERING_RELEVANCE = "relevance"
+    const val ORDERING_DISCOVERY = "discovery_score"
   }
 }
