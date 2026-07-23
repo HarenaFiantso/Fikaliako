@@ -88,5 +88,6 @@ export const Radius = {
   full: 999,
 } as const;
 
-export const BottomTabInset = Platform.select({ ios: 50, android: 80 }) ?? 0;
+// Clearance for the floating glass tab bar (64 tall + 8 gap + breathing room).
+export const BottomTabInset = 88;
 export const MaxContentWidth = 800;
