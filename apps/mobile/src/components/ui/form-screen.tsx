@@ -12,6 +12,8 @@ import { ThemedView } from '@/components/themed-view';
 
 import { useTheme } from '@/hooks/use-theme';
 
+import { safeBack } from '@/lib/navigation';
+
 import { MaxContentWidth, Radius, Spacing } from '@/constants/theme';
 
 export type FormScreenProps = {
@@ -41,7 +43,7 @@ export function FormScreen({ title, subtitle, children }: FormScreenProps) {
               <Pressable
                 accessibilityRole="button"
                 accessibilityLabel="Go back"
-                onPress={() => router.back()}
+                onPress={() => safeBack(router)}
                 style={[
                   styles.backButton,
                   { backgroundColor: theme.card, borderColor: theme.border },

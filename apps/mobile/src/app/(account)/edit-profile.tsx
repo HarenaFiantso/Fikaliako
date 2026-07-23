@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'expo-router';
@@ -15,6 +15,7 @@ import { ThemedText } from '@/components/themed-text';
 
 import { editProfileSchema, type EditProfileValues } from '@/lib/auth/schemas';
 import { useSession } from '@/lib/auth/session-store';
+import { safeBack } from '@/lib/navigation';
 
 import { Spacing } from '@/constants/theme';
 
@@ -31,6 +32,12 @@ export default function EditProfileScreen() {
 
   const [formError, setFormError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
+
+  useEffect(() => {
+    if (!done) return;
+    const timer = setTimeout(() => safeBack(router, '/profile'), 1200);
+    return () => clearTimeout(timer);
+  }, [done, router]);
 
   const {
     control,
@@ -49,7 +56,6 @@ export default function EditProfileScreen() {
     try {
       await updateProfile(values);
       setDone(true);
-      setTimeout(() => router.back(), 1200);
     } catch (error) {
       setFormError(error instanceof Error ? error.message : 'Could not update the profile');
     }

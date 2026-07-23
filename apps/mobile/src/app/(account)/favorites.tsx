@@ -26,6 +26,7 @@ import { ThemedView } from '@/components/themed-view';
 import { useTheme } from '@/hooks/use-theme';
 
 import { useFavorites } from '@/lib/favorites-store';
+import { safeBack } from '@/lib/navigation';
 
 import { MaxContentWidth, Radius, Spacing } from '@/constants/theme';
 
@@ -60,7 +61,7 @@ export default function FavoritesScreen() {
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Go back"
-            onPress={() => router.back()}
+            onPress={() => safeBack(router, '/profile')}
             style={[styles.backButton, { backgroundColor: theme.card, borderColor: theme.border }]}
           >
             <Ionicons name="chevron-back" size={22} color={theme.text} />

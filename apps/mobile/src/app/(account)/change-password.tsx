@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'expo-router';
@@ -11,6 +11,7 @@ import { TextField } from '@/components/ui/text-field';
 
 import { changePasswordSchema, type ChangePasswordValues } from '@/lib/auth/schemas';
 import { useSession } from '@/lib/auth/session-store';
+import { safeBack } from '@/lib/navigation';
 
 export default function ChangePasswordScreen() {
   const router = useRouter();
@@ -19,6 +20,12 @@ export default function ChangePasswordScreen() {
 
   const [formError, setFormError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
+
+  useEffect(() => {
+    if (!done) return;
+    const timer = setTimeout(() => safeBack(router, '/profile'), 1200);
+    return () => clearTimeout(timer);
+  }, [done, router]);
 
   const {
     control,
@@ -34,7 +41,6 @@ export default function ChangePasswordScreen() {
     try {
       await changePassword(values);
       setDone(true);
-      setTimeout(() => router.back(), 1200);
     } catch (error) {
       setFormError(error instanceof Error ? error.message : 'Could not change the password');
     }
