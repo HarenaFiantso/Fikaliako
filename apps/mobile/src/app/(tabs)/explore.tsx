@@ -8,7 +8,7 @@ import type { EstablishmentSummary } from '@fikaliako/api-client';
 
 import { Button } from '@/components/ui/button';
 
-import { BrandMark, Motif } from '@/components/brand-decor';
+import { BrandMark } from '@/components/brand-decor';
 import { EstablishmentCard } from '@/components/establishment-card';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -48,16 +48,6 @@ export default function ExploreScreen() {
 
   return (
     <ThemedView style={styles.root}>
-      <Motif
-        shape="disc"
-        size={220}
-        x={260}
-        y={-100}
-        color={theme.accent}
-        opacity={0.5}
-        drift={10}
-      />
-
       <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
         <Animated.View entering={FadeInDown.duration(300)} style={styles.header}>
           <View style={styles.headerTitleRow}>

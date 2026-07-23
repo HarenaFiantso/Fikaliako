@@ -40,39 +40,35 @@ export function SegmentedControl<T extends string>({
   const position = useSharedValue(index);
 
   useEffect(() => {
-    position.value = withSpring(index, { damping: 14, stiffness: 220 });
+    position.value = withSpring(index, { damping: 16, stiffness: 240 });
   }, [index, position]);
 
-  /**
-   * Same droplet motion as the tab bar: the distance to the nearest segment
-   * drives a horizontal stretch and vertical squash, so the thumb deforms
-   * mid-flight and settles round.
-   */
-  const thumbStyle = useAnimatedStyle(() => {
-    const wobble = Math.abs(position.value - Math.round(position.value));
-    return {
-      transform: [
-        { translateX: position.value * segmentWidth },
-        { scaleX: 1 + wobble * 0.25 },
-        { scaleY: 1 - wobble * 0.1 },
-      ],
-    };
-  });
+  // Translation only: scaling a glass (UIVisualEffectView-backed) surface
+  // degrades the liquid-glass rendering, so the droplet squish stays out.
+  const thumbStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: position.value * segmentWidth }],
+  }));
 
   const liquidGlass = Platform.OS === 'ios' && isLiquidGlassAvailable();
 
   return (
     <View
-      style={[styles.track, { backgroundColor: theme.backgroundElement }]}
+      style={[styles.track, !liquidGlass && { backgroundColor: theme.backgroundElement }]}
       onLayout={(event) => setWidth(event.nativeEvent.layout.width)}
     >
+      {liquidGlass && (
+        <GlassView
+          glassEffectStyle="regular"
+          style={[StyleSheet.absoluteFill, styles.trackGlass]}
+        />
+      )}
       {segmentWidth > 0 && (
         <Animated.View style={[styles.thumb, { width: segmentWidth }, thumbStyle]}>
           {liquidGlass ? (
             <GlassView
               glassEffectStyle="regular"
               isInteractive
-              tintColor={`${theme.accent}80`}
+              tintColor={theme.accent}
               style={styles.thumbFill}
             />
           ) : (
@@ -106,6 +102,9 @@ const styles = StyleSheet.create({
     padding: THUMB_PADDING,
     minHeight: 44,
     alignItems: 'stretch',
+  },
+  trackGlass: {
+    borderRadius: Radius.xl,
     overflow: 'hidden',
   },
   thumb: {
