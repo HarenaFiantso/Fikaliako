@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 
+import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { ActivityIndicator, RefreshControl, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Pressable, RefreshControl, StyleSheet, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -19,7 +20,7 @@ import { useTheme } from '@/hooks/use-theme';
 import { useEstablishmentBrowse } from '@/lib/browse-store';
 import { useFavorites } from '@/lib/favorites-store';
 
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import { BottomTabInset, MaxContentWidth, Radius, Spacing } from '@/constants/theme';
 
 export default function ExploreScreen() {
   const router = useRouter();
@@ -55,6 +56,18 @@ export default function ExploreScreen() {
           <View style={styles.headerTitleRow}>
             <BrandMark size={36} tone="terracotta" />
             <ThemedText type="subtitle">Explore</ThemedText>
+            <View style={styles.headerSpacer} />
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Add a place"
+              onPress={() => router.push('/propose')}
+              style={({ pressed }) => [
+                styles.addButton,
+                { backgroundColor: theme.accent, opacity: pressed ? 0.7 : 1 },
+              ]}
+            >
+              <Ionicons name="add" size={24} color={theme.primary} />
+            </Pressable>
           </View>
           <ThemedText type="small" themeColor="textSecondary">
             Aiza no hisakafo androany ?
@@ -142,6 +155,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.two,
+  },
+  headerSpacer: {
+    flex: 1,
+  },
+  addButton: {
+    width: 44,
+    height: 44,
+    borderRadius: Radius.full,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   centered: {
     flex: 1,
