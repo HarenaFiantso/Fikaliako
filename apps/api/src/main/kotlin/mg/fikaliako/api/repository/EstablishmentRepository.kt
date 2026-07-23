@@ -9,7 +9,8 @@ import java.util.UUID
 
 interface EstablishmentRepository :
   JpaRepository<Establishment, UUID>,
-  EstablishmentSearchRepository {
+  EstablishmentSearchRepository,
+  EstablishmentTextSearchRepository {
   fun findBySlug(slug: String): Establishment?
 }
 

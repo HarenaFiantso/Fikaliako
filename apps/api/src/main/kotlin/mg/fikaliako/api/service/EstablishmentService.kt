@@ -161,7 +161,9 @@ class EstablishmentService(
 
   companion object {
     const val DEFAULT_RADIUS_M = 1000.0
-    const val MAX_RADIUS_M = 5000.0
+
+    /** Book ch. 4.2 — the distance mode goes up to 10 km. */
+    const val MAX_RADIUS_M = 10_000.0
     const val DEFAULT_LIMIT = 50
     const val MAX_PAGE_SIZE = 100
 

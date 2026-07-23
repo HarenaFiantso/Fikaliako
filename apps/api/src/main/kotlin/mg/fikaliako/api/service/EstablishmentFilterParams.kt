@@ -45,7 +45,7 @@ object EstablishmentFilterParams {
           }
         }.orEmpty()
     return EstablishmentFilters(
-      type = type,
+      types = listOfNotNull(type),
       minPrice = minPrice,
       maxPrice = maxPrice,
       cuisine = cuisine,
