@@ -96,7 +96,6 @@ export default function FavoritesScreen() {
               <Animated.View
                 entering={FadeInDown.duration(300).delay(Math.min(index * 60, 360))}
                 exiting={FadeOut.duration(180)}
-                layout={LinearTransition.springify().damping(18)}
               >
                 <EstablishmentCard establishment={item} />
               </Animated.View>
