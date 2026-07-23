@@ -13,19 +13,27 @@ import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import { useColorScheme } from 'react-native';
 
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
+import { CelebrationOverlay } from '@/components/celebration-overlay';
 
 import { useSession } from '@/lib/auth/session-store';
+import { useCelebration } from '@/lib/celebration-store';
 import { useOnboarding } from '@/lib/onboarding-store';
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+
   const status = useSession((state) => state.status);
   const restore = useSession((state) => state.restore);
+
   const onboardingReady = useOnboarding((state) => state.ready);
   const onboarded = useOnboarding((state) => state.completed);
   const restoreOnboarding = useOnboarding((state) => state.restore);
+
+  const celebration = useCelebration((state) => state.message);
+  const dismissCelebration = useCelebration((state) => state.dismiss);
+
   const [fontsReady, fontsError] = useFonts({
     Raleway_400Regular,
     Raleway_500Medium,
@@ -61,6 +69,7 @@ export default function RootLayout() {
           <Stack.Screen name="(auth)" />
         </Stack.Protected>
       </Stack>
+      {celebration && <CelebrationOverlay message={celebration} onDismiss={dismissCelebration} />}
     </ThemeProvider>
   );
 }

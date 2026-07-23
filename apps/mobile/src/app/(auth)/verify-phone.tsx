@@ -12,6 +12,7 @@ import { ThemedText } from '@/components/themed-text';
 
 import { formatPhone, normalizePhone } from '@/lib/auth/phone';
 import { useSession } from '@/lib/auth/session-store';
+import { useCelebration } from '@/lib/celebration-store';
 
 import { Spacing } from '@/constants/theme';
 
@@ -44,6 +45,7 @@ export default function VerifyPhoneScreen() {
     setNotice(null);
     try {
       await verifyPhone({ phone, code: value });
+      useCelebration.getState().celebrate('Your account is ready — time to eat well.');
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Could not verify the number');
       setCode('');
