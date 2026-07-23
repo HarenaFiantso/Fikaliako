@@ -139,6 +139,7 @@ function toSummary(detail: EstablishmentDetail): EstablishmentSummary {
 }
 
 function DetailContent({ detail }: { detail: EstablishmentDetail }) {
+  const router = useRouter();
   const theme = useTheme();
   const insets = useSafeAreaInsets();
 
@@ -293,6 +294,16 @@ function DetailContent({ detail }: { detail: EstablishmentDetail }) {
 
         <Section title="Reviews" delay={360}>
           <RatingBreakdown rating={detail.rating} />
+          <Button
+            title="Write a review"
+            variant="secondary"
+            onPress={() =>
+              router.push({
+                pathname: '/review/[establishmentId]',
+                params: { establishmentId: detail.id, name: detail.name },
+              })
+            }
+          />
           {!reviewsEntry ||
           (reviewsEntry.status === 'loading' && reviewsEntry.items.length === 0) ? (
             <ActivityIndicator color={theme.primary} style={styles.reviewsSpinner} />

@@ -62,6 +62,7 @@ export default function RootLayout() {
           <Stack.Screen name="(tabs)" />
           <Stack.Screen name="(account)" />
           <Stack.Screen name="establishment/[idOrSlug]" />
+          <Stack.Screen name="review/[establishmentId]" options={{ presentation: 'modal' }} />
         </Stack.Protected>
         <Stack.Protected guard={!signedIn && !onboarded}>
           <Stack.Screen name="(onboarding)" options={{ animation: 'fade' }} />
