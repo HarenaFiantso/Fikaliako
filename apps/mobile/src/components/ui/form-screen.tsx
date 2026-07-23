@@ -6,7 +6,7 @@ import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet } fro
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { BrandMark, Motif } from '@/components/brand-decor';
+import { BrandMark } from '@/components/brand-decor';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 
@@ -27,26 +27,6 @@ export function FormScreen({ title, subtitle, children }: FormScreenProps) {
 
   return (
     <ThemedView style={styles.root}>
-      <Motif
-        shape="disc"
-        size={240}
-        x={250}
-        y={-110}
-        color={theme.accent}
-        opacity={0.55}
-        drift={10}
-      />
-      <Motif
-        shape="ring"
-        size={150}
-        x={-70}
-        y={90}
-        color={theme.accent}
-        opacity={0.5}
-        drift={8}
-        delay={700}
-      />
-
       <SafeAreaView style={styles.safeArea} edges={['top', 'bottom', 'left', 'right']}>
         <KeyboardAvoidingView
           style={styles.flex}
