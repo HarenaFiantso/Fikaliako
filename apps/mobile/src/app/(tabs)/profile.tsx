@@ -77,6 +77,11 @@ export default function ProfileScreen() {
         </Animated.View>
         <Animated.View entering={FadeInDown.duration(300).delay(80)} style={styles.menu}>
           <MenuRow
+            icon="person-outline"
+            label="Edit profile"
+            onPress={() => router.push('/edit-profile')}
+          />
+          <MenuRow
             icon="key-outline"
             label="Change password"
             onPress={() => router.push('/change-password')}
