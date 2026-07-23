@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ProblemDetail
 import org.springframework.http.converter.HttpMessageNotReadableException
+import org.springframework.web.HttpRequestMethodNotSupportedException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.MissingServletRequestParameterException
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -92,6 +93,18 @@ class ApiExceptionHandler {
     ex: MissingServletRequestParameterException,
     request: HttpServletRequest,
   ): ProblemDetail = problem(HttpStatus.BAD_REQUEST, "Bad request", "Missing required parameter '${ex.parameterName}'.", request)
+
+  @ExceptionHandler(HttpRequestMethodNotSupportedException::class)
+  fun handleMethodNotSupported(
+    ex: HttpRequestMethodNotSupportedException,
+    request: HttpServletRequest,
+  ): ProblemDetail =
+    problem(
+      HttpStatus.METHOD_NOT_ALLOWED,
+      "Method not allowed",
+      "${ex.method} is not supported on this resource.",
+      request,
+    )
 
   @ExceptionHandler(Exception::class)
   fun handleUnexpected(

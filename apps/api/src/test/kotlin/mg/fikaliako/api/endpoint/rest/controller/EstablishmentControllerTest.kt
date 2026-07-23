@@ -165,6 +165,20 @@ class EstablishmentControllerTest {
       }
   }
 
+  @Test
+  fun `an unsupported method is a problem+json 405, not a 500`() {
+    mockMvc
+      .post("/v1/establishments/some-slug") {
+        with(jwt().jwt { it.subject("bbbbbbbb-0000-0000-0000-000000000001") })
+        contentType = MediaType.APPLICATION_JSON
+        content = "{}"
+      }.andExpect {
+        status { isMethodNotAllowed() }
+        content { contentType(MediaType.APPLICATION_PROBLEM_JSON) }
+        jsonPath("$.title") { value("Method not allowed") }
+      }
+  }
+
   private fun summary() =
     EstablishmentSummary(
       id = UUID.fromString("aaaaaaaa-0000-0000-0000-000000000001"),
