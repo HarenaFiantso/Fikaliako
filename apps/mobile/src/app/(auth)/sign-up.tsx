@@ -49,7 +49,7 @@ export default function SignUpScreen() {
 
   return (
     <FormScreen
-      title="Create an account"
+      title="Create your account"
       subtitle="A phone number is all it takes to join Fikaliako."
     >
       {formError && <AlertBanner kind="error" message={formError} />}

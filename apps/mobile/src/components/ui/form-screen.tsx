@@ -6,12 +6,13 @@ import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet } fro
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { BrandMark, Motif } from '@/components/brand-decor';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 
 import { useTheme } from '@/hooks/use-theme';
 
-import { MaxContentWidth, Spacing } from '@/constants/theme';
+import { MaxContentWidth, Radius, Spacing } from '@/constants/theme';
 
 export type FormScreenProps = {
   title: string;
@@ -21,10 +22,31 @@ export type FormScreenProps = {
 
 export function FormScreen({ title, subtitle, children }: FormScreenProps) {
   const theme = useTheme();
+
   const router = useRouter();
 
   return (
     <ThemedView style={styles.root}>
+      <Motif
+        shape="disc"
+        size={240}
+        x={250}
+        y={-110}
+        color={theme.accent}
+        opacity={0.55}
+        drift={10}
+      />
+      <Motif
+        shape="ring"
+        size={150}
+        x={-70}
+        y={90}
+        color={theme.accent}
+        opacity={0.5}
+        drift={8}
+        delay={700}
+      />
+
       <SafeAreaView style={styles.safeArea} edges={['top', 'bottom', 'left', 'right']}>
         <KeyboardAvoidingView
           style={styles.flex}
@@ -40,15 +62,21 @@ export function FormScreen({ title, subtitle, children }: FormScreenProps) {
                 accessibilityRole="button"
                 accessibilityLabel="Go back"
                 onPress={() => router.back()}
-                style={[styles.backButton, { backgroundColor: theme.backgroundElement }]}
+                style={[
+                  styles.backButton,
+                  { backgroundColor: theme.card, borderColor: theme.border },
+                ]}
               >
                 <Ionicons name="chevron-back" size={22} color={theme.text} />
               </Pressable>
             )}
             <Animated.View entering={FadeInDown.duration(300)} style={styles.header}>
-              <ThemedText type="subtitle">{title}</ThemedText>
+              <BrandMark size={48} tone="terracotta" />
+              <ThemedText type="subtitle" style={styles.centered}>
+                {title}
+              </ThemedText>
               {subtitle ? (
-                <ThemedText type="default" themeColor="textSecondary">
+                <ThemedText type="default" themeColor="textSecondary" style={styles.centered}>
                   {subtitle}
                 </ThemedText>
               ) : null}
@@ -67,6 +95,7 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     alignItems: 'center',
+    overflow: 'hidden',
   },
   safeArea: {
     flex: 1,
@@ -82,14 +111,20 @@ const styles = StyleSheet.create({
     gap: Spacing.four,
   },
   backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 44,
+    height: 44,
+    borderRadius: Radius.full,
+    borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
   header: {
+    alignItems: 'center',
     gap: Spacing.two,
+    paddingHorizontal: Spacing.three,
+  },
+  centered: {
+    textAlign: 'center',
   },
   body: {
     gap: Spacing.three,

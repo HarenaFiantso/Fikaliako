@@ -35,7 +35,9 @@ export function TextField({
   ...inputProps
 }: TextFieldProps) {
   const theme = useTheme();
+
   const [hidden, setHidden] = useState(secure);
+
   const focus = useSharedValue(0);
   const shake = useSharedValue(0);
 
@@ -71,9 +73,7 @@ export function TextField({
   return (
     <View style={styles.container}>
       <ThemedText type="smallBold">{label}</ThemedText>
-      <Animated.View
-        style={[styles.inputWrapper, { backgroundColor: theme.backgroundElement }, wrapperStyle]}
-      >
+      <Animated.View style={[styles.inputWrapper, { backgroundColor: theme.card }, wrapperStyle]}>
         <TextInput
           ref={inputRef}
           style={[styles.input, { color: theme.text }]}
@@ -116,8 +116,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderRadius: Radius.xl,
-    paddingHorizontal: Spacing.three,
+    borderRadius: Radius.full,
+    paddingHorizontal: Spacing.three + Spacing.one,
   },
   input: {
     flex: 1,
