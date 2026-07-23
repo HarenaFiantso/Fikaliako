@@ -98,7 +98,15 @@ export default function FavoritesScreen() {
                 entering={FadeInDown.duration(300).delay(Math.min(index * 60, 360))}
                 exiting={FadeOut.duration(180)}
               >
-                <EstablishmentCard establishment={item} />
+                <EstablishmentCard
+                  establishment={item}
+                  onPress={() =>
+                    router.push({
+                      pathname: '/establishment/[idOrSlug]',
+                      params: { idOrSlug: item.slug },
+                    })
+                  }
+                />
               </Animated.View>
             )}
             itemLayoutAnimation={LinearTransition.springify().damping(18)}

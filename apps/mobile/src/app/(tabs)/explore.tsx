@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 
+import { useRouter } from 'expo-router';
 import { ActivityIndicator, RefreshControl, StyleSheet, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -21,6 +22,7 @@ import { useFavorites } from '@/lib/favorites-store';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
 
 export default function ExploreScreen() {
+  const router = useRouter();
   const theme = useTheme();
   const insets = useSafeAreaInsets();
 
@@ -82,7 +84,15 @@ export default function ExploreScreen() {
             keyExtractor={(item: EstablishmentSummary) => item.id}
             renderItem={({ item, index }) => (
               <Animated.View entering={FadeInDown.duration(300).delay(Math.min(index * 60, 360))}>
-                <EstablishmentCard establishment={item} />
+                <EstablishmentCard
+                  establishment={item}
+                  onPress={() =>
+                    router.push({
+                      pathname: '/establishment/[idOrSlug]',
+                      params: { idOrSlug: item.slug },
+                    })
+                  }
+                />
               </Animated.View>
             )}
             contentContainerStyle={[

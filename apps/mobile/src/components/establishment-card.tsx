@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
-import { StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 
 import type { EstablishmentSummary, EstablishmentType } from '@fikaliako/api-client';
 
@@ -12,7 +13,9 @@ import { formatAriary } from '@/lib/format';
 
 import { FontFamily, Radius, Spacing } from '@/constants/theme';
 
-const TYPE_META: Record<
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
+export const TYPE_META: Record<
   EstablishmentType,
   { label: string; icon: keyof typeof Ionicons.glyphMap }
 > = {
@@ -27,15 +30,27 @@ const TYPE_META: Record<
   hotel_restaurant: { label: 'Hotel restaurant', icon: 'bed-outline' },
 };
 
-export function EstablishmentCard({ establishment }: { establishment: EstablishmentSummary }) {
+export function EstablishmentCard({
+  establishment,
+  onPress,
+}: {
+  establishment: EstablishmentSummary;
+  onPress?: () => void;
+}) {
   const theme = useTheme();
+
+  const scale = useSharedValue(1);
+
+  const pressStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
 
   const meta = TYPE_META[establishment.type];
   const priceLabel =
     establishment.avg_price_ar != null ? ` · ~${formatAriary(establishment.avg_price_ar)}` : '';
 
-  return (
-    <View style={[styles.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
+  const content = (
+    <>
       <View style={[styles.typeBadge, { backgroundColor: theme.accent }]}>
         <Ionicons name={meta.icon} size={22} color={theme.primary} />
       </View>
@@ -67,7 +82,30 @@ export function EstablishmentCard({ establishment }: { establishment: Establishm
         )}
       </View>
       <FavoriteButton establishment={establishment} />
-    </View>
+    </>
+  );
+
+  const cardColors = { backgroundColor: theme.card, borderColor: theme.border };
+
+  if (!onPress) {
+    return <View style={[styles.card, cardColors]}>{content}</View>;
+  }
+
+  return (
+    <AnimatedPressable
+      accessibilityRole="button"
+      accessibilityLabel={establishment.name}
+      onPress={onPress}
+      onPressIn={() => {
+        scale.value = withSpring(0.98, { damping: 20, stiffness: 400 });
+      }}
+      onPressOut={() => {
+        scale.value = withSpring(1, { damping: 20, stiffness: 400 });
+      }}
+      style={[styles.card, cardColors, pressStyle]}
+    >
+      {content}
+    </AnimatedPressable>
   );
 }
 
