@@ -14,6 +14,21 @@ interface ReviewRepository : JpaRepository<Review, UUID> {
     authorId: UUID,
   ): Boolean
 
+  fun findByEstablishmentIdAndStatus(
+    establishmentId: UUID,
+    status: ReviewStatus,
+  ): List<Review>
+
+  @Query("SELECT DISTINCT r.establishment.id FROM Review r WHERE r.status = :status")
+  fun establishmentIdsWithReviews(
+    @Param("status") status: ReviewStatus,
+  ): List<UUID>
+
+  @Query("SELECT AVG(r.globalNote) FROM Review r WHERE r.status = :status")
+  fun averageGlobalNote(
+    @Param("status") status: ReviewStatus,
+  ): Double?
+
   @Query(
     """
         SELECT r FROM Review r JOIN FETCH r.author
