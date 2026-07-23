@@ -2,8 +2,10 @@ package mg.fikaliako.api.endpoint.rest.controller
 
 import mg.fikaliako.api.config.SecurityConfig
 import mg.fikaliako.api.endpoint.rest.model.Amenities
+import mg.fikaliako.api.endpoint.rest.model.ContributionReceipt
 import mg.fikaliako.api.endpoint.rest.model.EstablishmentDetail
 import mg.fikaliako.api.endpoint.rest.model.EstablishmentFilters
+import mg.fikaliako.api.endpoint.rest.model.EstablishmentProposal
 import mg.fikaliako.api.endpoint.rest.model.EstablishmentSummary
 import mg.fikaliako.api.endpoint.rest.model.GeoPoint
 import mg.fikaliako.api.endpoint.rest.model.OpeningInterval
@@ -11,6 +13,7 @@ import mg.fikaliako.api.endpoint.rest.model.Page
 import mg.fikaliako.api.endpoint.rest.model.RatingSummary
 import mg.fikaliako.api.endpoint.rest.model.ReferentialItem
 import mg.fikaliako.api.model.exception.NotFoundException
+import mg.fikaliako.api.service.ContributionService
 import mg.fikaliako.api.service.EstablishmentService
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
@@ -18,9 +21,11 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
+import org.springframework.test.web.servlet.post
 import java.math.BigDecimal
 import java.time.Instant
 import java.util.UUID
@@ -33,6 +38,9 @@ class EstablishmentControllerTest {
 
   @MockitoBean
   lateinit var service: EstablishmentService
+
+  @MockitoBean
+  lateinit var contributionService: ContributionService
 
   @Test
   fun `list serializes items in snake_case with the next cursor`() {
@@ -80,6 +88,81 @@ class EstablishmentControllerTest {
       content { contentType(MediaType.APPLICATION_PROBLEM_JSON) }
       jsonPath("$.detail") { value("Unknown filter: teleport") }
     }
+  }
+
+  @Test
+  fun `proposing an establishment requires authentication`() {
+    mockMvc
+      .post("/v1/establishments") {
+        contentType = MediaType.APPLICATION_JSON
+        content = """{"name": "Chez Bao", "type": "gargotte", "position": {"lat": -18.91, "lng": 47.52}}"""
+      }.andExpect {
+        status { isUnauthorized() }
+        content { contentType(MediaType.APPLICATION_PROBLEM_JSON) }
+      }
+  }
+
+  @Test
+  fun `an authenticated proposal is accepted for moderation`() {
+    val authorId = UUID.fromString("bbbbbbbb-0000-0000-0000-000000000001")
+    val proposal =
+      EstablishmentProposal(
+        name = "Chez Bao",
+        type = "gargotte",
+        position = GeoPoint(-18.91, 47.52),
+        avgPriceAr = 3000,
+      )
+    Mockito
+      .`when`(contributionService.proposeEstablishment(authorId, proposal))
+      .thenReturn(
+        ContributionReceipt(
+          id = UUID.fromString("cccccccc-0000-0000-0000-000000000001"),
+          status = "pending",
+          createdAt = Instant.parse("2026-07-06T09:00:00Z"),
+        ),
+      )
+
+    mockMvc
+      .post("/v1/establishments") {
+        with(jwt().jwt { it.subject(authorId.toString()) })
+        contentType = MediaType.APPLICATION_JSON
+        content =
+          """
+          {"name": "Chez Bao", "type": "gargotte",
+           "position": {"lat": -18.91, "lng": 47.52}, "avg_price_ar": 3000}
+          """.trimIndent()
+      }.andExpect {
+        status { isAccepted() }
+        jsonPath("$.id") { value("cccccccc-0000-0000-0000-000000000001") }
+        jsonPath("$.status") { value("pending") }
+        jsonPath("$.created_at") { exists() }
+      }
+  }
+
+  @Test
+  fun `a nameless proposal is a 400`() {
+    mockMvc
+      .post("/v1/establishments") {
+        with(jwt().jwt { it.subject("bbbbbbbb-0000-0000-0000-000000000001") })
+        contentType = MediaType.APPLICATION_JSON
+        content = """{"type": "gargotte", "position": {"lat": -18.91, "lng": 47.52}}"""
+      }.andExpect {
+        status { isBadRequest() }
+        content { contentType(MediaType.APPLICATION_PROBLEM_JSON) }
+      }
+  }
+
+  @Test
+  fun `an out-of-range pin is a 400`() {
+    mockMvc
+      .post("/v1/establishments") {
+        with(jwt().jwt { it.subject("bbbbbbbb-0000-0000-0000-000000000001") })
+        contentType = MediaType.APPLICATION_JSON
+        content = """{"name": "Chez Bao", "type": "gargotte", "position": {"lat": -95.0, "lng": 47.52}}"""
+      }.andExpect {
+        status { isBadRequest() }
+        content { contentType(MediaType.APPLICATION_PROBLEM_JSON) }
+      }
   }
 
   private fun summary() =

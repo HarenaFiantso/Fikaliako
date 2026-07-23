@@ -298,8 +298,8 @@ export interface paths {
     get: operations['listEstablishments'];
     put?: never;
     /**
-     * Propose a new establishment (planned)
-     * @description (planned) Community contribution — anyone connected can propose a new establishment, positioned by dropping a pin (project book ch. 4.8). Goes through the moderation queue. Arrives with the community module.
+     * Propose a new establishment
+     * @description Community contribution (project book ch. 4.8) — anyone connected can propose a new establishment, positioned by dropping a pin (formal addresses are rare). Nothing is published directly: the proposal is stored as a `create` contribution in the moderation queue and becomes an establishment once a moderator applies it.
      */
     post: operations['proposeEstablishment'];
     delete?: never;
@@ -788,6 +788,32 @@ export interface components {
       created_at: string;
       /** Format: date-time */
       updated_at: string;
+    };
+    /** @description A community proposal for a new establishment (book ch. 4.8). The position is the dropped pin; `city` defaults to Antananarivo. */
+    EstablishmentProposal: {
+      name: string;
+      type: components['schemas']['EstablishmentType'];
+      position: components['schemas']['GeoPoint'];
+      address?: string;
+      district?: string;
+      /** @default Antananarivo */
+      city: string;
+      phone?: string;
+      avg_price_ar?: number;
+      /** @description Free note for the moderators (specialities, landmarks…). */
+      comment?: string;
+    };
+    /** @description Acknowledgement that a contribution entered the moderation queue. */
+    ContributionReceipt: {
+      /**
+       * Format: uuid
+       * @description The contribution id, not an establishment id.
+       */
+      id: string;
+      /** @enum {string} */
+      status: 'pending';
+      /** Format: date-time */
+      created_at: string;
     };
     /** @description Partial business-profile update; absent fields stay untouched. Position and `verified` are not editable through this endpoint. */
     BusinessEstablishmentUpdate: {
@@ -1440,15 +1466,23 @@ export interface operations {
       path?: never;
       cookie?: never;
     };
-    requestBody?: never;
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['EstablishmentProposal'];
+      };
+    };
     responses: {
       /** @description Proposal accepted for moderation. */
       202: {
         headers: {
           [name: string]: unknown;
         };
-        content?: never;
+        content: {
+          'application/json': components['schemas']['ContributionReceipt'];
+        };
       };
+      400: components['responses']['BadRequest'];
+      401: components['responses']['Unauthorized'];
     };
   };
   getEstablishment: {
