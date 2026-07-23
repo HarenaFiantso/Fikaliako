@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import * as SplashScreen from 'expo-splash-screen';
 import { Image } from 'expo-image';
+import { Dimensions, StyleSheet, Text, View } from 'react-native';
 import Animated, { Easing, Keyframe } from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
 
@@ -35,6 +36,7 @@ export function AnimatedSplashOverlay() {
     },
   });
 
+  const wordmark = <Text style={styles.wordmark}>Fikaliako</Text>;
 
   return animate ? (
     <Animated.View
@@ -46,6 +48,7 @@ export function AnimatedSplashOverlay() {
       })}
       style={styles.splashOverlay}
     >
+      {wordmark}
     </Animated.View>
   ) : (
     <View
@@ -56,6 +59,7 @@ export function AnimatedSplashOverlay() {
       }}
       style={styles.splashOverlay}
     >
+      {wordmark}
     </View>
   );
 }
@@ -141,6 +145,7 @@ const styles = StyleSheet.create({
   },
   splashOverlay: {
     ...StyleSheet.absoluteFill,
+    backgroundColor: '#B74B21',
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 1000,

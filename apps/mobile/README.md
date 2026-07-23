@@ -4,18 +4,15 @@ React Native / Expo app (Expo SDK 57, expo-router) — the mobile client planned
 
 ## Run
 
-```sh
-pnpm turbo dev --filter=mobile   # or: pnpm --filter mobile dev  (expo start)
-pnpm --filter mobile ios         # iOS simulator
-pnpm --filter mobile android     # Android emulator
-```
-
-MapLibre is a native module, so the app needs a development build rather than Expo Go:
+MapLibre is a native module, so the app runs in a development build, never Expo Go. Compile and install the build once per native change, then iterate against the dev server:
 
 ```sh
-pnpm --filter mobile prebuild    # generate android/ + ios/ (gitignored)
-pnpm --filter mobile ios         # then build & run
+pnpm --filter mobile ios         # expo run:ios — native build + install + start (simulator)
+pnpm --filter mobile android     # expo run:android — same for the Android emulator
+pnpm turbo dev --filter=mobile   # expo start --dev-client — JS-only iteration afterwards
 ```
+
+`expo run:*` regenerates the native projects (`ios/`, `android/`, both gitignored) as needed; `pnpm --filter mobile prebuild` does that step alone.
 
 ## API
 

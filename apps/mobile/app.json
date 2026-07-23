@@ -14,6 +14,7 @@
     "android": {
       "package": "mg.fikaliako.mobile",
       "adaptiveIcon": {
+        "backgroundColor": "#F9E4D0",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
@@ -29,6 +30,7 @@
       [
         "expo-splash-screen",
         {
+          "backgroundColor": "#B74B21",
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 76
         }
@@ -39,6 +41,8 @@
           "locationWhenInUsePermission": "Fikaliako uses your location to find places to eat near you. Your position is never stored."
         }
       ],
+      "@maplibre/maplibre-react-native",
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true,
