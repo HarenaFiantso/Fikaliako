@@ -18,6 +18,9 @@ class EstablishmentRating(
   @Column(name = "review_count")
   var reviewCount: Int = 0,
 
+  @Column(name = "recent_review_count")
+  var recentReviewCount: Int = 0,
+
   @Column(name = "avg_quality")
   var avgQuality: BigDecimal? = null,
 
@@ -39,6 +42,6 @@ class EstablishmentRating(
   @Column(name = "bayesian_note")
   var bayesianNote: BigDecimal? = null,
 
-  @Column(name = "computed_at", insertable = false, updatable = false)
+  @Column(name = "computed_at")
   var computedAt: Instant? = null,
 )

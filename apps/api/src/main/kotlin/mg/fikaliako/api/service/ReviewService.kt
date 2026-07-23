@@ -26,6 +26,7 @@ class ReviewService(
   private val reviewRepository: ReviewRepository,
   private val establishmentRepository: EstablishmentRepository,
   private val userRepository: UserAccountRepository,
+  private val ratingAggregationService: RatingAggregationService,
   private val clock: Clock,
 ) {
   @Transactional
@@ -61,6 +62,9 @@ class ReviewService(
       )
     review.globalNote = weightedGlobalNote(input)
     reviewRepository.save(review)
+    // Same transaction: the establishment page shows fresh averages immediately;
+    // the nightly job still owns the ranking-wide recompute (ch. 4.6).
+    ratingAggregationService.recompute(establishmentId)
     return toItem(review)
   }
 

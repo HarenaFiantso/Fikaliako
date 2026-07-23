@@ -31,7 +31,9 @@ class ReviewServiceTest {
   private val reviewRepo = Mockito.mock(ReviewRepository::class.java)
   private val establishmentRepo = Mockito.mock(EstablishmentRepository::class.java)
   private val userRepo = Mockito.mock(UserAccountRepository::class.java)
-  private val service = ReviewService(reviewRepo, establishmentRepo, userRepo, Clock.fixed(now, ZoneOffset.UTC))
+  private val ratingAggregation = Mockito.mock(RatingAggregationService::class.java)
+  private val service =
+    ReviewService(reviewRepo, establishmentRepo, userRepo, ratingAggregation, Clock.fixed(now, ZoneOffset.UTC))
 
   private val estId = UUID.fromString("aaaaaaaa-0000-0000-0000-000000000001")
   private val authorId = UUID.fromString("bbbbbbbb-0000-0000-0000-000000000001")
@@ -111,6 +113,7 @@ class ReviewServiceTest {
     assertEquals(now, saved.createdAt)
     assertEquals(BigDecimal("4.33"), item.globalNote)
     assertEquals("Naina", item.authorName)
+    Mockito.verify(ratingAggregation).recompute(estId)
   }
 
   @Test
