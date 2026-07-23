@@ -65,6 +65,34 @@ tasks.withType<Test> {
   useJUnitPlatform()
 }
 
+// End-to-end tests run the whole API against a real PostGIS via Testcontainers,
+// so they need Docker. They live in their own source set behind `gradlew e2eTest`
+// (pnpm --filter api test:e2e) and stay out of `test`, which remains Docker-free.
+sourceSets {
+  create("e2eTest") {
+    compileClasspath += sourceSets.main.get().output
+    runtimeClasspath += sourceSets.main.get().output
+  }
+}
+
+configurations["e2eTestImplementation"].extendsFrom(configurations.testImplementation.get())
+configurations["e2eTestRuntimeOnly"].extendsFrom(configurations.testRuntimeOnly.get())
+
+dependencies {
+  // Versions managed by the Spring Boot BOM (Testcontainers 2.x module names)
+  "e2eTestImplementation"("org.testcontainers:testcontainers-junit-jupiter")
+  "e2eTestImplementation"("org.testcontainers:testcontainers-postgresql")
+}
+
+tasks.register<Test>("e2eTest") {
+  description = "End-to-end discovery tests on real PostGIS (Testcontainers — needs Docker)."
+  group = "verification"
+  testClassesDirs = sourceSets["e2eTest"].output.classesDirs
+  classpath = sourceSets["e2eTest"].runtimeClasspath
+  useJUnitPlatform()
+  shouldRunAfter(tasks.test)
+}
+
 allOpen {
   annotation("jakarta.persistence.Entity")
   annotation("jakarta.persistence.MappedSuperclass")
