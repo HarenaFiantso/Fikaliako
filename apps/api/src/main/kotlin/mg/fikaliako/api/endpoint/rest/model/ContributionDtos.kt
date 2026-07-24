@@ -44,3 +44,21 @@ data class ContributionReceipt(
   val status: String,
   val createdAt: Instant,
 )
+
+data class ContributionItem(
+  val id: UUID,
+  val type: String,
+  val status: String,
+  val payload: Map<String, Any?>,
+  val establishmentId: UUID?,
+  val authorName: String?,
+  val confirmationsCount: Int,
+  val resolutionNote: String?,
+  val createdAt: Instant,
+  val resolvedAt: Instant?,
+)
+
+data class RejectContributionRequest(
+  @field:Size(max = 500)
+  val reason: String? = null,
+)

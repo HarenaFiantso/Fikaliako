@@ -477,6 +477,83 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/v1/moderation/contributions': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Moderation queue
+     * @description Community contributions for review (project book ch. 4.8), oldest first (FIFO), cursor-paginated. Defaults to the `pending` queue; pass `status` to browse the resolved history.
+     */
+    get: operations['listContributions'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/moderation/contributions/{contributionId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Contribution detail */
+    get: operations['getContribution'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/moderation/contributions/{contributionId}/approve': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Approve a contribution
+     * @description Applies a pending contribution. A `create` proposal materialises as a new **active** establishment, publicly visible at once; the response carries its id in `establishment_id`. Resolution is final — approving an already-resolved contribution is a 409. Audit-logged (book ch. 7.3).
+     */
+    post: operations['approveContribution'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/moderation/contributions/{contributionId}/reject': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Reject a contribution
+     * @description Declines a pending contribution without touching any establishment; the optional `reason` is kept as the resolution note. Resolution is final — rejecting an already-resolved contribution is a 409. Audit-logged.
+     */
+    post: operations['rejectContribution'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/v1/admin/establishments/{establishmentId}/managers': {
     parameters: {
       query?: never;
@@ -815,6 +892,52 @@ export interface components {
       /** Format: date-time */
       created_at: string;
     };
+    /**
+     * @description What the contribution proposes (book ch. 4.8).
+     * @enum {string}
+     */
+    ContributionType: 'create' | 'edit' | 'correction' | 'closure_report';
+    /**
+     * @description Lifecycle of a community contribution: `pending` awaits moderation, `applied` was approved, `rejected` was declined, `superseded` was replaced by a newer concordant contribution.
+     * @enum {string}
+     */
+    ContributionStatus: 'pending' | 'applied' | 'rejected' | 'superseded';
+    /** @description A community contribution as the moderation back-office sees it. */
+    ContributionItem: {
+      /** Format: uuid */
+      id: string;
+      type: components['schemas']['ContributionType'];
+      status: components['schemas']['ContributionStatus'];
+      /** @description The proposed values as submitted. For `create` contributions the keys mirror `EstablishmentProposal`, with the position flattened to `lat`/`lng`. */
+      payload: {
+        [key: string]: unknown;
+      };
+      /**
+       * Format: uuid
+       * @description The establishment the contribution targets; for `create` contributions, the establishment born from the approval.
+       */
+      establishment_id?: string;
+      /** @description Display name of the author; absent if the account was purged. */
+      author_name?: string;
+      confirmations_count: number;
+      /** @description Moderator note recorded on resolution (the rejection reason). */
+      resolution_note?: string;
+      /** Format: date-time */
+      created_at: string;
+      /** Format: date-time */
+      resolved_at?: string;
+    };
+    /** @description A cursor-paginated page of the moderation queue, oldest first. */
+    ContributionPage: {
+      items: components['schemas']['ContributionItem'][];
+      /** @description Pass back as `?cursor=`; absent on the last page. */
+      next_cursor?: string;
+    };
+    /** @description Optional feedback recorded when rejecting a contribution. */
+    RejectContributionRequest: {
+      /** @description Why the contribution is declined; kept as the resolution note. */
+      reason?: string;
+    };
     /** @description Partial business-profile update; absent fields stay untouched. Position and `verified` are not editable through this endpoint. */
     BusinessEstablishmentUpdate: {
       name?: string;
@@ -1013,6 +1136,8 @@ export interface components {
     EstablishmentId: string;
     /** @description User account UUID. */
     UserId: string;
+    /** @description Contribution UUID. */
+    ContributionId: string;
     /** @description Filter by establishment type. */
     TypeFilter: components['schemas']['EstablishmentType'];
     /** @description Minimum average price in ariary. */
@@ -1770,6 +1895,122 @@ export interface operations {
       401: components['responses']['Unauthorized'];
       403: components['responses']['Forbidden'];
       404: components['responses']['NotFound'];
+    };
+  };
+  listContributions: {
+    parameters: {
+      query?: {
+        /** @description Contribution status to browse (default `pending`). */
+        status?: components['schemas']['ContributionStatus'];
+        /** @description Page size (default 50 for establishments, 20 for reviews; max 100). */
+        limit?: components['parameters']['LimitParam'];
+        /** @description Opaque pagination cursor from a previous response's `next_cursor`. */
+        cursor?: components['parameters']['CursorParam'];
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description A page of contributions. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ContributionPage'];
+        };
+      };
+      400: components['responses']['BadRequest'];
+      401: components['responses']['Unauthorized'];
+      403: components['responses']['Forbidden'];
+    };
+  };
+  getContribution: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Contribution UUID. */
+        contributionId: components['parameters']['ContributionId'];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description The contribution. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ContributionItem'];
+        };
+      };
+      401: components['responses']['Unauthorized'];
+      403: components['responses']['Forbidden'];
+      404: components['responses']['NotFound'];
+    };
+  };
+  approveContribution: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Contribution UUID. */
+        contributionId: components['parameters']['ContributionId'];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description The applied contribution. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ContributionItem'];
+        };
+      };
+      400: components['responses']['BadRequest'];
+      401: components['responses']['Unauthorized'];
+      403: components['responses']['Forbidden'];
+      404: components['responses']['NotFound'];
+      409: components['responses']['Conflict'];
+    };
+  };
+  rejectContribution: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Contribution UUID. */
+        contributionId: components['parameters']['ContributionId'];
+      };
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': components['schemas']['RejectContributionRequest'];
+      };
+    };
+    responses: {
+      /** @description The rejected contribution. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ContributionItem'];
+        };
+      };
+      400: components['responses']['BadRequest'];
+      401: components['responses']['Unauthorized'];
+      403: components['responses']['Forbidden'];
+      404: components['responses']['NotFound'];
+      409: components['responses']['Conflict'];
     };
   };
   listEstablishmentManagers: {

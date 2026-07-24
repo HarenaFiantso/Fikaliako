@@ -42,6 +42,9 @@ class Contribution(
   @Column(name = "resolved_at")
   var resolvedAt: Instant? = null,
 
+  @Column(name = "resolution_note", columnDefinition = "text")
+  var resolutionNote: String? = null,
+
   @Column(name = "created_at")
   var createdAt: Instant? = null,
 )

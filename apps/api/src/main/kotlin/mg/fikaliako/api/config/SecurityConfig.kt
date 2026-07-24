@@ -75,6 +75,8 @@ class SecurityConfig(
           .authenticated()
           .requestMatchers("/v1/business/**")
           .hasAnyRole("BUSINESS", "ADMIN")
+          .requestMatchers("/v1/moderation/**")
+          .hasAnyRole("MODERATOR", "ADMIN")
           .requestMatchers("/v1/admin/**")
           .hasRole("ADMIN")
           .requestMatchers(HttpMethod.GET, "/v1/**")

@@ -2,7 +2,7 @@ openapi: 3.1.0
 
 info:
   title: Fikaliako API
-  version: 0.3.0
+  version: 0.4.0
   summary: Geolocated food discovery for Madagascar
   description: |
     REST API of **Fikaliako**, the platform for discovering places to eat in
@@ -37,15 +37,16 @@ info:
 
     Roles (the `role` claim): `user` (consumer), `business` (premium
     establishment account — manages its establishments under
-    `/v1/business/**`), `moderator`, and `admin` (back-office,
+    `/v1/business/**`), `moderator` (moderation queue,
+    `/v1/moderation/**`), and `admin` (everything a moderator can, plus
     `/v1/admin/**`).
 
     ## Conventions
 
     - All endpoints are rooted at `/v1`.
     - Reads (`GET`) are public; writes require authentication, and the
-      `/v1/business` and `/v1/admin` trees additionally require the matching
-      role (403 otherwise).
+      `/v1/business`, `/v1/moderation` and `/v1/admin` trees additionally
+      require the matching role (403 otherwise).
     - Errors use RFC 9457 Problem Details (`application/problem+json`) and carry
       a `correlation_id`, also returned in the `X-Correlation-Id` header.
     - Prices are integers in **ariary** (`*_ar` fields).
@@ -85,6 +86,10 @@ tags:
     description: >
       Premium establishment accounts (`business` role) managing the profile of
       the establishments an admin granted them.
+  - name: Moderation
+    description: >
+      Back-office moderation queue (`moderator` or `admin` role) — community
+      contributions reviewed before publication (book ch. 4.8), audit-logged.
   - name: Admin
     description: Back-office (`admin` role) — manager grants, audit-logged.
 
@@ -816,6 +821,133 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
 
+  /v1/moderation/contributions:
+    get:
+      tags: [Moderation]
+      operationId: listContributions
+      summary: Moderation queue
+      description: >
+        Community contributions for review (project book ch. 4.8), oldest
+        first (FIFO), cursor-paginated. Defaults to the `pending` queue; pass
+        `status` to browse the resolved history.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: status
+          in: query
+          description: Contribution status to browse (default `pending`).
+          schema:
+            $ref: "#/components/schemas/ContributionStatus"
+        - $ref: "#/components/parameters/LimitParam"
+        - $ref: "#/components/parameters/CursorParam"
+      responses:
+        "200":
+          description: A page of contributions.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContributionPage"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /v1/moderation/contributions/{contributionId}:
+    get:
+      tags: [Moderation]
+      operationId: getContribution
+      summary: Contribution detail
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/ContributionId"
+      responses:
+        "200":
+          description: The contribution.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContributionItem"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /v1/moderation/contributions/{contributionId}/approve:
+    post:
+      tags: [Moderation]
+      operationId: approveContribution
+      summary: Approve a contribution
+      description: >
+        Applies a pending contribution. A `create` proposal materialises as a
+        new **active** establishment, publicly visible at once; the response
+        carries its id in `establishment_id`. Resolution is final — approving
+        an already-resolved contribution is a 409. Audit-logged (book
+        ch. 7.3).
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/ContributionId"
+      responses:
+        "200":
+          description: The applied contribution.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContributionItem"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+
+  /v1/moderation/contributions/{contributionId}/reject:
+    post:
+      tags: [Moderation]
+      operationId: rejectContribution
+      summary: Reject a contribution
+      description: >
+        Declines a pending contribution without touching any establishment;
+        the optional `reason` is kept as the resolution note. Resolution is
+        final — rejecting an already-resolved contribution is a 409.
+        Audit-logged.
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/ContributionId"
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RejectContributionRequest"
+      responses:
+        "200":
+          description: The rejected contribution.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContributionItem"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+
   /v1/admin/establishments/{establishmentId}/managers:
     get:
       tags: [Admin]
@@ -892,8 +1024,8 @@ components:
         15-minute HS256 access token from `/v1/auth/login`,
         `/v1/auth/verify-phone` or `/v1/auth/refresh` (project book ch. 7.3).
         Carries the user id (`sub`) and a `role` claim
-        (user/business/moderator/admin) that gates the `/v1/business` and
-        `/v1/admin` trees.
+        (user/business/moderator/admin) that gates the `/v1/business`,
+        `/v1/moderation` and `/v1/admin` trees.
 
   parameters:
     LimitParam:
@@ -917,6 +1049,12 @@ components:
       in: path
       required: true
       description: User account UUID.
+      schema: { type: string, format: uuid }
+    ContributionId:
+      name: contributionId
+      in: path
+      required: true
+      description: Contribution UUID.
       schema: { type: string, format: uuid }
     TypeFilter:
       name: type
@@ -1379,6 +1517,74 @@ components:
           description: The contribution id, not an establishment id.
         status: { type: string, enum: [pending] }
         created_at: { type: string, format: date-time }
+
+    ContributionType:
+      type: string
+      description: What the contribution proposes (book ch. 4.8).
+      enum: [create, edit, correction, closure_report]
+
+    ContributionStatus:
+      type: string
+      description: >
+        Lifecycle of a community contribution: `pending` awaits moderation,
+        `applied` was approved, `rejected` was declined, `superseded` was
+        replaced by a newer concordant contribution.
+      enum: [pending, applied, rejected, superseded]
+
+    ContributionItem:
+      type: object
+      description: A community contribution as the moderation back-office sees it.
+      required: [id, type, status, payload, confirmations_count, created_at]
+      properties:
+        id: { type: string, format: uuid }
+        type:
+          $ref: "#/components/schemas/ContributionType"
+        status:
+          $ref: "#/components/schemas/ContributionStatus"
+        payload:
+          type: object
+          description: >
+            The proposed values as submitted. For `create` contributions the
+            keys mirror `EstablishmentProposal`, with the position flattened
+            to `lat`/`lng`.
+          additionalProperties: true
+        establishment_id:
+          type: string
+          format: uuid
+          description: >
+            The establishment the contribution targets; for `create`
+            contributions, the establishment born from the approval.
+        author_name:
+          type: string
+          description: Display name of the author; absent if the account was purged.
+        confirmations_count: { type: integer }
+        resolution_note:
+          type: string
+          description: Moderator note recorded on resolution (the rejection reason).
+        created_at: { type: string, format: date-time }
+        resolved_at: { type: string, format: date-time }
+
+    ContributionPage:
+      type: object
+      description: A cursor-paginated page of the moderation queue, oldest first.
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/ContributionItem"
+        next_cursor:
+          type: string
+          description: Pass back as `?cursor=`; absent on the last page.
+
+    RejectContributionRequest:
+      type: object
+      description: Optional feedback recorded when rejecting a contribution.
+      properties:
+        reason:
+          type: string
+          maxLength: 500
+          description: Why the contribution is declined; kept as the resolution note.
 
     BusinessEstablishmentUpdate:
       type: object
