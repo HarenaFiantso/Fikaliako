@@ -1,5 +1,6 @@
-import type { UserRole } from '@fikaliako/api-client';
 import type { AuthProvider } from 'react-admin';
+
+import type { UserRole } from '@fikaliako/api-client';
 
 import { api } from '../lib/api';
 import { problemMessage } from '../lib/problem';
@@ -18,7 +19,9 @@ export const authProvider: AuthProvider = {
     const { phone, password } = params as LoginParams;
     const { data, error } = await api.POST('/v1/auth/login', { body: { phone, password } });
     if (error || !data) {
-      throw new Error(problemMessage(error, 'Sign-in failed. Check your phone number and password.'));
+      throw new Error(
+        problemMessage(error, 'Sign-in failed. Check your phone number and password.')
+      );
     }
     if (!BACK_OFFICE_ROLES.includes(data.user.role)) {
       // Valid account, wrong tree: revoke the session we just opened.

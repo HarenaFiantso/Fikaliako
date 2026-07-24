@@ -6,7 +6,7 @@ import { authProvider } from './auth/provider';
 import { ContributionList } from './moderation/ContributionList';
 import { ContributionShow } from './moderation/ContributionShow';
 import { dataProvider } from './moderation/data-provider';
-import { proposalOf, type ContributionRecord } from './moderation/types';
+import { type ContributionRecord, proposalOf } from './moderation/types';
 import { darkTheme, lightTheme } from './theme';
 
 export function App() {

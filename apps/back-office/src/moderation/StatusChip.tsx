@@ -1,6 +1,7 @@
-import type { ContributionStatus } from '@fikaliako/api-client';
 import { Chip, type ChipProps } from '@mui/material';
 import { useRecordContext } from 'react-admin';
+
+import type { ContributionStatus } from '@fikaliako/api-client';
 
 import type { ContributionRecord } from './types';
 

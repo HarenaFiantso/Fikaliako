@@ -1,10 +1,11 @@
-import { Box, Card, CardContent, Chip, Link, Stack, Typography } from '@mui/material';
 import type { ReactNode } from 'react';
+
+import { Box, Card, CardContent, Chip, Link, Stack, Typography } from '@mui/material';
 import { Show, TopToolbar, useRecordContext } from 'react-admin';
 
 import { ApproveButton, RejectButton } from './actions';
 import { StatusChip } from './StatusChip';
-import { formatAriary, proposalOf, type ContributionRecord } from './types';
+import { type ContributionRecord, formatAriary, proposalOf } from './types';
 
 function Detail({ label, children }: { label: string; children: ReactNode }) {
   return (

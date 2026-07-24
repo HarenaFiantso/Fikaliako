@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import CancelRoundedIcon from '@mui/icons-material/CancelRounded';
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 import {
@@ -9,11 +11,10 @@ import {
   DialogTitle,
   TextField,
 } from '@mui/material';
-import { useState } from 'react';
 import { Confirm, useDataProvider, useNotify, useRecordContext, useRefresh } from 'react-admin';
 
 import type { ModerationDataProvider } from './data-provider';
-import { proposalOf, type ContributionRecord } from './types';
+import { type ContributionRecord, proposalOf } from './types';
 
 function useModerationAction() {
   const dataProvider = useDataProvider<ModerationDataProvider>();
@@ -66,7 +67,7 @@ export function ApproveButton() {
           setOpen(false);
           void run(
             () => dataProvider.approve(String(record.id)),
-            'Contribution approved — the place is now public.',
+            'Contribution approved — the place is now public.'
           );
         }}
         onClose={() => setOpen(false)}
@@ -129,7 +130,7 @@ export function RejectButton() {
               close();
               void run(
                 () => dataProvider.reject(String(record.id), note),
-                'Contribution rejected.',
+                'Contribution rejected.'
               );
             }}
           >

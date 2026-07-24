@@ -1,15 +1,7 @@
+import { type FormEvent, useState } from 'react';
+
 import RestaurantMenuRoundedIcon from '@mui/icons-material/RestaurantMenuRounded';
-import {
-  Alert,
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Stack,
-  TextField,
-  Typography,
-} from '@mui/material';
-import { useState, type FormEvent } from 'react';
+import { Alert, Box, Button, Card, CardContent, Stack, TextField, Typography } from '@mui/material';
 import { useLogin } from 'react-admin';
 
 export function LoginPage() {

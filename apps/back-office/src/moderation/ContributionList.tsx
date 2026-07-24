@@ -11,7 +11,7 @@ import {
 
 import { ApproveButton, RejectButton } from './actions';
 import { StatusChip } from './StatusChip';
-import { formatAriary, proposalOf, type ContributionRecord } from './types';
+import { type ContributionRecord, formatAriary, proposalOf } from './types';
 
 const STATUS_CHOICES = [
   { id: 'pending', name: 'Pending' },
