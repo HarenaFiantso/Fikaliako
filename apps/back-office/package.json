@@ -1,0 +1,34 @@
+{
+  "name": "back-office",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Fikaliako moderation back-office (project book ch. 7) — admins and moderators review community contributions before publication",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --max-warnings 0",
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@fikaliako/api-client": "workspace:^",
+    "@mui/icons-material": "^9.2.0",
+    "@mui/material": "^9.2.0",
+    "react": "^19.2.0",
+    "react-admin": "^5.15.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@fikaliako/eslint-config": "workspace:*",
+    "@fikaliako/typescript-config": "workspace:*",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "^6.0.0",
+    "eslint": "^9.39.1",
+    "typescript": "5.9.2",
+    "vite": "^8.1.0"
+  }
+}
