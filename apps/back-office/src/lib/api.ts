@@ -1,6 +1,11 @@
-import { createFikaliakoClient } from '@fikaliako/api-client';
+import { createAuthenticatedFikaliakoClient } from '@fikaliako/api-client';
 
-export const API_BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8080';
+import { getValidAccessToken } from '../auth/token-manager';
+import { API_BASE_URL } from './base-url';
 
-/** Shared typed client for the Fikaliako API (no auth yet — see the auth module). */
-export const api = createFikaliakoClient(API_BASE_URL);
+/**
+ * App-wide typed Fikaliako client. The bearer middleware asks the token
+ * manager before every request, so calls are authenticated whenever a
+ * back-office session exists.
+ */
+export const api = createAuthenticatedFikaliakoClient(API_BASE_URL, getValidAccessToken);
