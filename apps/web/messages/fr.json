@@ -28,7 +28,8 @@
     "register": "Créer un compte",
     "profile": "Mon profil",
     "logout": "Se déconnecter",
-    "logout-success": "Vous êtes déconnecté·e. À bientôt !"
+    "logout-success": "Vous êtes déconnecté·e. À bientôt !",
+    "moderation": "Modération"
   },
   "auth": {
     "brand-panel": {
@@ -130,6 +131,69 @@
       "session-expired": "Votre session a expiré. Reconnectez-vous.",
       "network": "Impossible de joindre le serveur. Vérifiez votre connexion.",
       "generic": "Une erreur est survenue. Réessayez."
+    }
+  },
+  "moderation": {
+    "title": "File de modération",
+    "subtitle": "Les lieux proposés par la communauté, à vérifier avant publication.",
+    "guard": {
+      "restricted-title": "Accès réservé",
+      "restricted-body": "Cette page est réservée aux modérateurs et administrateurs de Fikaliako.",
+      "back-home": "Retour à l'accueil"
+    },
+    "status": {
+      "pending": "En attente",
+      "applied": "Approuvée",
+      "rejected": "Refusée",
+      "superseded": "Remplacée"
+    },
+    "queue": {
+      "empty": "Rien à modérer ici — la file est vide.",
+      "loading": "Chargement…",
+      "load-more": "Charger la suite",
+      "error": "Impossible de charger la file de modération.",
+      "retry": "Réessayer",
+      "submitted-by": "par {name}",
+      "anonymous": "auteur inconnu"
+    },
+    "detail": {
+      "title": "Contribution",
+      "back": "File de modération",
+      "proposed-place": "Lieu proposé",
+      "moderation": "Modération",
+      "name": "Nom",
+      "type": "Type",
+      "avg-price": "Prix moyen",
+      "address": "Adresse",
+      "district": "Quartier",
+      "city": "Ville",
+      "phone": "Téléphone",
+      "position": "Position",
+      "comment": "Note pour les modérateurs",
+      "status": "Statut",
+      "author": "Auteur·e",
+      "submitted": "Proposée le",
+      "confirmations": "Confirmations",
+      "resolved": "Traitée le",
+      "establishment": "Établissement publié",
+      "resolution-note": "Motif de la décision",
+      "error": "Impossible de charger cette contribution."
+    },
+    "actions": {
+      "approve": "Approuver",
+      "reject": "Refuser",
+      "cancel": "Annuler",
+      "working": "Un instant…",
+      "approve-title": "Approuver ce lieu ?",
+      "approve-body": "« {name} » sera publié et immédiatement visible par tout le monde.",
+      "approve-confirm": "Approuver",
+      "approve-success": "Contribution approuvée — le lieu est en ligne.",
+      "reject-title": "Refuser ce lieu ?",
+      "reject-body": "« {name} » ne sera pas publié. Le motif est conservé avec la décision.",
+      "reject-reason": "Motif (facultatif)",
+      "reject-confirm": "Refuser",
+      "reject-success": "Contribution refusée.",
+      "error": "L'action a échoué. Réessayez."
     }
   }
 }

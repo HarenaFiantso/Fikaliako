@@ -28,7 +28,8 @@
     "register": "Create account",
     "profile": "My profile",
     "logout": "Sign out",
-    "logout-success": "You are signed out. See you soon!"
+    "logout-success": "You are signed out. See you soon!",
+    "moderation": "Moderation"
   },
   "auth": {
     "brand-panel": {
@@ -130,6 +131,69 @@
       "session-expired": "Your session has expired. Sign in again.",
       "network": "Cannot reach the server. Check your connection.",
       "generic": "Something went wrong. Try again."
+    }
+  },
+  "moderation": {
+    "title": "Moderation queue",
+    "subtitle": "Places proposed by the community, reviewed before publication.",
+    "guard": {
+      "restricted-title": "Restricted area",
+      "restricted-body": "This page is reserved for Fikaliako moderators and administrators.",
+      "back-home": "Back to home"
+    },
+    "status": {
+      "pending": "Pending",
+      "applied": "Approved",
+      "rejected": "Rejected",
+      "superseded": "Superseded"
+    },
+    "queue": {
+      "empty": "Nothing to review — the queue is empty.",
+      "loading": "Loading…",
+      "load-more": "Load more",
+      "error": "The moderation queue could not be loaded.",
+      "retry": "Try again",
+      "submitted-by": "by {name}",
+      "anonymous": "unknown author"
+    },
+    "detail": {
+      "title": "Contribution",
+      "back": "Moderation queue",
+      "proposed-place": "Proposed place",
+      "moderation": "Moderation",
+      "name": "Name",
+      "type": "Type",
+      "avg-price": "Average price",
+      "address": "Address",
+      "district": "District",
+      "city": "City",
+      "phone": "Phone",
+      "position": "Position",
+      "comment": "Note for the moderators",
+      "status": "Status",
+      "author": "Author",
+      "submitted": "Submitted",
+      "confirmations": "Confirmations",
+      "resolved": "Resolved",
+      "establishment": "Published establishment",
+      "resolution-note": "Resolution note",
+      "error": "This contribution could not be loaded."
+    },
+    "actions": {
+      "approve": "Approve",
+      "reject": "Reject",
+      "cancel": "Cancel",
+      "working": "One moment…",
+      "approve-title": "Approve this place?",
+      "approve-body": "“{name}” will be published and immediately visible to everyone.",
+      "approve-confirm": "Approve",
+      "approve-success": "Contribution approved — the place is now public.",
+      "reject-title": "Reject this place?",
+      "reject-body": "“{name}” will stay unpublished. The reason is kept with the decision.",
+      "reject-reason": "Reason (optional)",
+      "reject-confirm": "Reject",
+      "reject-success": "Contribution rejected.",
+      "error": "The action failed. Try again."
     }
   }
 }

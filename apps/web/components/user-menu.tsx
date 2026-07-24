@@ -1,8 +1,9 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+import Link from 'next/link';
 
-import { ChevronDown, LogOut } from 'lucide-react';
+import { ChevronDown, LogOut, ShieldCheck } from 'lucide-react';
 import { toast } from 'sonner';
 
 import type { UserProfile } from '@fikaliako/api-client';
@@ -19,6 +20,7 @@ import {
 
 import { useLogout } from '@/hooks/use-auth-mutations';
 
+import { isStaff } from '@/lib/moderation';
 import { formatPhoneForDisplay } from '@/lib/validation/normalize-phone';
 
 export function UserMenu({ user }: { user: UserProfile }) {
@@ -50,6 +52,17 @@ export function UserMenu({ user }: { user: UserProfile }) {
           </p>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
+        {isStaff(user.role) ? (
+          <>
+            <DropdownMenuItem asChild>
+              <Link href="/moderation">
+                <ShieldCheck />
+                {t('moderation')}
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+          </>
+        ) : null}
         <DropdownMenuItem variant="destructive" onSelect={handleLogout}>
           <LogOut />
           {t('logout')}

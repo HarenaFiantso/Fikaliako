@@ -15,7 +15,8 @@
     "register": "Hamorona kaonty",
     "profile": "Ny mombamomba ahy",
     "logout": "Hivoaka",
-    "logout-success": "Tafavoaka ianao. Mandra-pihaona!"
+    "logout-success": "Tafavoaka ianao. Mandra-pihaona!",
+    "moderation": "Fanaraha-maso"
   },
   "auth": {
     "fields": {
@@ -51,6 +52,28 @@
       "title": "Hamarino ny laharanao",
       "submit": "Hamarina",
       "resend": "Alefaso indray ny kaody"
+    }
+  },
+  "moderation": {
+    "title": "Fanaraha-maso",
+    "subtitle": "Ireo toerana naroson'ny mpikambana, jerena alohan'ny famoahana azy.",
+    "status": {
+      "pending": "Miandry",
+      "applied": "Nankatoavina",
+      "rejected": "Nolavina",
+      "superseded": "Nosoloina"
+    },
+    "queue": {
+      "empty": "Tsy misy andrasana eto.",
+      "load-more": "Hampiseho bebe kokoa",
+      "retry": "Andramo indray",
+      "submitted-by": "nataon'i {name}",
+      "anonymous": "tsy fantatra"
+    },
+    "actions": {
+      "approve": "Ekena",
+      "reject": "Lavina",
+      "cancel": "Aoka ihany"
     }
   }
 }
