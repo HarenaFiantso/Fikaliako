@@ -1,12 +1,13 @@
-import type { ContributionStatus, Problem } from '@fikaliako/api-client';
 import {
-  HttpError,
   type DataProvider,
   type GetListParams,
   type GetListResult,
   type GetOneParams,
   type GetOneResult,
+  HttpError,
 } from 'react-admin';
+
+import type { ContributionStatus, Problem } from '@fikaliako/api-client';
 
 import { api } from '../lib/api';
 import { problemMessage } from '../lib/problem';
@@ -26,8 +27,7 @@ const DEFAULT_STATUS: ContributionStatus = 'pending';
  */
 const cursors = new Map<string, string>();
 
-const cursorKey = (status: string, perPage: number, page: number) =>
-  `${status}|${perPage}|${page}`;
+const cursorKey = (status: string, perPage: number, page: number) => `${status}|${perPage}|${page}`;
 
 function toError(problem: Problem | undefined, response: Response, fallback: string): HttpError {
   return new HttpError(problemMessage(problem, fallback), response.status, problem);
@@ -41,7 +41,7 @@ function assertContributions(resource: string): void {
 
 async function getList(
   resource: string,
-  params: GetListParams,
+  params: GetListParams
 ): Promise<GetListResult<ContributionRecord>> {
   assertContributions(resource);
   const page = params.pagination?.page ?? 1;
@@ -58,6 +58,8 @@ async function getList(
   if (data.next_cursor) cursors.set(cursorKey(status, perPage, page + 1), data.next_cursor);
   return {
     data: data.items,
+    // The API never reports a count; on the last page it becomes known.
+    ...(data.next_cursor ? {} : { total: (page - 1) * perPage + data.items.length }),
     pageInfo: {
       hasNextPage: Boolean(data.next_cursor),
       hasPreviousPage: page > 1,
@@ -67,7 +69,7 @@ async function getList(
 
 async function getOne(
   resource: string,
-  params: GetOneParams,
+  params: GetOneParams
 ): Promise<GetOneResult<ContributionRecord>> {
   assertContributions(resource);
   const { data, error, response } = await api.GET('/v1/moderation/contributions/{contributionId}', {
@@ -80,7 +82,7 @@ async function getOne(
 async function approve(id: string): Promise<ContributionRecord> {
   const { data, error, response } = await api.POST(
     '/v1/moderation/contributions/{contributionId}/approve',
-    { params: { path: { contributionId: id } } },
+    { params: { path: { contributionId: id } } }
   );
   if (error || !data) throw toError(error, response, 'Could not approve the contribution.');
   return data;
@@ -93,7 +95,7 @@ async function reject(id: string, reason?: string): Promise<ContributionRecord> 
     {
       params: { path: { contributionId: id } },
       body: trimmed ? { reason: trimmed } : {},
-    },
+    }
   );
   if (error || !data) throw toError(error, response, 'Could not reject the contribution.');
   return data;
