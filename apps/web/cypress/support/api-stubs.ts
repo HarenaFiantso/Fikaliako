@@ -25,6 +25,38 @@ export const testTokens = {
 
 export const authSession = { user: testUser, tokens: testTokens };
 
+export const testEstablishment = {
+  id: 'b1a7c4d2-8e3f-4a6b-9c1d-5e2f7a8b3c4d',
+  slug: 'gargotte-chez-bao',
+  name: 'Gargotte Chez Bao',
+  type: 'gargotte',
+  position: { lat: -18.9092, lng: 47.521 },
+  avg_price_ar: 2500,
+  verified: true,
+  status: 'active',
+  rating_avg: 4.5,
+  rating_count: 12,
+};
+
+export const unratedEstablishment = {
+  id: 'c2b8d5e3-9f4a-4b7c-8d2e-6f3a8b9c4d5e',
+  slug: 'kafe-analakely',
+  name: 'Kafe Analakely',
+  type: 'cafe',
+  position: { lat: -18.9101, lng: 47.5254 },
+  verified: false,
+  status: 'active',
+  rating_count: 0,
+};
+
+/** An EstablishmentPage; `next_cursor` is absent on the last page. */
+export function establishmentPage(
+  items: Record<string, unknown>[],
+  nextCursor?: string
+): Record<string, unknown> {
+  return { items, ...(nextCursor ? { next_cursor: nextCursor } : {}) };
+}
+
 export function problem(status: number, title: string, detail: string) {
   return {
     statusCode: status,
