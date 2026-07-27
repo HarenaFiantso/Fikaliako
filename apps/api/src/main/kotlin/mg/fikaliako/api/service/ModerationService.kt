@@ -29,7 +29,7 @@ import java.time.Clock
 import java.util.UUID
 
 /**
- * Back-office side of the community loop (book ch. 4.8): moderators review
+ * Staff side of the community loop (book ch. 4.8): moderators review
  * queued contributions; approving a `create` proposal materialises it as a
  * publicly visible establishment, rejecting only records the decision. Every
  * resolution is final and lands in the immutable audit log (ch. 7.3).

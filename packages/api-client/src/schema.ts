@@ -641,7 +641,7 @@ export interface components {
      */
     OtpCode: string;
     /**
-     * @description Account role: `user` = consumer, `business` = premium establishment account, `moderator` and `admin` = back-office.
+     * @description Account role: `user` = consumer, `business` = premium establishment account, `moderator` and `admin` = staff.
      * @enum {string}
      */
     UserRole: 'user' | 'business' | 'moderator' | 'admin';
@@ -902,7 +902,7 @@ export interface components {
      * @enum {string}
      */
     ContributionStatus: 'pending' | 'applied' | 'rejected' | 'superseded';
-    /** @description A community contribution as the moderation back-office sees it. */
+    /** @description A community contribution as the moderation queue sees it. */
     ContributionItem: {
       /** Format: uuid */
       id: string;

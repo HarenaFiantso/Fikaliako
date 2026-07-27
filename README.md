@@ -81,24 +81,23 @@ The target user journey (book ch. 4 — each stage is a functional block):
 
 Two languages, no more (book ch. 7): **Kotlin server-side, TypeScript client-side**.
 
-| Layer                       | Technology                                                                                                             |
-| --------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| **Monorepo**                | [Turborepo](https://turborepo.dev/) 2 · pnpm 9 workspaces — the Gradle-built API is driven as a workspace package      |
-| **Web**                     | [Next.js](https://nextjs.org/) 16 (SSR — every establishment page must be Google-indexable) · React 19                 |
-| **Mobile** _(planned)_      | React Native (Expo) + MapLibre Native — Android first, then iOS                                                        |
-| **Back-office** _(planned)_ | React — moderation queues, roles, quality dashboard                                                                    |
-| **API**                     | Kotlin 2.3 · Spring Boot 4.1 · JVM 21 (Gradle Kotlin DSL, wrapper committed, JDK auto-provisioned via foojay)          |
-| **Database**                | PostgreSQL 16 + [PostGIS](https://postgis.net/) — native `GEOGRAPHY(Point,4326)`, GiST + trigram indexes               |
-| **ORM / spatial**           | Spring Data JPA · `hibernate-spatial` (JTS)                                                                            |
-| **Migrations**              | [Flyway](https://flywaydb.org/) — sole owner of the schema (`ddl-auto: validate`)                                      |
-| **Search** _(planned)_      | [Meilisearch](https://www.meilisearch.com/), synced from Postgres — typo-tolerant FR/MG search                         |
-| **Cache & queues**          | Redis 7 — cache, rate limiting, OTP queues, revocable refresh tokens                                                   |
-| **Files** _(planned)_       | MinIO (S3-compatible) — photos compressed client-side, thumbnails at upload                                            |
-| **Maps** _(planned)_        | OpenStreetMap vector tiles (Planetiler) behind a CDN, rendered by MapLibre GL                                          |
-| **API contract**            | Hand-managed OpenAPI 3.1 spec served at `/v1/openapi.yaml` · self-hosted Swagger UI at `/v1/docs`                      |
-| **Auth**                    | Spring Security, stateless — short JWTs + Redis-revocable refresh tokens, OTP SMS signup _(accounts module, upcoming)_ |
-| **Observability**           | Spring Actuator (`health` · `info` · `metrics`) — Prometheus + Grafana planned                                         |
-| **Delivery** _(planned)_    | Docker Compose on VPS · GitHub Actions (build, tests, deploy)                                                          |
+| Layer                    | Technology                                                                                                             |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
+| **Monorepo**             | [Turborepo](https://turborepo.dev/) 2 · pnpm 9 workspaces — the Gradle-built API is driven as a workspace package      |
+| **Web**                  | [Next.js](https://nextjs.org/) 16 (SSR — every establishment page must be Google-indexable) · React 19                 |
+| **Mobile** _(planned)_   | React Native (Expo) + MapLibre Native — Android first, then iOS                                                        |
+| **API**                  | Kotlin 2.3 · Spring Boot 4.1 · JVM 21 (Gradle Kotlin DSL, wrapper committed, JDK auto-provisioned via foojay)          |
+| **Database**             | PostgreSQL 16 + [PostGIS](https://postgis.net/) — native `GEOGRAPHY(Point,4326)`, GiST + trigram indexes               |
+| **ORM / spatial**        | Spring Data JPA · `hibernate-spatial` (JTS)                                                                            |
+| **Migrations**           | [Flyway](https://flywaydb.org/) — sole owner of the schema (`ddl-auto: validate`)                                      |
+| **Search** _(planned)_   | [Meilisearch](https://www.meilisearch.com/), synced from Postgres — typo-tolerant FR/MG search                         |
+| **Cache & queues**       | Redis 7 — cache, rate limiting, OTP queues, revocable refresh tokens                                                   |
+| **Files** _(planned)_    | MinIO (S3-compatible) — photos compressed client-side, thumbnails at upload                                            |
+| **Maps** _(planned)_     | OpenStreetMap vector tiles (Planetiler) behind a CDN, rendered by MapLibre GL                                          |
+| **API contract**         | Hand-managed OpenAPI 3.1 spec served at `/v1/openapi.yaml` · self-hosted Swagger UI at `/v1/docs`                      |
+| **Auth**                 | Spring Security, stateless — short JWTs + Redis-revocable refresh tokens, OTP SMS signup _(accounts module, upcoming)_ |
+| **Observability**        | Spring Actuator (`health` · `info` · `metrics`) — Prometheus + Grafana planned                                         |
+| **Delivery** _(planned)_ | Docker Compose on VPS · GitHub Actions (build, tests, deploy)                                                          |
 
 ---
 
@@ -111,7 +110,6 @@ flowchart TB
     subgraph Clients["Clients — TypeScript"]
         web["Web PWA<br/>Next.js (SSR)"]
         mobile["Mobile app<br/>React Native / Expo (planned)"]
-        bo["Back-office<br/>React (planned)"]
     end
 
     subgraph API["API — Spring Boot modular monolith (Kotlin, /v1)"]
@@ -135,7 +133,7 @@ flowchart TB
         sms["Local SMS gateway (OTP)"]
     end
 
-    web & mobile & bo --> API
+    web & mobile --> API
     estab & search --> pg
     search --> meili
     community --> pg

@@ -88,10 +88,10 @@ tags:
       the establishments an admin granted them.
   - name: Moderation
     description: >
-      Back-office moderation queue (`moderator` or `admin` role) — community
+      Staff moderation queue (`moderator` or `admin` role) — community
       contributions reviewed before publication (book ch. 4.8), audit-logged.
   - name: Admin
-    description: Back-office (`admin` role) — manager grants, audit-logged.
+    description: Administration (`admin` role) — manager grants, audit-logged.
 
 paths:
   /v1/ping:
@@ -1181,7 +1181,7 @@ components:
       type: string
       description: >
         Account role: `user` = consumer, `business` = premium establishment
-        account, `moderator` and `admin` = back-office.
+        account, `moderator` and `admin` = staff.
       enum: [user, business, moderator, admin]
 
     UserProfile:
@@ -1533,7 +1533,7 @@ components:
 
     ContributionItem:
       type: object
-      description: A community contribution as the moderation back-office sees it.
+      description: A community contribution as the moderation queue sees it.
       required: [id, type, status, payload, confirmations_count, created_at]
       properties:
         id: { type: string, format: uuid }

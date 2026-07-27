@@ -34,8 +34,8 @@ fikaliako:
     otp-max-per-hour: 5
     otp-max-attempts: 5
   cors:
-    # 3000 = web, 3001 = back-office
-    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:3001}
+    # 3000 = web
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000}
   jobs:
     # Nightly rating aggregation (project book ch. 4.6), Indian/Antananarivo time.
     rating-aggregation-cron: "0 0 3 * * *"
