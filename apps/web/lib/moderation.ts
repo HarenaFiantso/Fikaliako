@@ -28,12 +28,3 @@ export type CreateProposalPayload = {
 export function proposalOf(contribution: ContributionItem): CreateProposalPayload {
   return contribution.payload as CreateProposalPayload;
 }
-
-export function formatAriary(amount: number): string {
-  return `${new Intl.NumberFormat('fr-FR').format(amount)} Ar`;
-}
-
-/** "street_vendor" → "street vendor" — establishment types stay domain terms. */
-export function humanizeType(type: string | undefined): string {
-  return type ? type.replace(/_/g, ' ') : '—';
-}

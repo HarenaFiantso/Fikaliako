@@ -16,7 +16,8 @@ import { StatusBadge } from '@/components/moderation/status-badge';
 
 import { useContribution } from '@/hooks/use-moderation';
 
-import { formatAriary, humanizeType, proposalOf } from '@/lib/moderation';
+import { formatAriary, humanizeType } from '@/lib/format';
+import { proposalOf } from '@/lib/moderation';
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
