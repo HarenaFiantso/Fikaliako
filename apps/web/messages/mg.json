@@ -8,7 +8,8 @@
     "language": "Fiteny"
   },
   "landing": {
-    "cta-register": "Hiditra ao amin'ny fiaraha-monina"
+    "cta-register": "Hiditra ao amin'ny fiaraha-monina",
+    "cta-explore": "Hijery ireo toerana"
   },
   "header": {
     "login": "Hiditra",
@@ -16,7 +17,8 @@
     "profile": "Ny mombamomba ahy",
     "logout": "Hivoaka",
     "logout-success": "Tafavoaka ianao. Mandra-pihaona!",
-    "moderation": "Fanaraha-maso"
+    "moderation": "Fanaraha-maso",
+    "explore": "Hijery"
   },
   "auth": {
     "fields": {
@@ -74,6 +76,81 @@
       "approve": "Ekena",
       "reject": "Lavina",
       "cancel": "Aoka ihany"
+    }
+  },
+  "explore": {
+    "title": "Hijery",
+    "tagline": "Aiza no hisakafo anio?",
+    "add-place": "Hanampy toerana",
+    "retry": "Andramo indray",
+    "load-more": "Hampiseho bebe kokoa"
+  },
+  "establishment": {
+    "types": {
+      "restaurant": "Trano fisakafoanana",
+      "gargotte": "Gargotte",
+      "cafe": "Kafe",
+      "snack": "Snack",
+      "food_truck": "Food truck",
+      "street_vendor": "Mpivarotra an-dalambe",
+      "pastry_shop": "Mpanao mofomamy",
+      "bar_restaurant": "Bar-restaurant",
+      "hotel_restaurant": "Fisakafoanan'ny hotely"
+    },
+    "verified": "Voamarina",
+    "no-reviews": "Mbola tsy misy hevitra",
+    "closed": "Mihidy",
+    "back-to-explore": "Hijery",
+    "view-on-map": "Hijery eo amin’ny sarintany",
+    "favorite": {
+      "add": "Hanampy amin’ny tiana",
+      "remove": "Hanala amin’ny tiana"
+    },
+    "open-state": {
+      "open": "Misokatra",
+      "closed-now": "Mihidy izao",
+      "closed": "Nikatona tanteraka",
+      "pending": "Miandry fanamarinana"
+    },
+    "sections": {
+      "contact": "Fifandraisana",
+      "location": "Toerana",
+      "opening-hours": "Ora fisokafana",
+      "good-to-know": "Tsara ho fantatra",
+      "cuisine-payment": "Sakafo sy fandoavam-bola",
+      "reviews": "Hevitra"
+    },
+    "weekdays": {
+      "monday": "Alatsinainy",
+      "tuesday": "Talata",
+      "wednesday": "Alarobia",
+      "thursday": "Alakamisy",
+      "friday": "Zoma",
+      "saturday": "Asabotsy",
+      "sunday": "Alahady"
+    },
+    "criteria": {
+      "avg_quality": "Kalitao",
+      "avg_price": "Vidiny",
+      "avg_cleanliness": "Fahadiovana",
+      "avg_speed": "Hafainganana",
+      "avg_welcome": "Fandraisana"
+    },
+    "reviews": {
+      "retry": "Andramo indray",
+      "load-more": "Hevitra fanampiny"
+    }
+  },
+  "propose": {
+    "title": "Hanampy toerana",
+    "submit": "Alefa ho amin’ny fanaraha-maso",
+    "sent-title": "Voalefa ny tolo-kevitra",
+    "back-to-explore": "Hiverina hijery",
+    "fields": {
+      "type": "Karazana toerana inona?",
+      "name": "Anarana",
+      "position": "Toerana",
+      "city": "Tanàna"
     }
   }
 }

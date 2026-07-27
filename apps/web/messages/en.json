@@ -16,11 +16,11 @@
   "landing": {
     "hero-title": "Find where to eat, here and now",
     "hero-subtitle": "Restaurants, gargottes and street vendors of Antananarivo, by your location, budget and craving.",
-    "cta-explore": "Explore the map",
+    "cta-explore": "Explore the places",
     "cta-register": "Join the community",
     "api-unreachable": "The API is unreachable — start it with \"pnpm turbo dev --filter=api\".",
     "api-says": "{service} says: {message}",
-    "welcome": "Tongasoa, {name}! The map of good spots is coming soon.",
+    "welcome": "Tongasoa, {name}! Let’s find where to eat today.",
     "status-title": "API status"
   },
   "header": {
@@ -29,7 +29,8 @@
     "profile": "My profile",
     "logout": "Sign out",
     "logout-success": "You are signed out. See you soon!",
-    "moderation": "Moderation"
+    "moderation": "Moderation",
+    "explore": "Explore"
   },
   "auth": {
     "brand-panel": {
@@ -194,6 +195,146 @@
       "reject-confirm": "Reject",
       "reject-success": "Contribution rejected.",
       "error": "The action failed. Try again."
+    }
+  },
+  "explore": {
+    "title": "Explore",
+    "tagline": "Where do we eat today?",
+    "add-place": "Add a place",
+    "error": "The places around could not be loaded.",
+    "retry": "Try again",
+    "empty": "No establishments yet — the community is just getting started.",
+    "loading": "Loading…",
+    "load-more": "Load more"
+  },
+  "establishment": {
+    "types": {
+      "restaurant": "Restaurant",
+      "gargotte": "Gargotte",
+      "cafe": "Café",
+      "snack": "Snack",
+      "food_truck": "Food truck",
+      "street_vendor": "Street vendor",
+      "pastry_shop": "Pastry shop",
+      "bar_restaurant": "Bar-restaurant",
+      "hotel_restaurant": "Hotel restaurant"
+    },
+    "verified": "Verified",
+    "no-reviews": "No reviews yet",
+    "closed": "Closed",
+    "review-count": "{count, plural, one {# review} other {# reviews}}",
+    "back-to-explore": "Explore",
+    "view-on-map": "View on the map",
+    "meta-description": "{name} — {type} in {where}. Prices, opening hours and community reviews on Fikaliako.",
+    "favorite": {
+      "add": "Add to favorites",
+      "remove": "Remove from favorites"
+    },
+    "open-state": {
+      "open": "Open now",
+      "closed-now": "Closed now",
+      "closed": "Permanently closed",
+      "pending": "Pending review"
+    },
+    "sections": {
+      "contact": "Contact",
+      "location": "Location",
+      "opening-hours": "Opening hours",
+      "good-to-know": "Good to know",
+      "cuisine-payment": "Cuisine & payment",
+      "reviews": "Reviews"
+    },
+    "contact": {
+      "call": "Call",
+      "whatsapp": "WhatsApp",
+      "facebook": "Facebook",
+      "website": "Website"
+    },
+    "weekdays": {
+      "monday": "Monday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday",
+      "friday": "Friday",
+      "saturday": "Saturday",
+      "sunday": "Sunday"
+    },
+    "amenities": {
+      "delivery": "Delivery",
+      "parking": "Parking",
+      "wifi": "Wi-Fi",
+      "wheelchair_access": "Wheelchair access",
+      "air_conditioning": "Air conditioning",
+      "terrace": "Terrace",
+      "family_friendly": "Family friendly",
+      "romantic": "Romantic",
+      "student_friendly": "Student friendly",
+      "scenic_view": "Scenic view",
+      "open_24h": "Open 24h"
+    },
+    "criteria": {
+      "avg_quality": "Quality",
+      "avg_price": "Price",
+      "avg_cleanliness": "Cleanliness",
+      "avg_speed": "Speed",
+      "avg_welcome": "Welcome"
+    },
+    "reviews": {
+      "error": "The reviews could not be loaded.",
+      "retry": "Try again",
+      "empty": "No reviews yet — be the first to share your experience.",
+      "loading": "Loading…",
+      "load-more": "More reviews"
+    }
+  },
+  "propose": {
+    "title": "Add a place",
+    "subtitle": "Know somewhere good that Fikaliako is missing? Put it on the map.",
+    "submit": "Send for moderation",
+    "sending": "Sending…",
+    "success-toast": "Misaotra! Your proposal is off to moderation.",
+    "sent-title": "Proposal sent",
+    "sent-body": "A moderator will check it before publication. Misaotra for contributing!",
+    "back-to-explore": "Back to Explore",
+    "add-another": "Add another place",
+    "fields": {
+      "type": "What kind of place?",
+      "name": "Name",
+      "position": "Position",
+      "lat": "Latitude",
+      "lng": "Longitude",
+      "district": "District (optional)",
+      "city": "City",
+      "address": "Address or landmark (optional)",
+      "phone": "Phone (optional)",
+      "avg-price": "Average price in Ar (optional)",
+      "comment": "Note for the moderators (optional)",
+      "comment-description": "Specialities, opening habits, how to spot it…"
+    },
+    "placeholders": {
+      "name": "Chez Mama Fara",
+      "district": "Analakely",
+      "address": "Near the Analakely market stairs",
+      "comment": "Specialities, opening habits…"
+    },
+    "position": {
+      "hint": "Put the pin at the entrance — that is what places it on the map.",
+      "pinned": "Pin dropped",
+      "use-my-location": "Use my location",
+      "locating": "Locating…",
+      "denied": "Could not read your position. Allow geolocation or type the coordinates.",
+      "unsupported": "Your browser does not support geolocation — type the coordinates.",
+      "description": "Formal addresses are rare, so the position is what puts a place on the map."
+    },
+    "errors": {
+      "name-too-short": "Use at least {min} characters",
+      "too-long": "Use at most {max} characters",
+      "city-required": "City is required",
+      "position-required": "The position is required",
+      "lat-invalid": "Invalid latitude (between -90 and 90)",
+      "lng-invalid": "Invalid longitude (between -180 and 180)",
+      "digits-only": "Digits only",
+      "submit-failed": "The proposal could not be sent. Try again."
     }
   }
 }

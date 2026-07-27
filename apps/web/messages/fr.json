@@ -16,11 +16,11 @@
   "landing": {
     "hero-title": "Trouvez où manger, ici et maintenant",
     "hero-subtitle": "Restaurants, gargottes et vendeurs de rue d'Antananarivo, selon votre position, votre budget et votre envie.",
-    "cta-explore": "Explorer la carte",
+    "cta-explore": "Explorer les adresses",
     "cta-register": "Rejoindre la communauté",
     "api-unreachable": "L'API est injoignable — démarrez-la avec « pnpm turbo dev --filter=api ».",
     "api-says": "{service} répond : {message}",
-    "welcome": "Tongasoa, {name} ! La carte des bonnes adresses arrive bientôt.",
+    "welcome": "Tongasoa, {name} ! Voyons où manger aujourd’hui.",
     "status-title": "État de l'API"
   },
   "header": {
@@ -29,7 +29,8 @@
     "profile": "Mon profil",
     "logout": "Se déconnecter",
     "logout-success": "Vous êtes déconnecté·e. À bientôt !",
-    "moderation": "Modération"
+    "moderation": "Modération",
+    "explore": "Explorer"
   },
   "auth": {
     "brand-panel": {
@@ -194,6 +195,146 @@
       "reject-confirm": "Refuser",
       "reject-success": "Contribution refusée.",
       "error": "L'action a échoué. Réessayez."
+    }
+  },
+  "explore": {
+    "title": "Explorer",
+    "tagline": "Où mange-t-on aujourd'hui ?",
+    "add-place": "Ajouter un lieu",
+    "error": "Les lieux autour n'ont pas pu être chargés.",
+    "retry": "Réessayer",
+    "empty": "Aucun établissement pour le moment — la communauté vient de commencer.",
+    "loading": "Chargement…",
+    "load-more": "Voir plus"
+  },
+  "establishment": {
+    "types": {
+      "restaurant": "Restaurant",
+      "gargotte": "Gargotte",
+      "cafe": "Café",
+      "snack": "Snack",
+      "food_truck": "Food truck",
+      "street_vendor": "Vendeur de rue",
+      "pastry_shop": "Pâtisserie",
+      "bar_restaurant": "Bar-restaurant",
+      "hotel_restaurant": "Restaurant d'hôtel"
+    },
+    "verified": "Vérifié",
+    "no-reviews": "Pas encore d'avis",
+    "closed": "Fermé",
+    "review-count": "{count, plural, one {# avis} other {# avis}}",
+    "back-to-explore": "Explorer",
+    "view-on-map": "Voir sur la carte",
+    "meta-description": "{name} — {type} à {where}. Prix, horaires et avis de la communauté sur Fikaliako.",
+    "favorite": {
+      "add": "Ajouter aux favoris",
+      "remove": "Retirer des favoris"
+    },
+    "open-state": {
+      "open": "Ouvert",
+      "closed-now": "Fermé actuellement",
+      "closed": "Définitivement fermé",
+      "pending": "En attente de validation"
+    },
+    "sections": {
+      "contact": "Contact",
+      "location": "Emplacement",
+      "opening-hours": "Horaires",
+      "good-to-know": "Bon à savoir",
+      "cuisine-payment": "Cuisine et paiement",
+      "reviews": "Avis"
+    },
+    "contact": {
+      "call": "Appeler",
+      "whatsapp": "WhatsApp",
+      "facebook": "Facebook",
+      "website": "Site web"
+    },
+    "weekdays": {
+      "monday": "Lundi",
+      "tuesday": "Mardi",
+      "wednesday": "Mercredi",
+      "thursday": "Jeudi",
+      "friday": "Vendredi",
+      "saturday": "Samedi",
+      "sunday": "Dimanche"
+    },
+    "amenities": {
+      "delivery": "Livraison",
+      "parking": "Parking",
+      "wifi": "Wi-Fi",
+      "wheelchair_access": "Accès fauteuil roulant",
+      "air_conditioning": "Climatisation",
+      "terrace": "Terrasse",
+      "family_friendly": "Familial",
+      "romantic": "Romantique",
+      "student_friendly": "Pour étudiants",
+      "scenic_view": "Belle vue",
+      "open_24h": "Ouvert 24h/24"
+    },
+    "criteria": {
+      "avg_quality": "Qualité",
+      "avg_price": "Prix",
+      "avg_cleanliness": "Propreté",
+      "avg_speed": "Rapidité",
+      "avg_welcome": "Accueil"
+    },
+    "reviews": {
+      "error": "Les avis n'ont pas pu être chargés.",
+      "retry": "Réessayer",
+      "empty": "Pas encore d'avis — soyez le premier à partager votre expérience.",
+      "loading": "Chargement…",
+      "load-more": "Plus d'avis"
+    }
+  },
+  "propose": {
+    "title": "Ajouter un lieu",
+    "subtitle": "Vous connaissez une bonne adresse qui manque à Fikaliako ? Mettez-la sur la carte.",
+    "submit": "Envoyer en modération",
+    "sending": "Envoi…",
+    "success-toast": "Misaotra ! Votre proposition part en modération.",
+    "sent-title": "Proposition envoyée",
+    "sent-body": "Un modérateur la vérifiera avant publication. Misaotra pour votre contribution !",
+    "back-to-explore": "Retour à l'exploration",
+    "add-another": "Ajouter un autre lieu",
+    "fields": {
+      "type": "Quel type de lieu ?",
+      "name": "Nom",
+      "position": "Position",
+      "lat": "Latitude",
+      "lng": "Longitude",
+      "district": "Quartier (optionnel)",
+      "city": "Ville",
+      "address": "Adresse ou point de repère (optionnel)",
+      "phone": "Téléphone (optionnel)",
+      "avg-price": "Prix moyen en Ar (optionnel)",
+      "comment": "Note pour les modérateurs (optionnel)",
+      "comment-description": "Spécialités, habitudes d'ouverture, comment repérer le lieu…"
+    },
+    "placeholders": {
+      "name": "Chez Mama Fara",
+      "district": "Analakely",
+      "address": "Près des escaliers du marché d'Analakely",
+      "comment": "Spécialités, habitudes d'ouverture…"
+    },
+    "position": {
+      "hint": "Placez le point à l'entrée du lieu — c'est ce qui le met sur la carte.",
+      "pinned": "Point placé",
+      "use-my-location": "Ma position",
+      "locating": "Localisation…",
+      "denied": "Impossible de lire votre position. Autorisez la géolocalisation ou saisissez les coordonnées.",
+      "unsupported": "Votre navigateur ne gère pas la géolocalisation — saisissez les coordonnées.",
+      "description": "Les adresses formelles étant rares, c'est la position qui place le lieu sur la carte."
+    },
+    "errors": {
+      "name-too-short": "Utilisez au moins {min} caractères",
+      "too-long": "Utilisez au plus {max} caractères",
+      "city-required": "La ville est obligatoire",
+      "position-required": "La position est obligatoire",
+      "lat-invalid": "Latitude invalide (entre -90 et 90)",
+      "lng-invalid": "Longitude invalide (entre -180 et 180)",
+      "digits-only": "Chiffres uniquement",
+      "submit-failed": "La proposition n'a pas pu être envoyée. Réessayez."
     }
   }
 }

@@ -59,20 +59,28 @@ export function LandingHero() {
           className="mt-10"
         >
           {isAuthenticated && user ? (
-            <p className="border-border bg-card flex items-center gap-2 rounded-full border px-5 py-2.5 text-sm font-medium shadow-sm">
-              <Sparkles className="text-primary size-4" />
-              {t('welcome', { name: user.display_name })}
-            </p>
+            <div className="flex flex-col items-center gap-4">
+              <p className="border-border bg-card flex items-center gap-2 rounded-full border px-5 py-2.5 text-sm font-medium shadow-sm">
+                <Sparkles className="text-primary size-4" />
+                {t('welcome', { name: user.display_name })}
+              </p>
+              <Button size="lg" asChild>
+                <Link href="/explore">
+                  {t('cta-explore')}
+                  <ArrowRight />
+                </Link>
+              </Button>
+            </div>
           ) : (
             <div className="flex flex-col items-center gap-3 sm:flex-row">
               <Button size="lg" asChild>
-                <Link href="/register">
-                  {t('cta-register')}
+                <Link href="/explore">
+                  {t('cta-explore')}
                   <ArrowRight />
                 </Link>
               </Button>
               <Button size="lg" variant="outline" asChild>
-                <Link href="/login">{t('cta-explore')}</Link>
+                <Link href="/register">{t('cta-register')}</Link>
               </Button>
             </div>
           )}

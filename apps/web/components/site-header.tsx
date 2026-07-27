@@ -19,7 +19,12 @@ export function SiteHeader() {
   return (
     <header className="border-border/60 bg-background/80 sticky top-0 z-40 border-b backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-        <BrandLogo />
+        <div className="flex items-center gap-2">
+          <BrandLogo />
+          <Button variant="ghost" size="sm" asChild>
+            <Link href="/explore">{t('explore')}</Link>
+          </Button>
+        </div>
         <div className="flex items-center gap-1.5">
           <LocaleSwitcher />
           <ThemeToggle />
