@@ -20,7 +20,8 @@ import { StatusBadge } from '@/components/moderation/status-badge';
 
 import { useModerationQueue } from '@/hooks/use-moderation';
 
-import { formatAriary, humanizeType, proposalOf } from '@/lib/moderation';
+import { formatAriary, humanizeType } from '@/lib/format';
+import { proposalOf } from '@/lib/moderation';
 import { cn } from '@/lib/utils';
 
 const STATUSES: ContributionStatus[] = ['pending', 'applied', 'rejected', 'superseded'];
