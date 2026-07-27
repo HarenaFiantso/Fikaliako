@@ -74,7 +74,7 @@ data class OpeningHoursUpdate(
   val intervals: List<OpeningIntervalInput> = emptyList(),
 )
 
-// One manager of an establishment (admin back-office view)
+// One manager of an establishment (admin view)
 data class ManagerItem(
   val userId: UUID,
   val displayName: String,
