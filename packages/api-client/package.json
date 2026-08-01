@@ -22,6 +22,6 @@
     "eslint": "^9.39.1",
     "openapi-typescript": "^7.13.0",
     "prettier": "^3.7.4",
-    "typescript": "5.9.2"
+    "typescript": "7.0.2"
   }
 }
