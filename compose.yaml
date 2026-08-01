@@ -1,7 +1,7 @@
 services:
   postgres:
     # imresamu/postgis: multi-arch build of postgis/postgis (which has no arm64 images)
-    image: imresamu/postgis:17-3.5
+    image: imresamu/postgis:18-3.6
     labels:
       # non-standard image name: tells Spring Boot this is a Postgres service
       org.springframework.boot.service-connection: postgres
